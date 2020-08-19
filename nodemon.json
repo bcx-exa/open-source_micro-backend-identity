@@ -1,0 +1,6 @@
+{
+  "exec": "ts-node src/app.ts",
+  "watch": ["src"],
+  "ext": "ts",
+  "ignore": ["src/middelware/tsoa/swagger.json", "src/middelware/tsoa/routes.ts"]
+}

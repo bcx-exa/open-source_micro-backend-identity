@@ -1,0 +1,45 @@
+service:
+  name: ${file(cicd/env/${self:provider.stage}.yml):StackName}
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  customDomain:
+    domainName: ${file(cicd/env/${self:provider.stage}.yml):DomainName}
+    certificateName: ${file(cicd/env/${self:provider.stage}.yml):DomainName}
+    createRoute53Record: true
+    endpointType: 'edge'
+    securityPolicy: tls_1_2
+    hostedZoneId: ${file(cicd/env/${self:provider.stage}.yml):HostedZoneId}
+    apiType: rest
+    autoDomain: true
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-domain-manager
+  
+provider:
+  name: aws
+  region: ${file(cicd/env/${self:provider.stage}.yml):Region, 'eu-west-1'}
+  stage: ${opt:stage, 'dev'}
+  runtime: nodejs12.x
+  stackName: ${file(cicd/env/${self:provider.stage}.yml):StackName}
+  tracing:
+    apiGateway: true
+    lambda: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    NODE_ENV: dev
+
+# resources:
+# - Resources:
+# - ${file(cicd/restapi.serverless.yml)}
+
+functions:
+  base:
+    handler: src/app.app_bundle
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+

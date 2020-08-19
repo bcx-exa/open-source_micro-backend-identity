@@ -1,0 +1,10 @@
+# package directories
+node_modules
+jspm_packages
+.vscode
+
+# Serverless directories
+.serverless
+.env
+# Webpack directories
+.webpack

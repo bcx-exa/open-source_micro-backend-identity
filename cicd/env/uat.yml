@@ -1,0 +1,5 @@
+DomainName: <YOUR DOMAIN>
+Region: <REGION>
+AcmStackName: <YOUR ACM STACK NAME>
+StackName: <YOUR STACK NAME>
+HostedZoneId: <YOUR HOSTED ZONE ID>

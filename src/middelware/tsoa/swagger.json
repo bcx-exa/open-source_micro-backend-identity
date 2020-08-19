@@ -1,0 +1,105 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"HelloWorldInterface": {
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "micro-base-core",
+		"version": "0.0.3",
+		"description": "Boilerplate for building a micro-service",
+		"license": {
+			"name": "UNLICENSED"
+		},
+		"contact": {
+			"name": "Martin Greyling"
+		}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/HelloWorld": {
+			"get": {
+				"operationId": "Hello",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HelloWorldInterface"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"HelloWorldController"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"put": {
+				"operationId": "HelloPut",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HelloWorldInterface"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"HelloWorldController"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "HelloPost",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HelloWorldInterface"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"HelloWorldController"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

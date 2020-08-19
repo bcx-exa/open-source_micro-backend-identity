@@ -1,0 +1,26 @@
+service:
+  name: ${file(cicd/env/${self:provider.stage}.yml):AcmStackName}
+provider:
+  name: aws
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  stackName: ${file(cicd/env/${self:provider.stage}.yml):AcmStackName}
+
+resources:
+  Resources:
+    ApiGatewayCert:
+      Type: AWS::CertificateManager::Certificate
+      Properties: 
+        DomainName: ${file(cicd/env/${self:provider.stage}.yml):DomainName}
+        DomainValidationOptions:
+          - DomainName: ${file(cicd/env/${self:provider.stage}.yml):DomainName}
+            ValidationDomain: ${file(cicd/env/${self:provider.stage}.yml):DomainName}
+        ValidationMethod: DNS
+  Outputs:
+    ApiGatewayCert:
+      Value: 
+        Ref: ApiGatewayCert
+      Export:
+        Name: ${file(cicd/env/${self:provider.stage}.yml):AcmStackName}
+
+    

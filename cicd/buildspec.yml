@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12 
+  pre_build:
+    commands:
+      - npm install serverless -g
+      - npm install
+      - npm run test
+      - npm run lint
+      - aws configure set default.region $DEPLOYMENT_REGION
+      - aws configure set aws_access_key_id $ACCESS_KEY_ID
+      - aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
+  build:
+    commands:
+      - npm run deploy
+  post_build:
+    commands:
