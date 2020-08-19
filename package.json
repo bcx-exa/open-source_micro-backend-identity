@@ -1,7 +1,7 @@
 {
-  "name": "micro-base-core",
-  "version": "1.0.0",
-  "description": "Boilerplate for building a micro-service",
+  "name": "micro-identity",
+  "version": "0.0.1",
+  "description": "Boilerplate for creating identity microservice",
   "main": "src/app.ts",
   "scripts": {
     "dev": "eslint . --ext .ts && nodemon",
@@ -18,6 +18,7 @@
     "@types/shelljs": "^0.8.8",
     "@types/swagger-ui-express": "^4.1.2",
     "aws-lambda": "^1.0.6",
+    "aws-sdk": "^2.736.0",
     "aws-xray-sdk": "^3.1.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

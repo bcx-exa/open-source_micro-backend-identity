@@ -19,7 +19,7 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", "cicd/resources/advanced/ses.js"],
   "exclude": [
     "node_modules/**/*",
     ".serverless/**/*",

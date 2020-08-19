@@ -3,7 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import { execShellCommand } from './middelware/terminal/shell';
 import xrayExpress from 'aws-xray-sdk-express';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 
 export class Server {
   public httpServer: any

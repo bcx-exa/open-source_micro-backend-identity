@@ -1,10 +1,10 @@
 service:
-  name: ${file(cicd/env/${self:provider.stage}.yml):AcmStackName}
+  name: ${file(cicd/env/${self:provider.stage}.yml):AcmStackName}-${self:provider.stage}-${self:provider.region}
 provider:
   name: aws
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
-  stackName: ${file(cicd/env/${self:provider.stage}.yml):AcmStackName}
+  stackName: ${file(cicd/env/${self:provider.stage}.yml):AcmStackName}-${self:provider.stage}-${self:provider.region}
 
 resources:
   Resources:

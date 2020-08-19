@@ -1,0 +1,96 @@
+Resources:
+    # Create Identity User Pool
+    IdentityUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName:
+          Fn::Sub: ${self:service.name}-${self:provider.stage}-identity-user-pool
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        VerificationMessageTemplate:
+          DefaultEmailOption: CONFIRM_WITH_LINK
+          EmailSubjectByLink: Confirm your Freed@ account
+          EmailMessageByLink:
+            Fn::Join:
+              - ""
+              - - '<html><body>Dear Freed@ Identity, <Br><h4>Welcome to the Freed@ Community</h4><BR>Thank you for registering as a Identity, complete your registration by clicking the link below to verify your email address.<br><a href="'
+                - api-identity.freedatsandbox.xyz/verify
+                - '/IdentityEmailVerification?{##Verify Email##}">Verify</a></p><br>Thanks from the Freed@ Team <Br></body></html>'
+        Schema:
+          - Name: name
+            AttributeDataType: String
+            Mutable: true
+            Required: true
+          - Name: email
+            AttributeDataType: String
+            Mutable: false
+            Required: true
+          - Name: profile
+            AttributeDataType: String
+            Mutable: false
+            Required: true
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: false
+            RequireUppercase: true
+    # # Create Identity App Client
+    # IdentityUserPoolClient:
+    #   Type: AWS::Cognito::UserPoolClient
+    #   Properties:
+    #     ClientName:
+    #       Fn::Sub: ${self:custom.projectName}-${self:custom.stage}-Identity-app-client
+    #     GenerateSecret: false
+    #     CallbackURLs:
+    #       - https://localhost:80 # Adjust if ever using federated identity provider
+    #     LogoutURLs:
+    #       - https://localhost:80/logout # Adjust if ever using federated identity provider
+    #     SupportedIdentityProviders:
+    #       - COGNITO
+    #     AllowedOAuthFlows:
+    #       - code
+    #     AllowedOAuthScopes:
+    #       - phone
+    #       - email
+    #       - openid
+    #       - profile
+    #       - aws.cognito.signin.user.admin
+    #     UserPoolId:
+    #       Ref: IdentityUserPool
+    # # Identity authorizer
+    # IdentityApiGatewayAuthorizer:
+    #   Type: AWS::ApiGateway::Authorizer
+    #   Properties:
+    #     AuthorizerResultTtlInSeconds: 10
+    #     IdentitySource: method.request.header.Authorization
+    #     Name: Identity-pool-authorizer
+    #     RestApiId:
+    #       "Fn::ImportValue": "${self:custom.projectName}-${self:custom.stage}-ApiGatewayRestApiId"
+    #     Type: COGNITO_USER_POOLS
+    #     ProviderARNs:
+    #       - {
+    #           "Fn::Join":
+    #             [
+    #               "",
+    #               [
+    #                 "arn:aws:cognito-idp:",
+    #                 { Ref: "AWS::Region" },
+    #                 ":",
+    #                 { Ref: "AWS::AccountId" },
+    #                 ":userpool/",
+    #                 Ref: IdentityUserPool,
+    #               ],
+    #             ],
+    #         }
+
+    # ## Identity domain name
+    # IdentityUserPoolDomain:
+    #   Type: AWS::Cognito::UserPoolDomain
+    #   Properties:
+    #     Domain: ${self:custom.projectName}-${self:custom.stage}-tzero-Identity-pool-domain
+    #     UserPoolId:
+    #       Ref: IdentityUserPool
