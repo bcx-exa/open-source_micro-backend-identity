@@ -1,5 +1,0 @@
-DomainName: api-identity.freedatsandbox.xyz
-Region: eu-west-1
-AcmStackName: identity-acm
-StackName: identity
-HostedZoneId: Z0466911267U3J6P7AN1V

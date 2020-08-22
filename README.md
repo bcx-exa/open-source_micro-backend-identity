@@ -6,7 +6,15 @@
 
 This is opinionated boilerplate code that aims to meet the requirements set out by our technical architecture team.
 
-- [x] 1. Plug and Play Identity Module
+# This is still a work in progress, the template isn't ready yet
+
+Main objective
+
+- [x] 1. Create a Plug and Play Identity microservice
+
+Features
+
+- [x] Auto SES Creating for 
 
 This template uses our [template_micro_backend_core](https://github.com/bcx-exa/template_micro_backend_core) version 1.0.0 as it's base.
 

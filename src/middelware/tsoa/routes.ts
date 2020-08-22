@@ -1,18 +1,22 @@
 /* tslint:disable */
 /* eslint-disable */
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse } from 'tsoa';
+import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { HelloWorldController } from './../../controllers/helloWorldController';
+import { SignUpController } from './../../controllers/authController';
 import * as express from 'express';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "HelloWorldInterface": {
+    "SignUpRequest": {
         "dataType": "refObject",
         "properties": {
-            "message": { "dataType": "string", "required": true },
+            "username": { "dataType": "string", "required": true },
+            "password": { "dataType": "string", "required": true },
+            "givenName": { "dataType": "string", "required": true },
+            "familyName": { "dataType": "string", "required": true },
+            "phoneNumber": { "dataType": "string", "required": true },
         },
         "additionalProperties": false,
     },
@@ -27,9 +31,10 @@ export function RegisterRoutes(app: express.Express) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
-    app.get('/HelloWorld',
+    app.post('/SignUp',
         function(request: any, response: any, next: any) {
             const args = {
+                SignUpRequest: { "in": "body", "name": "SignUpRequest", "required": true, "ref": "SignUpRequest" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -41,52 +46,10 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new HelloWorldController();
+            const controller = new SignUpController();
 
 
-            const promise = controller.hello.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.put('/HelloWorld',
-        function(request: any, response: any, next: any) {
-            const args = {
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new HelloWorldController();
-
-
-            const promise = controller.helloPut.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/HelloWorld',
-        function(request: any, response: any, next: any) {
-            const args = {
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new HelloWorldController();
-
-
-            const promise = controller.helloPost.apply(controller, validatedArgs as any);
+            const promise = controller.SignUpPost.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -1,30 +1,36 @@
 service:
-  name: ${file(cicd/env/${self:provider.stage}.yml):StackName}-${self:provider.stage}-${self:provider.region}
+  name: ${env:STAGE}-${env:REGION}-${env:APP_NAME}
 custom:
+  dotenv:
+    basePath: environments/
+    exclude: # By default dotenv will add the env to your functions
+      - ACCESS_KEY_ID
+      - SECRET_ACCESS_KEY 
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
   customDomain:
-    domainName: ${file(cicd/env/${self:provider.stage}.yml):DomainName}
-    certificateName: ${file(cicd/env/${self:provider.stage}.yml):DomainName}
+    domainName: ${env:API_DOMAIN}
+    certificateName: ${env:API_DOMAIN}
     createRoute53Record: true
     endpointType: 'edge'
     securityPolicy: tls_1_2
-    hostedZoneId: ${file(cicd/env/${self:provider.stage}.yml):HostedZoneId}
+    hostedZoneId: ${env:HOSTED_ZONE_ID}
     apiType: rest
     autoDomain: true
 
 plugins:
+  - serverless-dotenv-plugin
   - serverless-webpack
   - serverless-offline
   - serverless-domain-manager
   
 provider:
   name: aws
-  region: ${file(cicd/env/${self:provider.stage}.yml):Region, 'eu-west-1'}
-  stage: ${opt:stage, 'dev'}
+  region: ${env:REGION, 'us-east-1'}
+  stage: ${env:STAGE, 'dev'}
+  stackName: ${self:service.name}-stack
   runtime: nodejs12.x
-  stackName: ${file(cicd/env/${self:provider.stage}.yml):StackName}
   tracing:
     apiGateway: true
     lambda: true
@@ -34,7 +40,7 @@ provider:
 
 resources:
 - Resources:
-- ${file(cicd/resources/cognito.serverless.yml)}
+- ${file(iac/resources/cognito.serverless.yml)}
 
 functions:
   base:

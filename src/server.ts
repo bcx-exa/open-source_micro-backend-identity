@@ -3,7 +3,9 @@ import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import { execShellCommand } from './middelware/terminal/shell';
 import xrayExpress from 'aws-xray-sdk-express';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv-flow';
+import { credsConfigLocal } from './middelware/aws/auth';
+import path from 'path';
 
 export class Server {
   public httpServer: any
@@ -17,12 +19,15 @@ export class Server {
 
   public async Start(): Promise<void> {
     //Import env variables
-    dotenv.config();
+    dotenv.config({ path: path.resolve(process.cwd(), './environments/') });
     const env = process.env.NODE_ENV || 'local';
     
     //Generate tsoa routes & spec
-    if(env === 'local') 
+    if(env === 'local') {
       await execShellCommand("npm run tsoa");
+      credsConfigLocal();
+    }
+
 
     //X-ray Segment Start
     const appName = process.env.APP_NAME || 'micro-base'

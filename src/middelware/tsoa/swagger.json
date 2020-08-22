@@ -6,14 +6,30 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"HelloWorldInterface": {
+			"SignUpRequest": {
 				"properties": {
-					"message": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"givenName": {
+						"type": "string"
+					},
+					"familyName": {
+						"type": "string"
+					},
+					"phoneNumber": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"message"
+					"username",
+					"password",
+					"givenName",
+					"familyName",
+					"phoneNumber"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -22,11 +38,11 @@
 		"securitySchemes": {}
 	},
 	"info": {
-		"title": "micro-base-core",
-		"version": "0.0.3",
-		"description": "Boilerplate for building a micro-service",
+		"title": "micro-identity",
+		"version": "0.0.1",
+		"description": "Boilerplate for creating identity microservice",
 		"license": {
-			"name": "UNLICENSED"
+			"name": "MIT"
 		},
 		"contact": {
 			"name": "Martin Greyling"
@@ -34,66 +50,34 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/HelloWorld": {
-			"get": {
-				"operationId": "Hello",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/HelloWorldInterface"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"HelloWorldController"
-				],
-				"security": [],
-				"parameters": []
-			},
-			"put": {
-				"operationId": "HelloPut",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/HelloWorldInterface"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"HelloWorldController"
-				],
-				"security": [],
-				"parameters": []
-			},
+		"/SignUp": {
 			"post": {
-				"operationId": "HelloPost",
+				"operationId": "SignUpPost",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/HelloWorldInterface"
-								}
+								"schema": {}
 							}
 						}
 					}
 				},
 				"tags": [
-					"HelloWorldController"
+					"SignUpController"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignUpRequest"
+							}
+						}
+					}
+				}
 			}
 		}
 	},
