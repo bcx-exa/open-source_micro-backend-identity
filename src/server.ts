@@ -5,7 +5,11 @@ import { execShellCommand } from './middelware/terminal/shell';
 import xrayExpress from 'aws-xray-sdk-express';
 import dotenv from 'dotenv-flow';
 import { credsConfigLocal } from './middelware/aws/auth';
+import fs from 'fs';
 import path from 'path';
+import cors from 'cors';
+import passport from 'passport';
+import { genKeyPair } from './helpers/crypto'
 
 export class Server {
   public httpServer: any
@@ -18,21 +22,31 @@ export class Server {
   }
 
   public async Start(): Promise<void> {
+    //Generate key pairs if it doesn't exist
+    const privKeyExist = path.resolve(process.cwd(), 'src/crypto-keys/priv.pem');
+    if (!fs.existsSync(privKeyExist)) genKeyPair();
+    
     //Import env variables
     dotenv.config({ path: path.resolve(process.cwd(), './environments/') });
     const env = process.env.NODE_ENV || 'local';
     
+    //X-ray Segment Start
+    const appName = process.env.APP_NAME || 'micro-base'
+    this.httpServer.use(xrayExpress.openSegment(appName + '-startup'));
+    
+    //Add Passport Middelware to all routes
+    // await import('./middelware/passport/passport-jwt');
+    // this.httpServer(passport.initialize());
+
+    //Allow Cors
+    this.httpServer.use(cors());
+
     //Generate tsoa routes & spec
     if(env === 'local') {
       await execShellCommand("npm run tsoa");
       credsConfigLocal();
     }
 
-
-    //X-ray Segment Start
-    const appName = process.env.APP_NAME || 'micro-base'
-    this.httpServer.use(xrayExpress.openSegment(appName + '-startup'));
-    
     //Register tsoa routes
     const routes = await import('./middelware/tsoa/routes');
     routes.RegisterRoutes(this.httpServer);

@@ -5,36 +5,7 @@
 		"parameters": {},
 		"requestBodies": {},
 		"responses": {},
-		"schemas": {
-			"SignUpRequest": {
-				"properties": {
-					"username": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"givenName": {
-						"type": "string"
-					},
-					"familyName": {
-						"type": "string"
-					},
-					"phoneNumber": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"username",
-					"password",
-					"givenName",
-					"familyName",
-					"phoneNumber"
-				],
-				"type": "object",
-				"additionalProperties": false
-			}
-		},
+		"schemas": {},
 		"securitySchemes": {}
 	},
 	"info": {
@@ -73,7 +44,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/SignUpRequest"
+								"type": "string"
 							}
 						}
 					}

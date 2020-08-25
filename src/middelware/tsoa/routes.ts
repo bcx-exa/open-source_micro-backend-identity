@@ -9,18 +9,6 @@ import * as express from 'express';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "SignUpRequest": {
-        "dataType": "refObject",
-        "properties": {
-            "username": { "dataType": "string", "required": true },
-            "password": { "dataType": "string", "required": true },
-            "givenName": { "dataType": "string", "required": true },
-            "familyName": { "dataType": "string", "required": true },
-            "phoneNumber": { "dataType": "string", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const validationService = new ValidationService(models);
 
@@ -34,7 +22,7 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/SignUp',
         function(request: any, response: any, next: any) {
             const args = {
-                SignUpRequest: { "in": "body", "name": "SignUpRequest", "required": true, "ref": "SignUpRequest" },
+                SignUp: { "in": "body", "name": "SignUp", "required": true, "dataType": "string" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

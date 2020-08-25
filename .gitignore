@@ -3,6 +3,7 @@ node_modules
 jspm_packages
 .vscode
 
+priv.pem
 # Serverless directories
 .serverless
 .env.local
