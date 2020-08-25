@@ -1,42 +1,41 @@
+import * as express from 'express';
+import { StrategyOptions, Strategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import passport from 'passport';
-import { JwtStrategy, ExtractJwt } from 'passport-jwt';
+import { PassportStatic } from 'passport';
 import fs from 'fs';
-import { GetUserById } from "../../services/users";
-import { User } from "../../models/user";
+import { UserService } from "../../services/users";
+import { User } from '@/models/user';
 
-const pubKeyPath = process.cwd() + '/src/crypto-keys/pub.pem';
-const pubKey = fs.readFileSync(pubKeyPath, 'utf8');
+export const authenticateUser = (passport: PassportStatic) => {
+    const pubKeyPath = process.cwd() + '/src/crypto-keys/pub.pem';
+    const pubKey = fs.readFileSync(pubKeyPath, 'utf8');    
 
-// We are using the public key as this is to verify the validity of the signed token
-const options = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: pubKey,
-    algorithms: ['RS256']
+    const options: StrategyOptions = {
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        issuer: process.env.API_DOMAIN,
+        secretOrKey: pubKey,
+        algorithms: ['RS256']
+    };
+
+    passport.use(new Strategy(options, async (jwtPayload: IJwtPayload, done: VerifiedCallback) => {
+        const userService = new UserService();
+        const user = await userService.GetUserById(jwtPayload.user.id);
+
+        if (user) return done(user, false);
+        if (!user) {
+            return done(null, false);
+        } else {
+            return done(null, user, {issuedAt: jwtPayload.iat});
+        }
+    }));
+
+    
 };
 
-const jwtStrategy = new JwtStrategy(options, (payload, done) => {
-    //Get id from payload
-    GetUserById(payload.sub)
-        .then(user => {
-            // if user exists return it
-            if(user) return done(null, user);
-            // if user doesn't exist then return not found
-            else return done(null, false);
-        })
-        .catch(e => done(e));
-});
+export const expressAuthentication = passport.authenticate('jwt', {session: false});
 
-passport.use(jwtStrategy);
 
-passport.serializeUser((user: User, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser((Id: string, done) => {
-    GetUserById(id)
-        .then((user) => {
-            done(null, user);
-        })
-        .catch(e => done(e));
-})
-
+interface IJwtPayload {
+    user?: User;
+    iat?: Date;
+}

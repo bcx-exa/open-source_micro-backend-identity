@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import jsonwebtoken from 'jsonwebtoken';
-import path from 'path';
+import { User } from '../models/user';
 import fs from 'fs';
 
 // Helper method to create a hash from the clear text user password
@@ -42,23 +42,20 @@ export function genKeyPair(): void {
 }
 
 // Issue jwt
-export function issueJWT(user: any): any {
+export function issueJWT(user: User): any {
     
     //Get and configure variables
-    const _id = user._id;
     const expiresIn = '1d';
-    const payload = {
-        sub: _id,
-        iat: Date.now()
-    };
+    const payload = user;
     const privKeyPath = process.cwd() + '/src/crypto-keys/priv.pem';
     const privKey = fs.readFileSync(privKeyPath, 'utf8');
 
     // Sign token
     const signedToken = jsonwebtoken.sign(payload, privKey, { expiresIn: expiresIn, algorithm: 'RS256'});
-
+    
     // Return bearer token
     return {
+        statusCode: 200,
         token: "Bearer " + signedToken,
         expires: expiresIn
     }

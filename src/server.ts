@@ -10,6 +10,7 @@ import path from 'path';
 import cors from 'cors';
 import passport from 'passport';
 import { genKeyPair } from './helpers/crypto'
+import { authenticateUser } from './middelware/passport/passport-jwt';
 
 export class Server {
   public httpServer: any
@@ -34,12 +35,14 @@ export class Server {
     const appName = process.env.APP_NAME || 'micro-base'
     this.httpServer.use(xrayExpress.openSegment(appName + '-startup'));
     
-    //Add Passport Middelware to all routes
-    // await import('./middelware/passport/passport-jwt');
-    // this.httpServer(passport.initialize());
-
     //Allow Cors
     this.httpServer.use(cors());
+
+    //Add Passport Middelware to all routes
+    authenticateUser(passport);
+    this.httpServer.use(passport.initialize());
+
+
 
     //Generate tsoa routes & spec
     if(env === 'local') {

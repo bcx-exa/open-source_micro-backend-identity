@@ -24,24 +24,9 @@ resources:
           - DomainName: ${env:API_DOMAIN}
             ValidationDomain: ${env:API_DOMAIN}
         ValidationMethod: DNS
-    UiCert:
-      Type: AWS::CertificateManager::Certificate
-      Properties: 
-        DomainName: ${env:UI_DOMAIN}
-        DomainValidationOptions:
-          - DomainName: ${env:UI_DOMAIN}
-            ValidationDomain: ${env:UI_DOMAIN}
-        ValidationMethod: DNS
   Outputs:
     ApiGatewayCert:
       Value: 
         Ref: ApiGatewayCert
       Export:
         Name: ${self:service.name}-ApiGatewayCert
-    UiCert:
-      Value: 
-        Ref: UiCert
-      Export:
-        Name: ${self:service.name}-UiCert
-
-    

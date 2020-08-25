@@ -5,7 +5,66 @@
 		"parameters": {},
 		"requestBodies": {},
 		"responses": {},
-		"schemas": {},
+		"schemas": {
+			"Pick_User.username-or-password-or-firstName-or-lastName-or-email-or-phoneNumber-or-address_": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password",
+					"firstName",
+					"lastName",
+					"email",
+					"phoneNumber",
+					"address"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"UserSignUp": {
+				"$ref": "#/components/schemas/Pick_User.username-or-password-or-firstName-or-lastName-or-email-or-phoneNumber-or-address_"
+			},
+			"Pick_User.username-or-password_": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"UserSignIn": {
+				"$ref": "#/components/schemas/Pick_User.username-or-password_"
+			}
+		},
 		"securitySchemes": {}
 	},
 	"info": {
@@ -21,7 +80,7 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/SignUp": {
+		"/auth/signup": {
 			"post": {
 				"operationId": "SignUpPost",
 				"responses": {
@@ -35,7 +94,7 @@
 					}
 				},
 				"tags": [
-					"SignUpController"
+					"AuthController"
 				],
 				"security": [],
 				"parameters": [],
@@ -44,11 +103,65 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"type": "string"
+								"$ref": "#/components/schemas/UserSignUp"
 							}
 						}
 					}
 				}
+			}
+		},
+		"/auth/signin": {
+			"post": {
+				"operationId": "SignInPost",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AuthController"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserSignIn"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/refresh": {
+			"post": {
+				"operationId": "RefreshPost",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AuthController"
+				],
+				"security": [
+					{
+						"JWT": []
+					}
+				],
+				"parameters": []
 			}
 		}
 	},

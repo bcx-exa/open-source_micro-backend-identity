@@ -9,9 +9,10 @@
     "tsoa": "tsoa spec-and-routes",
     "test": "jest",
     "lint": "eslint . --ext .ts",
-    "deploy:dev": "sls deploy --config iac/resources/acm.serverless.yml --stage dev && node iac/resources/ses/build.js && sls deploy --stage dev && cd iac/resources && sls deploy --stage dev --config route53.serverless.yml",
-    "deploy:uat": "sls deploy --config iac/resources/acm.serverless.yml --stage uat && node iac/resources/ses/build.js && sls deploy --stage uat ",
-    "deploy:prod": "sls deploy --config iac/resources/acm.serverless.yml --stage prod && node iac/resources/ses/build.js && sls deploy --stage prod"
+    "deploy:dev": "sls deploy --config iac/resources/acm.serverless.yml --stage dev && sls deploy --stage dev",
+    "destroy:dev": "sls remove --stage dev && sls remove --config iac/resources/acm.serverless.yml --stage dev ",
+    "deploy:uat": "sls deploy --config iac/resources/acm.serverless.yml --stage uat && sls deploy --stage uat ",
+    "deploy:prod": "sls deploy --config iac/resources/acm.serverless.yml --stage prod && sls deploy --stage prod"
   },
   "dependencies": {
     "@types/aws-sdk": "^2.7.0",
@@ -35,7 +36,8 @@
     "swagger-ui-express": "^4.1.4",
     "tsoa": "^3.3.0-alpha.0",
     "typescript-rest": "^3.0.1",
-    "typescript-rest-swagger": "^1.1.4"
+    "typescript-rest-swagger": "^1.1.4",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",

@@ -1,40 +1,6 @@
 
-import AWS from "aws-sdk";
 
-
-// DynamoDB Scan Tables
-export const dynamoScan = async (params:any): Promise<any> => {
-  try {
-    const documentClient = new AWS.DynamoDB.DocumentClient();
-    const scanResults = [];
-    let items;
-    do{
-        items =  await documentClient.scan(params).promise();
-        items.Items.forEach((item) => scanResults.push(item));
-        params.ExclusiveStartKey  = items.LastEvaluatedKey;
-    }while(typeof items.LastEvaluatedKey != "undefined");
-    return scanResults;
-  }  
-  catch(error) {
-    handleCommonErrors(error);
-  }  
-};
-
-// DynamoDB Query Tables - To be tested
-export const dynamoQuery = async (params) => {   
-    const documentClient = new AWS.DynamoDB.DocumentClient();
-    const scanResults = [];
-    let items;
-    do{
-        items =  await documentClient.query(params).promise();
-        items.Items.forEach((item) => scanResults.push(item));
-        params.ExclusiveStartKey  = items.LastEvaluatedKey;
-    }while(typeof items.LastEvaluatedKey != "undefined");
-    return scanResults;
-};
-
-
-function handleCommonErrors(err) {
+export function handleDynamoErrors(err: AWS.AWSError): void {
     switch (err.code) {
         case 'InternalServerError':
             console.error(`Internal Server Error, generally safe to retry with exponential back-off. Error: ${err.message}`);

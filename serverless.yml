@@ -40,7 +40,7 @@ provider:
 
 resources:
 - Resources:
-- ${file(iac/resources/cognito.serverless.yml)}
+- ${file(iac/resources/dynamodb.serverless.yml)}
 
 functions:
   base:
