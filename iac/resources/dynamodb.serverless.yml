@@ -6,27 +6,35 @@
         PointInTimeRecoverySpecification:
           PointInTimeRecoveryEnabled: true
         KeySchema:
-          - AttributeName: id
+          - AttributeName: identity_id
             KeyType: HASH
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: identity_id
             AttributeType: S
           - AttributeName: email
             AttributeType: S
-          - AttributeName: phoneNumber
+          - AttributeName: phone_number
+            AttributeType: S
+          - AttributeName: preferred_username
             AttributeType: S
         TableName: ${env:DB_TABLE_NAME}
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
-          - IndexName: byEmail
+          - IndexName: by_email
             KeySchema:
               - AttributeName: email
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
-          - IndexName: byPhoneNumber
+          - IndexName: by_phone_number
             KeySchema:
-              - AttributeName: phoneNumber
+              - AttributeName: phone_number
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: by_preferred_username
+            KeySchema:
+              - AttributeName: preferred_username
                 KeyType: HASH
             Projection:
               ProjectionType: ALL

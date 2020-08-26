@@ -3,6 +3,13 @@
     "noImplicitAdditionalProperties": "throw-on-extras",
     "controllerPathGlobs": ["src/**/*Controller.ts"],
     "spec": {
+      "securityDefinitions": {
+        "jwt": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      },
       "outputDirectory": "src/middelware/tsoa",
       "specVersion": 3
     },
@@ -11,3 +18,5 @@
       "routesDir": "src/middelware/tsoa"
     }
   }
+
+

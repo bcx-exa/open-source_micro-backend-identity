@@ -1,7 +1,7 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
-import { execShellCommand } from './middelware/terminal/shell';
+import { execShellCommand } from './helpers/shell';
 import xrayExpress from 'aws-xray-sdk-express';
 import dotenv from 'dotenv-flow';
 import { credsConfigLocal } from './middelware/aws/auth';
@@ -11,6 +11,8 @@ import cors from 'cors';
 import passport from 'passport';
 import { genKeyPair } from './helpers/crypto'
 import { authenticateUser } from './middelware/passport/passport-jwt';
+import { ValidateError } from 'tsoa';
+import { ApiError } from './helpers/error-handling'
 
 export class Server {
   public httpServer: any
@@ -56,6 +58,32 @@ export class Server {
 
     //X-Ray Segment End
     this.httpServer.use(xrayExpress.closeSegment());
+
+    this.httpServer.use(function errorHandler(
+      err: unknown,
+      req: Request,
+      res: Response
+    ): Response | void {
+      if (err instanceof ValidateError) {
+        console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+        return res.status(422).json({
+          message: "Validation Failed",
+          details: err?.fields,
+        });
+      }
+      if (err instanceof ApiError) {
+        return res.status(err.statusCode).json({
+          name: err.name,
+          message: err.message,
+        });
+      }
+      if (err instanceof Error) {
+        return res.status(500).json({
+          name: err.name,
+          message: "Internal Server Error",
+        });
+      }
+    });
 
     //Swagger-UI
     this.httpServer.use("", swaggerUi.serve, async (_req: Request, res: Response) => {

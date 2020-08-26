@@ -3,31 +3,31 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AuthController } from './../../controllers/authController';
+import { AuthController } from './../../controllers/identityController';
 import { expressAuthentication } from './../passport/passport-jwt';
 import * as express from 'express';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "Pick_User.username-or-password-or-firstName-or-lastName-or-email-or-phoneNumber-or-address_": {
+    "Pick_UserIdentityDB.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_": {
         "dataType": "refAlias",
-        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true }, "firstName": { "dataType": "string", "required": true }, "lastName": { "dataType": "string", "required": true }, "email": { "dataType": "string", "required": true }, "phoneNumber": { "dataType": "string", "required": true }, "address": { "dataType": "string", "required": true } }, "validators": {} },
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true }, "given_name": { "dataType": "string" }, "family_name": { "dataType": "string" }, "email": { "dataType": "string" }, "phone_number": { "dataType": "string" } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserSignUp": {
+    "IdentitySignUp": {
         "dataType": "refAlias",
-        "type": { "ref": "Pick_User.username-or-password-or-firstName-or-lastName-or-email-or-phoneNumber-or-address_", "validators": {} },
+        "type": { "ref": "Pick_UserIdentityDB.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_", "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_User.username-or-password_": {
+    "Pick_UserIdentityDB.preferred_username-or-password_": {
         "dataType": "refAlias",
-        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true } }, "validators": {} },
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserSignIn": {
+    "IdentitySignIn": {
         "dataType": "refAlias",
-        "type": { "ref": "Pick_User.username-or-password_", "validators": {} },
+        "type": { "ref": "Pick_UserIdentityDB.preferred_username-or-password_", "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -43,7 +43,7 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/auth/signup',
         function(request: any, response: any, next: any) {
             const args = {
-                UserSignUp: { "in": "body", "name": "UserSignUp", "required": true, "ref": "UserSignUp" },
+                IdentitySignUp: { "in": "body", "name": "IdentitySignUp", "required": true, "ref": "IdentitySignUp" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -65,7 +65,7 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/auth/signin',
         function(request: any, response: any, next: any) {
             const args = {
-                UserSignIn: { "in": "body", "name": "UserSignIn", "required": true, "ref": "UserSignIn" },
+                IdentitySignIn: { "in": "body", "name": "IdentitySignIn", "required": true, "ref": "IdentitySignIn" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -85,7 +85,7 @@ export function RegisterRoutes(app: express.Express) {
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.post('/auth/refresh',
-        authenticateMiddleware([{ "JWT": [] }]),
+        authenticateMiddleware([{ "jwt": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
             };

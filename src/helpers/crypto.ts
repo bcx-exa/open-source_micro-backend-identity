@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import jsonwebtoken from 'jsonwebtoken';
-import { User } from '../models/user';
+import { UserIdentityDB, UserIdentityJWT } from '../models/identity';
 import fs from 'fs';
 
 // Helper method to create a hash from the clear text user password
@@ -42,11 +42,28 @@ export function genKeyPair(): void {
 }
 
 // Issue jwt
-export function issueJWT(user: User): any {
-    
+export function issueJWT(identity: UserIdentityDB): any {
+
     //Get and configure variables
-    const expiresIn = '1d';
-    const payload = user;
+    const expiresIn = '7d';
+    const payload: UserIdentityJWT = {
+        sub: identity.identity_id,
+        iss: process.env.API_DOMAIN,
+        aud: process.env.DOMAIN,
+        iat: (new Date().getTime()),
+        uid: {
+            identity_id: identity.identity_id,
+            preferred_username: identity.preferred_username,
+            email: identity.email,
+            phone_number: identity.phone_number,
+            picture: identity.picture,
+            address: identity.address,
+            phone_number_verified: identity.phone_number_verified,
+            email_verified: identity.email_verified,
+            created_at: identity.created_at,
+            updated_at: identity.updated_at
+        }
+    }
     const privKeyPath = process.cwd() + '/src/crypto-keys/priv.pem';
     const privKey = fs.readFileSync(privKeyPath, 'utf8');
 

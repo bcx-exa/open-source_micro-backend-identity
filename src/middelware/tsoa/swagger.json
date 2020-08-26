@@ -6,48 +6,40 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"Pick_User.username-or-password-or-firstName-or-lastName-or-email-or-phoneNumber-or-address_": {
+			"Pick_UserIdentityDB.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_": {
 				"properties": {
-					"username": {
+					"preferred_username": {
 						"type": "string"
 					},
 					"password": {
 						"type": "string"
 					},
-					"firstName": {
+					"given_name": {
 						"type": "string"
 					},
-					"lastName": {
+					"family_name": {
 						"type": "string"
 					},
 					"email": {
 						"type": "string"
 					},
-					"phoneNumber": {
-						"type": "string"
-					},
-					"address": {
+					"phone_number": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"username",
-					"password",
-					"firstName",
-					"lastName",
-					"email",
-					"phoneNumber",
-					"address"
+					"preferred_username",
+					"password"
 				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
-			"UserSignUp": {
-				"$ref": "#/components/schemas/Pick_User.username-or-password-or-firstName-or-lastName-or-email-or-phoneNumber-or-address_"
+			"IdentitySignUp": {
+				"$ref": "#/components/schemas/Pick_UserIdentityDB.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_"
 			},
-			"Pick_User.username-or-password_": {
+			"Pick_UserIdentityDB.preferred_username-or-password_": {
 				"properties": {
-					"username": {
+					"preferred_username": {
 						"type": "string"
 					},
 					"password": {
@@ -55,17 +47,23 @@
 					}
 				},
 				"required": [
-					"username",
+					"preferred_username",
 					"password"
 				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
-			"UserSignIn": {
-				"$ref": "#/components/schemas/Pick_User.username-or-password_"
+			"IdentitySignIn": {
+				"$ref": "#/components/schemas/Pick_UserIdentityDB.preferred_username-or-password_"
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
 	},
 	"info": {
 		"title": "micro-identity",
@@ -103,7 +101,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UserSignUp"
+								"$ref": "#/components/schemas/IdentitySignUp"
 							}
 						}
 					}
@@ -133,7 +131,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UserSignIn"
+								"$ref": "#/components/schemas/IdentitySignIn"
 							}
 						}
 					}
@@ -158,7 +156,7 @@
 				],
 				"security": [
 					{
-						"JWT": []
+						"jwt": []
 					}
 				],
 				"parameters": []
