@@ -1,0 +1,30 @@
+Resources:
+  #Transit Gateways
+  TransitGateway:
+    Type: "AWS::EC2::TransitGateway"
+    Condition: GlobalConnect
+    Properties:
+      AmazonSideAsn: 65000
+      Description: "Transit Gateway ${self:provider.region}"
+      AutoAcceptSharedAttachments: "enable"
+      DefaultRouteTableAssociation: "enable"
+      DnsSupport: "enable"
+      VpnEcmpSupport: "enable"
+      Tags:
+        - Key: Name
+          Value: TransitGateway
+  TransitGatewayAttach:
+    Type: AWS::EC2::TransitGatewayAttachment
+    Condition: GlobalConnect
+    Properties:
+      SubnetIds:
+        - Ref: WebSubAz1
+        - Ref: WebSubAz2
+        - Ref: WebSubAz3
+      Tags:
+        - Key: Name
+          Value: TransitGatewayAttach
+      TransitGatewayId:
+        Ref: TransitGateway
+      VpcId:
+        Ref: Vpc

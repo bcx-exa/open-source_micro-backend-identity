@@ -1,0 +1,84 @@
+Resources:
+  #Internet Gateways
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: ${env:APP_NAME}-igw
+  #Attach IGW to VPC
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: Vpc
+      InternetGatewayId:
+        Ref: InternetGateway
+  #NAT Gateways EIP
+  EipAz1:
+    Condition: Az1
+    DependsOn: AttachGateway
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags:
+        - Key: Name
+          Value: ${env:APP_NAME}-eip-ngw-az1
+      Domain: Vpc
+  EipAz2:
+    Condition: Az2
+    DependsOn: AttachGateway
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags:
+        - Key: Name
+          Value: ${env:APP_NAME}-eip-ngw-az2
+      Domain: Vpc
+  EipAz3:
+    Condition: Az3
+    DependsOn: AttachGateway
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags:
+        - Key: Name
+          Value: ${env:APP_NAME}-eip-ngw-az3
+      Domain: Vpc
+  #NAT Gateways
+  NatGatewayAz1:
+    Type: AWS::EC2::NatGateway
+    Condition: Az1
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - EipAz1
+          - AllocationId
+      SubnetId:
+        Ref: WebSubAz1
+      Tags:
+        - Key: Name
+          Value: ${env:APP_NAME}-ngw-az1
+  NatGatewayAz2:
+    Type: AWS::EC2::NatGateway
+    Condition: Az2
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - EipAz2
+          - AllocationId
+      SubnetId:
+        Ref: WebSubAz2
+      Tags:
+        - Key: Name
+          Value: ${env:APP_NAME}-ngw-az2
+  NatGatewayAz3:
+    Type: AWS::EC2::NatGateway
+    Condition: Az3
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - EipAz3
+          - AllocationId
+      SubnetId:
+        Ref: WebSubAz3
+      Tags:
+        - Key: Name
+          Value: ${env:APP_NAME}-ngw-az3

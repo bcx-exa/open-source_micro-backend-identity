@@ -1,0 +1,261 @@
+Resources:
+  #Route tables - Web
+  WebRouteAz1:
+    Type: AWS::EC2::RouteTable
+    Condition: Az1
+    Properties:
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: WebRouteAz1
+  WebRouteAz2:
+    Type: AWS::EC2::RouteTable
+    Condition: Az2
+    Properties:
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: WebRouteAz2
+  WebRouteAz3:
+    Type: AWS::EC2::RouteTable
+    Condition: Az3
+    Properties:
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: WebRouteAz3
+  #Route tables - App
+  AppRouteAz1:
+    Type: AWS::EC2::RouteTable
+    Condition: Az1
+    DependsOn: NatGatewayAz1
+    Properties:
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: AppRouteAz1
+  AppRouteAz2:
+    Type: AWS::EC2::RouteTable
+    DependsOn: NatGatewayAz2
+    Condition: Az2
+    Properties:
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: AppRouteAz2
+  AppRouteAz3:
+    Type: AWS::EC2::RouteTable
+    DependsOn: NatGatewayAz3
+    Condition: Az3
+    Properties:
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: AppRouteAz3
+  #Route tables - Db
+  DbRouteAz1:
+    Type: AWS::EC2::RouteTable
+    DependsOn: NatGatewayAz1
+    Condition: Az1
+    Properties:
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: DbRouteAz1
+  DbRouteAz2:
+    Type: AWS::EC2::RouteTable
+    DependsOn: NatGatewayAz2
+    Condition: Az2
+    Properties:
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: DbRouteAz2
+  DbRouteAz3:
+    Type: AWS::EC2::RouteTable
+    DependsOn: NatGatewayAz3
+    Condition: Az3
+    Properties:
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: DbRouteAz3
+
+  #Route Table to Subnet Association - Web
+  WebRouteAssAz1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Az1
+    Properties:
+      SubnetId:
+        Ref: WebSubAz1
+      RouteTableId:
+        Ref: WebRouteAz1
+  WebRouteAssAz2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Az2
+    Properties:
+      SubnetId:
+        Ref: WebSubAz2
+      RouteTableId:
+        Ref: WebRouteAz2
+  WebRouteAssAz3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Az3
+    Properties:
+      SubnetId:
+        Ref: WebSubAz3
+      RouteTableId:
+        Ref: WebRouteAz3
+  #Route Table to Subnet Association - App
+  AppRouteAssAz1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Az1
+    Properties:
+      SubnetId:
+        Ref: AppSubAz1
+      RouteTableId:
+        Ref: AppRouteAz1
+  AppRouteAssAz2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Az2
+    Properties:
+      SubnetId:
+        Ref: AppSubAz2
+      RouteTableId:
+        Ref: AppRouteAz2
+  AppRouteAssAz3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Az3
+    Properties:
+      SubnetId:
+        Ref: AppSubAz3
+      RouteTableId:
+        Ref: AppRouteAz3
+  #Route Table to Subnet Association - Db
+  DbRouteAssAz1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Az1
+    Properties:
+      SubnetId:
+        Ref: DbSubAz1
+      RouteTableId:
+        Ref: DbRouteAz1
+  DbRouteAssAz2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Az2
+    Properties:
+      SubnetId:
+        Ref: DbSubAz2
+      RouteTableId:
+        Ref: DbRouteAz2
+  DbRouteAssAz3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Az3
+    Properties:
+      SubnetId:
+        Ref: DbSubAz3
+      RouteTableId:
+        Ref: DbRouteAz3
+
+  #Default Routes - Web
+  WebDefaultRouteAz1:
+    Type: AWS::EC2::Route
+    Condition: Az1
+    DependsOn: InternetGateway
+    Properties:
+      RouteTableId:
+        Ref: WebRouteAz1
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
+  WebDefaultRouteAz2:
+    Type: AWS::EC2::Route
+    Condition: Az2
+    DependsOn: InternetGateway
+    Properties:
+      RouteTableId:
+        Ref: WebRouteAz2
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
+  WebDefaultRouteAz3:
+    Type: AWS::EC2::Route
+    Condition: Az3
+    DependsOn: InternetGateway
+    Properties:
+      RouteTableId:
+        Ref: WebRouteAz3
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
+  #Default Routes - App
+  AppDefaultRouteAz1:
+    Type: AWS::EC2::Route
+    Condition: Az1
+    DependsOn: NatGatewayAz1
+    Properties:
+      RouteTableId:
+        Ref: AppRouteAz1
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NatGatewayAz1
+  AppDefaultRouteAz2:
+    Type: AWS::EC2::Route
+    Condition: Az2
+    DependsOn: NatGatewayAz2
+    Properties:
+      RouteTableId:
+        Ref:  AppRouteAz2
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NatGatewayAz2
+  AppDefaultRouteAz3:
+    Type: AWS::EC2::Route
+    Condition: Az3
+    DependsOn: NatGatewayAz3
+    Properties:
+      RouteTableId:
+        Ref:  AppRouteAz3
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NatGatewayAz3
+  #Default Routes - Db
+  DbDefaultRouteAz1:
+    Type: AWS::EC2::Route
+    Condition: Az1
+    DependsOn: NatGatewayAz1
+    Properties:
+      RouteTableId:
+        Ref: DbRouteAz1
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NatGatewayAz1
+  DbDefaultRouteAz2:
+    Type: AWS::EC2::Route
+    Condition: Az2
+    DependsOn: NatGatewayAz2
+    Properties:
+      RouteTableId:
+        Ref: DbRouteAz2
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NatGatewayAz2
+  DbDefaultRouteAz3:
+    Type: AWS::EC2::Route
+    Condition: Az3
+    DependsOn: NatGatewayAz3
+    Properties:
+      RouteTableId:
+        Ref: DbRouteAz3
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NatGatewayAz3

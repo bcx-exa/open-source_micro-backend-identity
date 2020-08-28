@@ -6,7 +6,7 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"Pick_UserIdentityDB.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_": {
+			"Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_": {
 				"properties": {
 					"preferred_username": {
 						"type": "string"
@@ -35,9 +35,9 @@
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
 			"IdentitySignUp": {
-				"$ref": "#/components/schemas/Pick_UserIdentityDB.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_"
+				"$ref": "#/components/schemas/Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_"
 			},
-			"Pick_UserIdentityDB.preferred_username-or-password_": {
+			"Pick_UserProfile.preferred_username-or-password_": {
 				"properties": {
 					"preferred_username": {
 						"type": "string"
@@ -54,7 +54,7 @@
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
 			"IdentitySignIn": {
-				"$ref": "#/components/schemas/Pick_UserIdentityDB.preferred_username-or-password_"
+				"$ref": "#/components/schemas/Pick_UserProfile.preferred_username-or-password_"
 			}
 		},
 		"securitySchemes": {
@@ -136,30 +136,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/auth/refresh": {
-			"post": {
-				"operationId": "RefreshPost",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"AuthController"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": []
 			}
 		}
 	},

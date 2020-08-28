@@ -10,24 +10,24 @@ import * as express from 'express';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "Pick_UserIdentityDB.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_": {
+    "Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_": {
         "dataType": "refAlias",
         "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true }, "given_name": { "dataType": "string" }, "family_name": { "dataType": "string" }, "email": { "dataType": "string" }, "phone_number": { "dataType": "string" } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IdentitySignUp": {
         "dataType": "refAlias",
-        "type": { "ref": "Pick_UserIdentityDB.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_", "validators": {} },
+        "type": { "ref": "Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_", "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_UserIdentityDB.preferred_username-or-password_": {
+    "Pick_UserProfile.preferred_username-or-password_": {
         "dataType": "refAlias",
         "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IdentitySignIn": {
         "dataType": "refAlias",
-        "type": { "ref": "Pick_UserIdentityDB.preferred_username-or-password_", "validators": {} },
+        "type": { "ref": "Pick_UserProfile.preferred_username-or-password_", "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -84,78 +84,9 @@ export function RegisterRoutes(app: express.Express) {
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/auth/refresh',
-        authenticateMiddleware([{ "jwt": [] }]),
-        function(request: any, response: any, next: any) {
-            const args = {
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new AuthController();
-
-
-            const promise = controller.RefreshPost.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
-    function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
-        return (request: any, _response: any, next: any) => {
-            let responded = 0;
-            let success = false;
-
-            const succeed = function(user: any) {
-                if (!success) {
-                    success = true;
-                    responded++;
-                    request['user'] = user;
-                    next();
-                }
-            }
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            const fail = function(error: any) {
-                responded++;
-                if (responded == security.length && !success) {
-                    error.status = error.status || 401;
-                    next(error)
-                }
-            }
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            for (const secMethod of security) {
-                if (Object.keys(secMethod).length > 1) {
-                    let promises: Promise<any>[] = [];
-
-                    for (const name in secMethod) {
-                        promises.push(expressAuthentication(request, name, secMethod[name]));
-                    }
-
-                    Promise.all(promises)
-                        .then((users) => { succeed(users[0]); })
-                        .catch(fail);
-                } else {
-                    for (const name in secMethod) {
-                        expressAuthentication(request, name, secMethod[name])
-                            .then(succeed)
-                            .catch(fail);
-                    }
-                }
-            }
-        }
-    }
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 

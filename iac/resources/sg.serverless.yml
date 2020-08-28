@@ -1,0 +1,111 @@
+Resources:
+  #Create Security Groups
+  MgmtSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow Management Traffic Inbound
+      VpcId:
+        Ref: Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: MgmtSG
+        - Key: Security group name
+          Value: MgmtSG
+  AlbSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow traffic to ALB
+      VpcId:
+        Ref: Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: MgmtSG
+        - Key: Security group name
+          Value: MgmtSG
+  AppSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow the app layer to communicate outbound
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: AppSg
+        - Key: Security group name
+          Value: AppSgsg
+  DbSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow Traffic Inbound From App and Mgmt Security Groups
+      VpcId:
+        Ref: Vpc
+      Tags:
+        - Key: Name
+          Value: DbSg
+        - Key: Security group name
+          Value:  DbSg
+  DbSgAppMySqlIngress:
+    DependsOn: DbSg
+    Condition: MySql
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId:
+        Ref: DbSg
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - AppSg
+          - GroupId
+  DbSgMgmtMySqlIngress:
+    DependsOn: DbSg
+    Condition: MySql
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId:
+        Ref: DbSg
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - MgmtSg
+          - GroupId
+  DbSgAlbMySqlIngress:
+    DependsOn: DbSg
+    Condition: NotProd
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId:
+        Ref: DbSg
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - AlbSg
+          - GroupId
+  

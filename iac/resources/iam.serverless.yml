@@ -1,0 +1,32 @@
+Resources:
+  IdentityRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      RoleName: IdentityRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: IdentityPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "*"
+                  # - "rds:*"
+                  # - "rds-data:*"
+                  # - "ec2:*"
+                  # - "cloudwatch:*"
+                  # - "sns:*"
+                  # - "ses:*"
+                  # - "xray:*"
+                  # - "cloudformation:*"
+                Resource:
+                  - "*"

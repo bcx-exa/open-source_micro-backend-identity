@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import jsonwebtoken from 'jsonwebtoken';
-import { UserIdentityDB, UserIdentityJWT } from '../models/identity';
-import fs from 'fs';
+import { UserProfile, UserIdentityJWT } from '../models/identity';
+import AWS from 'aws-sdk';
 
 // Helper method to create a hash from the clear text user password
 export function generatePasswordHash(password: string): any {
@@ -23,26 +23,8 @@ export function validatePasswordHash(password:string , dbHash: string, salt: str
     return userHash === dbHash;
 }
 
-// This generates key pairs used for signing & encryption
-export function genKeyPair(): void {
-    const keyPair = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 4096,
-        publicKeyEncoding: {
-            type: 'pkcs1',
-            format: 'pem'
-        },
-        privateKeyEncoding: {
-            type: 'pkcs1',
-            format: 'pem'
-        }
-    });
-
-    fs.writeFileSync(process.cwd() + '/src/crypto-keys/pub.pem', keyPair.publicKey);
-    fs.writeFileSync(process.cwd() + '/src/crypto-keys/priv.pem', keyPair.privateKey);
-}
-
 // Issue jwt
-export function issueJWT(identity: UserIdentityDB): any {
+export async function issueJWT(identity: UserProfile ): Promise<any> {
 
     //Get and configure variables
     const expiresIn = '7d';
@@ -51,7 +33,7 @@ export function issueJWT(identity: UserIdentityDB): any {
         iss: process.env.API_DOMAIN,
         aud: process.env.DOMAIN,
         iat: (new Date().getTime()),
-        uid: {
+        profile: {
             identity_id: identity.identity_id,
             preferred_username: identity.preferred_username,
             email: identity.email,
@@ -64,11 +46,16 @@ export function issueJWT(identity: UserIdentityDB): any {
             updated_at: identity.updated_at
         }
     }
-    const privKeyPath = process.cwd() + '/src/crypto-keys/priv.pem';
-    const privKey = fs.readFileSync(privKeyPath, 'utf8');
-
+    const ssm = new AWS.SSM({region: process.env.REGION});
+    const params = {
+        Name: process.env.PRIVATE_KEY_NAME, /* required */
+        WithDecryption: true 
+    };
+    
+    const privKey = await ssm.getParameter(params).promise();
+  
     // Sign token
-    const signedToken = jsonwebtoken.sign(payload, privKey, { expiresIn: expiresIn, algorithm: 'RS256'});
+    const signedToken = jsonwebtoken.sign(payload, privKey.Parameter.Value, { expiresIn: expiresIn, algorithm: 'RS256'});
     
     // Return bearer token
     return {

@@ -12,7 +12,7 @@ provider:
   name: aws
   region: 'us-east-1'
   stage: ${env:STAGE, 'dev'}
-  stackName: ${self:service.name}-stack
+  stackName: ${self:service.name}-acm-stack
 
 resources:
   Resources:

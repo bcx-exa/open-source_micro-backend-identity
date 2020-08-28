@@ -1,0 +1,112 @@
+Resources:
+  #Create Web Tier (Public)
+  WebSubAz1:
+    Type: AWS::EC2::Subnet
+    Condition: Az1
+    Properties:
+      VpcId:
+        Ref: Vpc
+      CidrBlock: ${env:WEBSUBAZ1}
+      AvailabilityZone: "${env:REGION}a"
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: ${env:WEBSUBAZ1}
+  WebSubAz2:
+    Type: AWS::EC2::Subnet
+    Condition: Az2
+    Properties:
+      VpcId:
+        Ref: Vpc
+      CidrBlock: ${env:WEBSUBAZ2}
+      AvailabilityZone: "${env:REGION}b"
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: ${env:WEBSUBAZ2}
+  WebSubAz3:
+    Type: AWS::EC2::Subnet
+    Condition: Az3
+    Properties:
+      VpcId:
+        Ref: Vpc
+      CidrBlock: ${env:WEBSUBAZ3}
+      AvailabilityZone: "${env:REGION}c"
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: ${env:WEBSUBAZ3}
+  #Create App Tier (Private)
+  AppSubAz1:
+    Type: AWS::EC2::Subnet
+    Condition: Az1
+    Properties:
+      VpcId:
+        Ref: Vpc
+      CidrBlock: ${env:APPSUBAZ1}
+      AvailabilityZone: "${env:REGION}a"
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: ${env:APPSUBAZ1}
+  AppSubAz2:
+    Type: AWS::EC2::Subnet
+    Condition: Az2
+    Properties:
+      VpcId:
+        Ref: Vpc
+      CidrBlock: ${env:APPSUBAZ2}
+      AvailabilityZone: "${env:REGION}b"
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: ${env:APPSUBAZ2}
+  AppSubAz3:
+    Type: AWS::EC2::Subnet
+    Condition: Az3
+    Properties:
+      VpcId:
+        Ref: Vpc
+      CidrBlock: ${env:APPSUBAZ3}
+      AvailabilityZone: "${env:REGION}c"
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: ${env:APPSUBAZ3}
+  #Create DB Tier (Private)
+  DbSubAz1:
+    Type: AWS::EC2::Subnet
+    Condition: Az1
+    Properties:
+      VpcId:
+        Ref: Vpc
+      CidrBlock: ${env:DBSUBAZ1}
+      AvailabilityZone: "${env:REGION}a"
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: ${env:DBSUBAZ1}
+  DbSubAz2:
+    Type: AWS::EC2::Subnet
+    Condition: Az2
+    Properties:
+      VpcId:
+        Ref: Vpc
+      CidrBlock: ${env:DBSUBAZ2}
+      AvailabilityZone: "${env:REGION}b"
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: ${env:DBSUBAZ2}
+  DbSubAz3:
+    Type: AWS::EC2::Subnet
+    Condition: Az3
+    Properties:
+      VpcId:
+        Ref: Vpc
+      CidrBlock: ${env:DBSUBAZ3}
+      AvailabilityZone: "${env:REGION}c"
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: ${env:DBSUBAZ3}

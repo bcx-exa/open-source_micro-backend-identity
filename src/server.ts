@@ -5,14 +5,15 @@ import { execShellCommand } from './helpers/shell';
 import xrayExpress from 'aws-xray-sdk-express';
 import dotenv from 'dotenv-flow';
 import { credsConfigLocal } from './middelware/aws/auth';
-import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
 import passport from 'passport';
-import { genKeyPair } from './helpers/crypto'
-import { authenticateUser } from './middelware/passport/passport-jwt';
+import { registerStrategies } from './middelware/passport/passport-jwt';
 import { ValidateError } from 'tsoa';
-import { ApiError } from './helpers/error-handling'
+import { ApiError } from './helpers/error-handling';
+import "reflect-metadata";
+import "typeorm-aurora-data-api-driver";
+import { auroraConnectApi } from './helpers/aurora';
 
 export class Server {
   public httpServer: any
@@ -24,26 +25,25 @@ export class Server {
     this.httpServer.use(bodyParser.json());
   }
 
-  public async Start(): Promise<void> {
-    //Generate key pairs if it doesn't exist
-    const privKeyExist = path.resolve(process.cwd(), 'src/crypto-keys/priv.pem');
-    if (!fs.existsSync(privKeyExist)) genKeyPair();
-    
+  public async Start(): Promise<void> {    
     //Import env variables
     dotenv.config({ path: path.resolve(process.cwd(), './environments/') });
     const env = process.env.NODE_ENV || 'local';
     
     //X-ray Segment Start
     const appName = process.env.APP_NAME || 'micro-base'
-    this.httpServer.use(xrayExpress.openSegment(appName + '-startup'));
+    this.httpServer.use(xrayExpress.openSegment(appName + '-startup'))
     
+    // Aurora Connection
+    await auroraConnectApi();
+
+
     //Allow Cors
     this.httpServer.use(cors());
 
     //Add Passport Middelware to all routes
-    authenticateUser(passport);
+    registerStrategies();
     this.httpServer.use(passport.initialize());
-
 
 
     //Generate tsoa routes & spec
@@ -59,10 +59,12 @@ export class Server {
     //X-Ray Segment End
     this.httpServer.use(xrayExpress.closeSegment());
 
+    // Global Error handling
     this.httpServer.use(function errorHandler(
       err: unknown,
       req: Request,
-      res: Response
+      res: Response,
+      next: NextFunction
     ): Response | void {
       if (err instanceof ValidateError) {
         console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
@@ -81,8 +83,10 @@ export class Server {
         return res.status(500).json({
           name: err.name,
           message: "Internal Server Error",
+          details: err.stack
         });
       }
+      next();
     });
 
     //Swagger-UI
@@ -91,6 +95,8 @@ export class Server {
         swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json"))
       );
     });
+
+
 
     //Start Express Server
     if (env === 'local') {

@@ -9,6 +9,8 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+    # ignorePackages:
+    #   - pg-native
   customDomain:
     domainName: ${env:API_DOMAIN}
     certificateName: ${env:API_DOMAIN}
@@ -27,24 +29,55 @@ plugins:
   
 provider:
   name: aws
-  region: ${env:REGION, 'us-east-1'}
+  region: ${env:REGION, 'eu-west-2'}
   stage: ${env:STAGE, 'dev'}
   stackName: ${self:service.name}-stack
   runtime: nodejs12.x
+  role: IdentityRole       
   tracing:
     apiGateway: true
     lambda: true
-  environment:
-    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    NODE_ENV: dev
 
 resources:
-- Resources:
-- ${file(iac/resources/dynamodb.serverless.yml)}
+  - Conditions:
+      Az1:
+        Fn::Equals:
+          - ${env:AZ1}
+          - true
+      Az2:
+        Fn::Equals:
+          - ${env:AZ2}
+          - true
+      Az3:
+        Fn::Equals:
+          - ${env:AZ3}
+          - true
+      MySql:
+        Fn::Equals:
+          - ${env:MYSQL}
+          - true
+      NotProd:
+        !Not [!Equals ['${env:NODE_ENV}', prod]]
+  - Resources:
+  - ${file(iac/resources/vpc.serverless.yml)}
+  - ${file(iac/resources/subnet.serverless.yml)}
+  - ${file(iac/resources/gateways.serverless.yml)}
+  - ${file(iac/resources/routes.serverless.yml)}
+  - ${file(iac/resources/sg.serverless.yml)}
+  - ${file(iac/resources/aurora.serverless.yml)}
+  - ${file(iac/resources/iam.serverless.yml)}
+  - ${file(iac/archived/dynamodb.serverless.yml)}
 
 functions:
   base:
     handler: src/app.app_bundle
+    vpc:
+      securityGroupIds:
+        - Ref: AppSg
+      subnetIds:
+        - Ref: AppSubAz1
+        - Ref: AppSubAz2
+        - Ref: AppSubAz3
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'

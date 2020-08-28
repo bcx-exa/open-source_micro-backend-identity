@@ -1,0 +1,95 @@
+  Resources:
+    DBSecret:
+      Type: "AWS::SecretsManager::Secret"
+      Properties:
+        Name: ${env:DB_USERNAME}
+        Description: "This generates dynamic credentials used to access aurora serverless."
+        GenerateSecretString:
+          SecretStringTemplate: '{"username": "${env:DB_USERNAME}"}'
+          GenerateStringKey: "password"
+          PasswordLength: 30
+          ExcludeCharacters: '"@/\'
+        Tags:
+          - Key: Name
+            Value: ${env:DB_USERNAME}
+    DBSubnetGroup:
+      Type: AWS::RDS::DBSubnetGroup
+      Properties:
+        DBSubnetGroupDescription: CloudFormation managed DB subnet group.
+        SubnetIds:
+          - Ref: DbSubAz1
+          - Ref: DbSubAz2
+          - Ref: DbSubAz3
+        Tags:
+          - Key: Name
+            Value: ${env:APP_NAME}-db-subnet-group
+    RDSCluster:
+      Type: "AWS::RDS::DBCluster"
+      Properties:
+        MasterUsername:
+          !Join [
+            "",
+            [
+              "{{resolve:secretsmanager:",
+              !Ref DBSecret,
+              ":SecretString:username}}",
+            ],
+          ]
+        MasterUserPassword:
+          !Join [
+            "",
+            [
+              "{{resolve:secretsmanager:",
+              !Ref DBSecret,
+              ":SecretString:password}}",
+            ],
+          ]
+        DBClusterIdentifier: ${env:APP_NAME}-aurora-cluster
+        Engine: aurora
+        EngineVersion: 5.6.10a
+        EngineMode: serverless
+        EnableHttpEndpoint: true
+        ScalingConfiguration:
+          AutoPause: ${env:AURORA_AUTO_PAUSE}
+          MinCapacity: 1
+          MaxCapacity: 16
+          SecondsUntilAutoPause: 1000
+        VpcSecurityGroupIds:
+          - Ref: DbSg
+        DatabaseName: ${env:DB_NAME}
+        DBSubnetGroupName:
+          Ref: DBSubnetGroup
+        Tags:
+          - Key: Name
+            Value: ${env:APP_NAME}-aurora-cluster
+  Outputs:
+    #DB Secret
+    DBSecret:
+      Description: DB Secret ARN
+      Value:
+        Ref: DBSecret
+      Export:
+        Name: ${env:DB_SECRET_ARN_EXPORT_NAME}
+
+    #DB Cluster ARN Needs to be self constructed
+    RDSClusterARN:
+      Description: Aurora Cluster ARN
+      Value:
+        Fn::Join:
+          - ":"
+          - - "arn:aws:rds"
+            - ${env:REGION}
+            - Ref: AWS::AccountId
+            - "cluster"
+            - ${env:APP_NAME}-aurora-cluster
+      Export:
+        Name: ${env:DB_CLUSTER_ARN_EXPORT_NAME}
+    #Customer Endpoint Address
+    RDSCluster:
+      Description: Aurora Serverless Cluster Endpoint Address
+      Value:
+        Fn::GetAtt:
+          - RDSCluster
+          - Endpoint.Address
+      Export:
+        Name: ${env:DB_ENDPOINT_ADDRESS_EXPORT_NAME}
