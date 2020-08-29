@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import { execShellCommand } from './helpers/shell';
@@ -9,11 +9,10 @@ import path from 'path';
 import cors from 'cors';
 import passport from 'passport';
 import { registerStrategies } from './middelware/passport/passport-jwt';
-import { ValidateError } from 'tsoa';
-import { ApiError } from './helpers/error-handling';
-import "reflect-metadata";
-import "typeorm-aurora-data-api-driver";
+import { globalErrorHandler } from './helpers/error-handling';
 import { auroraConnectApi } from './helpers/aurora';
+
+//import { auroraConnectApi } from './helpers/aurora';
 
 export class Server {
   public httpServer: any
@@ -33,10 +32,9 @@ export class Server {
     //X-ray Segment Start
     const appName = process.env.APP_NAME || 'micro-base'
     this.httpServer.use(xrayExpress.openSegment(appName + '-startup'))
-    
-    // Aurora Connection
-    await auroraConnectApi();
 
+    // Open API connection to aurora serverless
+    await auroraConnectApi();
 
     //Allow Cors
     this.httpServer.use(cors());
@@ -44,7 +42,6 @@ export class Server {
     //Add Passport Middelware to all routes
     registerStrategies();
     this.httpServer.use(passport.initialize());
-
 
     //Generate tsoa routes & spec
     if(env === 'local') {
@@ -59,35 +56,6 @@ export class Server {
     //X-Ray Segment End
     this.httpServer.use(xrayExpress.closeSegment());
 
-    // Global Error handling
-    this.httpServer.use(function errorHandler(
-      err: unknown,
-      req: Request,
-      res: Response,
-      next: NextFunction
-    ): Response | void {
-      if (err instanceof ValidateError) {
-        console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
-        return res.status(422).json({
-          message: "Validation Failed",
-          details: err?.fields,
-        });
-      }
-      if (err instanceof ApiError) {
-        return res.status(err.statusCode).json({
-          name: err.name,
-          message: err.message,
-        });
-      }
-      if (err instanceof Error) {
-        return res.status(500).json({
-          name: err.name,
-          message: "Internal Server Error",
-          details: err.stack
-        });
-      }
-      next();
-    });
 
     //Swagger-UI
     this.httpServer.use("", swaggerUi.serve, async (_req: Request, res: Response) => {
@@ -96,7 +64,8 @@ export class Server {
       );
     });
 
-
+    // Global Error handling
+    this.httpServer.use(globalErrorHandler);
 
     //Start Express Server
     if (env === 'local') {

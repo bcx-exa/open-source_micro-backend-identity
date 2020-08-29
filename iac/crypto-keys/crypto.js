@@ -5,7 +5,7 @@
  const dotenv = require('dotenv-flow');
 
  dotenv.config({ path: path.resolve(process.cwd(), './environments/') });
- console.log(process.env.NODE_ENV);
+
  if(process.env.NODE_ENV == 'local') {
     const config = new AWS.Config({
         accessKeyId: process.env.ACCESS_KEY_ID, secretAccessKey: process.env.SECRET_ACCESS_KEY, region: process.env.REGION
@@ -13,7 +13,6 @@
     
       AWS.config.update(config);
  }
-
 
  // Generate keys if they don't exist
  function genKeyPair() {

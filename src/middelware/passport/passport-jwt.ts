@@ -2,9 +2,8 @@ import { StrategyOptions, Strategy, ExtractJwt, VerifiedCallback } from 'passpor
 import passport from 'passport';
 import AWS from 'aws-sdk';
 import { UserIdentityJWT, UserProfile } from '../../models/identity';
-import { ApiError } from '../../helpers/error-handling';
 import "reflect-metadata";
-import { getRepository } from 'typeorm';
+import { auroraConnectApi } from '../../helpers/aurora';
 
 let initialized = false;
 
@@ -29,8 +28,8 @@ export async function registerStrategies(): Promise<any> {
 
     passport.use(new Strategy(options, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {     
         try {
-            
-            const repository = getRepository(UserProfile);        
+            const connection = await auroraConnectApi();
+            const repository = await connection.getRepository(UserProfile);       
             const user = await repository.findOne({ identity_id: jwtPayload.sub });
     
             if(user) {
@@ -69,7 +68,7 @@ export async function expressAuthentication(
 	const authResult = await new Promise((resolve) =>
 		strategy(request, request.res, (err, user) => {
             if(err) {
-                throw new ApiError("Internal Server Error", 500, err); 
+                throw new Error('Passport Auth Result Error')
             }
             else {
                 resolve(user); 

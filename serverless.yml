@@ -8,9 +8,12 @@ custom:
       - SECRET_ACCESS_KEY 
   webpack:
     webpackConfig: ./webpack.config.js
-    includeModules: true
-    # ignorePackages:
-    #   - pg-native
+    includeModules: 
+      forceInclude:
+        - typeorm-aurora-data-api-driver
+        - data-api-client
+
+
   customDomain:
     domainName: ${env:API_DOMAIN}
     certificateName: ${env:API_DOMAIN}
