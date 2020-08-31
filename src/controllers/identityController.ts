@@ -19,18 +19,6 @@ export class AuthController extends Controller {
   async SignInPost( @Body() SignIn: SignIn): Promise<any> {   
       return new IdentityService().SignIn(SignIn);
   }
-  @Response<InternalServerError>("Signin API Internal Server Error")
-  @SuccessResponse("200", "User Logged In!") // Custom success response
-  @Post('google')  //specify the request type
-  async SignInPost( @Body() SignIn: SignIn): Promise<any> {   
-      return new IdentityService().SignIn(SignIn);
-  }
-  @Response<InternalServerError>("Signin API Internal Server Error")
-  @SuccessResponse("200", "User Logged In!") // Custom success response
-  @Post('google/callback')  //specify the request type
-  async SignInPost( @Body() SignIn: SignIn): Promise<any> {   
-      return new IdentityService().SignIn(SignIn);
-  }
 }
 
 
