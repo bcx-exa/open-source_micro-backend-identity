@@ -3,79 +3,80 @@ import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 //https://www.iana.org/assignments/jwt/jwt.xhtml
 @Entity()
 export class UserProfile {
-    @PrimaryGeneratedColumn("uuid")
-    identity_id: string;
+  @PrimaryGeneratedColumn("uuid")
+  identity_id: string;
 
-    @Column({ length: 100 })
-    preferred_username: string;
+  @Column({ length: 100 })
+  preferred_username: string;
 
-    @Column({ length: 300 })
-    salt: string;
+  @Column({ length: 300 })
+  salt: string;
 
-    @Column({ length: 300 })
-    password: string;
+  @Column({ length: 300 })
+  password: string;
 
-    @Column({ nullable: true, length: 100 })
-    given_name?: string;
-  
-    @Column({ nullable: true, length: 100 })
-    family_name?: string;
+  @Column({ nullable: true, length: 100 })
+  given_name?: string;
 
-    @Column({ nullable: true, length: 100 })
-    picture?: string;
+  @Column({ nullable: true, length: 100 })
+  family_name?: string;
 
-    @Column({ nullable: true, length: 100 })
-    phone_number?: string;
+  @Column({ nullable: true, length: 100 })
+  picture?: string;
 
-    @Column({ nullable: true, length: 100 })
-    email?: string;
+  @Column({ nullable: true, length: 100 })
+  phone_number?: string;
 
-    @Column({ nullable: true, length: 400 })
-    address?: string;
-   
-    @Column({ nullable: true, length: 400 })
-    locale?: string;
+  @Column({ nullable: true, length: 100 })
+  email?: string;
 
-    @Column('datetime', { nullable: true })
-    birth_date?: Date;
-    
-    @Column('datetime') 
-    created_at: Date;
-    
-    @Column('datetime') 
-    updated_at: Date;
+  @Column({ nullable: true, length: 400 })
+  address?: string;
 
-    @Column()
-    email_verified: boolean;
+  @Column({ nullable: true, length: 400 })
+  locale?: string;
 
-    @Column()
-    phone_number_verified: boolean;
+  @Column("datetime", { nullable: true })
+  birth_date?: Date;
 
-    @Column()
-    signed_up_local: boolean;
+  @Column("datetime")
+  created_at: Date;
 
-    @Column()
-    signed_up_google: boolean;
+  @Column("datetime")
+  updated_at: Date;
 
-    @Column()
-    signed_up_facebook: boolean;
+  @Column()
+  email_verified: boolean;
 
-    @Column()
-    disabled: boolean;
+  @Column()
+  phone_number_verified: boolean;
+
+  @Column()
+  signed_up_local: boolean;
+
+  @Column()
+  signed_up_google: boolean;
+
+  @Column()
+  signed_up_facebook: boolean;
+
+  @Column()
+  disabled: boolean;
+
+  @Column()
+  googleId: string;
 }
 
-// JWT Model 
+// JWT Model
 export interface UserIdentityJWT {
-    sub: string,
-    iss: string,
-    aud: string,
-    iat: number,
-    profile: ProfileJWT
+  sub: string;
+  iss: string;
+  aud: string;
+  iat: number;
+  profile: ProfileJWT;
 }
 
 export type SignUp = Pick<UserProfile, "preferred_username" | "password" | "given_name" | "family_name">;
-export type SignIn = Pick<UserProfile,  "preferred_username" | "password">;
-export type ProfileUpdate = Pick<UserProfile,  
-"identity_id" | "email" | "preferred_username" | "phone_number" | "given_name" | "family_name" | "address" | "birth_date" | "created_at" | "email_verified" | "phone_number_verified" | "locale" | "picture" | "updated_at">;
-export type ProfileJWT = Pick<UserProfile,  
-"identity_id" | "email" | "preferred_username" | "phone_number" | "given_name" | "family_name" | "address" | "birth_date" | "created_at" | "email_verified" | "phone_number_verified" | "locale" | "picture" | "updated_at">;
+export type SignIn = Pick<UserProfile, "preferred_username" | "password">;
+export type ProfileUpdate = Pick<UserProfile, "identity_id" | "email" | "preferred_username" | "phone_number" | "given_name" | "family_name" | "address" | "birth_date" | "created_at" | "email_verified" | "phone_number_verified" | "locale" | "picture" | "updated_at">;
+export type ProfileJWT = Pick<UserProfile, "identity_id" | "email" | "preferred_username" | "phone_number" | "given_name" | "family_name" | "address" | "birth_date" | "created_at" | "email_verified" | "phone_number_verified" | "locale" | "picture" | "updated_at">;
