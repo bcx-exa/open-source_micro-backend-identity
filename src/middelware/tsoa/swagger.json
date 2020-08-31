@@ -6,7 +6,16 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_": {
+			"InternalServerError": {
+				"properties": {
+					"stack": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name_": {
 				"properties": {
 					"preferred_username": {
 						"type": "string"
@@ -19,12 +28,6 @@
 					},
 					"family_name": {
 						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"phone_number": {
-						"type": "string"
 					}
 				},
 				"required": [
@@ -34,8 +37,8 @@
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
-			"IdentitySignUp": {
-				"$ref": "#/components/schemas/Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_"
+			"SignUp": {
+				"$ref": "#/components/schemas/Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name_"
 			},
 			"Pick_UserProfile.preferred_username-or-password_": {
 				"properties": {
@@ -53,7 +56,7 @@
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
-			"IdentitySignIn": {
+			"SignIn": {
 				"$ref": "#/components/schemas/Pick_UserProfile.preferred_username-or-password_"
 			}
 		},
@@ -82,11 +85,21 @@
 			"post": {
 				"operationId": "SignUpPost",
 				"responses": {
-					"200": {
-						"description": "Ok",
+					"201": {
+						"description": "Created",
 						"content": {
 							"application/json": {
 								"schema": {}
+							}
+						}
+					},
+					"Signup API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
 							}
 						}
 					}
@@ -101,7 +114,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IdentitySignUp"
+								"$ref": "#/components/schemas/SignUp"
 							}
 						}
 					}
@@ -113,10 +126,20 @@
 				"operationId": "SignInPost",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "User Logged In!",
 						"content": {
 							"application/json": {
 								"schema": {}
+							}
+						}
+					},
+					"Signin API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
 							}
 						}
 					}
@@ -131,7 +154,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IdentitySignIn"
+								"$ref": "#/components/schemas/SignIn"
 							}
 						}
 					}

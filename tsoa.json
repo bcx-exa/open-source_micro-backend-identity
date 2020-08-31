@@ -14,7 +14,7 @@
       "specVersion": 3
     },
     "routes": {
-      "authenticationModule": "src/middelware/passport/passport-jwt",
+      "authenticationModule": "src/middelware/passport/passport",
       "routesDir": "src/middelware/tsoa"
     }
   }

@@ -4,20 +4,28 @@
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../../controllers/identityController';
-import { expressAuthentication } from './../passport/passport-jwt';
+import { expressAuthentication } from './../passport/passport';
 import * as express from 'express';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_": {
-        "dataType": "refAlias",
-        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true }, "given_name": { "dataType": "string" }, "family_name": { "dataType": "string" }, "email": { "dataType": "string" }, "phone_number": { "dataType": "string" } }, "validators": {} },
+    "InternalServerError": {
+        "dataType": "refObject",
+        "properties": {
+            "stack": { "dataType": "string" },
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IdentitySignUp": {
+    "Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name_": {
         "dataType": "refAlias",
-        "type": { "ref": "Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name-or-email-or-phone_number_", "validators": {} },
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true }, "given_name": { "dataType": "string" }, "family_name": { "dataType": "string" } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SignUp": {
+        "dataType": "refAlias",
+        "type": { "ref": "Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name_", "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_UserProfile.preferred_username-or-password_": {
@@ -25,7 +33,7 @@ const models: TsoaRoute.Models = {
         "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IdentitySignIn": {
+    "SignIn": {
         "dataType": "refAlias",
         "type": { "ref": "Pick_UserProfile.preferred_username-or-password_", "validators": {} },
     },
@@ -43,7 +51,7 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/auth/signup',
         function(request: any, response: any, next: any) {
             const args = {
-                IdentitySignUp: { "in": "body", "name": "IdentitySignUp", "required": true, "ref": "IdentitySignUp" },
+                SignUp: { "in": "body", "name": "SignUp", "required": true, "ref": "SignUp" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -65,7 +73,7 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/auth/signin',
         function(request: any, response: any, next: any) {
             const args = {
-                IdentitySignIn: { "in": "body", "name": "IdentitySignIn", "required": true, "ref": "IdentitySignIn" },
+                SignIn: { "in": "body", "name": "SignIn", "required": true, "ref": "SignIn" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

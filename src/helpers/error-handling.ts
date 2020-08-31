@@ -18,6 +18,15 @@ export class NotVerified extends Error {
     }
 }
 
+export class InvalidFormat extends Error {
+    private statusCode: number;
+    constructor(message?: string, statusCode?: number) {
+        super(message);
+        this.name = "Invalid Format:";
+        this.statusCode = statusCode;
+    }
+}
+
 export class Conflict extends Error {
     private statusCode: number;
     constructor(message?: string, statusCode?: number) {
@@ -27,6 +36,14 @@ export class Conflict extends Error {
     }
 }
 
+export class InternalServerError extends Error {
+  private statusCode: number;
+  constructor(message?: string, statusCode?: number) {
+      super(message);
+      this.name = "DB Connection Error:";
+      this.statusCode = statusCode;
+  }
+}
 export class DbConnectionError extends Error {
     private statusCode: number;
     constructor(message?: string, statusCode?: number) {
@@ -62,6 +79,12 @@ export function globalErrorHandler(
         message: err.message,
       });
     }
+    if (err instanceof InvalidFormat) {
+        return res.status(403).json({
+          name: err.name,
+          message: err.message,
+        });
+      }
     if (err instanceof NotVerified) {
         return res.status(418).json({
           name: err.name,
@@ -74,6 +97,14 @@ export function globalErrorHandler(
         message: err.message,
     });
     }
+    if (err instanceof InternalServerError) {
+      console.log(err);
+      return res.status(500).json({         
+        name: err,
+        message: "Internal Server Error",
+        details: err.stack
+      });
+     }
     if (err instanceof Error) {
         console.log(err);
       return res.status(500).json({         

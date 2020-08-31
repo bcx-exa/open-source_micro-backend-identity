@@ -3,8 +3,8 @@ import { Request } from 'express';
 import passport from 'passport';
 import AWS from 'aws-sdk';
 import { UserIdentityJWT, UserProfile } from '@/models/identity';
-import { ApiError } from '../../helpers/error-handling';
-import { auroraConnectApi } from '../../helpers/aurora';
+import { ApiError } from '../error-handling';
+import { auroraConnectApi } from '../aurora';
 import "reflect-metadata";
 
 

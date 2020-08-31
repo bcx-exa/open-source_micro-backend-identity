@@ -8,7 +8,7 @@ import { credsConfigLocal } from './middelware/aws/auth';
 import path from 'path';
 import cors from 'cors';
 import passport from 'passport';
-import { registerStrategies } from './middelware/passport/passport-jwt';
+import { registerStrategies } from './middelware/passport/passport';
 import { globalErrorHandler } from './helpers/error-handling';
 import { auroraConnectApi } from './helpers/aurora';
 
@@ -29,15 +29,16 @@ export class Server {
     dotenv.config({ path: path.resolve(process.cwd(), './environments/') });
     const env = process.env.NODE_ENV || 'local';
     
-    //X-ray Segment Start
-    const appName = process.env.APP_NAME || 'micro-base'
-    this.httpServer.use(xrayExpress.openSegment(appName + '-startup'))
 
     // Open API connection to aurora serverless
     await auroraConnectApi();
 
     //Allow Cors
     this.httpServer.use(cors());
+
+    //X-ray Segment Start
+    const appName = process.env.APP_NAME || 'micro-base'
+    this.httpServer.use(xrayExpress.openSegment(appName + '-startup'))
 
     //Add Passport Middelware to all routes
     registerStrategies();

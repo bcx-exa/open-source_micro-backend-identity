@@ -70,10 +70,12 @@ export interface UserIdentityJWT {
     iss: string,
     aud: string,
     iat: number,
-    profile: IdentityJWT
+    profile: ProfileJWT
 }
 
-export type IdentitySignUp = Pick<UserProfile, "preferred_username" | "password" | "given_name" | "family_name" | "email" | "phone_number">;
-export type IdentitySignIn = Pick<UserProfile,  "preferred_username" | "password">;
-export type IdentityJWT = Pick<UserProfile,  
+export type SignUp = Pick<UserProfile, "preferred_username" | "password" | "given_name" | "family_name">;
+export type SignIn = Pick<UserProfile,  "preferred_username" | "password">;
+export type ProfileUpdate = Pick<UserProfile,  
+"identity_id" | "email" | "preferred_username" | "phone_number" | "given_name" | "family_name" | "address" | "birth_date" | "created_at" | "email_verified" | "phone_number_verified" | "locale" | "picture" | "updated_at">;
+export type ProfileJWT = Pick<UserProfile,  
 "identity_id" | "email" | "preferred_username" | "phone_number" | "given_name" | "family_name" | "address" | "birth_date" | "created_at" | "email_verified" | "phone_number_verified" | "locale" | "picture" | "updated_at">;
