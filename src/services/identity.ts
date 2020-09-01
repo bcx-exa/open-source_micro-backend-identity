@@ -1,9 +1,10 @@
 import { UserProfile, SignIn, SignUp } from "../models/identity";
-import { validatePasswordHash, generatePasswordHash, issueJWT } from "../helpers/crypto";
+import { validatePasswordHash, generatePasswordHash,issueJWT } from "../helpers/crypto";
 import { v4 as uuidv4 } from "uuid";
-import { Conflict, Unauthorized, NotVerified, InvalidFormat } from "../helpers/error-handling";
+import { Conflict, Unauthorized, NotVerified, InvalidFormat, PasswordPolicyException } from "../helpers/error-handling";
 import { auroraConnectApi } from "../helpers/aurora";
-import { validateUsername } from "../helpers/validation";
+import { validateUsername,  validatePasswordStrength } from "../helpers/validation";
+import { sendVerificationMessage } from "../helpers/pinpoint";
 
 export class IdentityService {
   public async SignUp(SignUp: SignUp): Promise<any> {
@@ -16,6 +17,8 @@ export class IdentityService {
     const connection = await auroraConnectApi();
     const repository = await connection.getRepository(UserProfile);
 
+    repository.clear();
+
     let findUser: any;
 
     if (isValidEmail) {
@@ -27,6 +30,15 @@ export class IdentityService {
     if (findUser) {
       throw new Conflict("User Already Exists");
     } else {
+
+      const pwdValidator = validatePasswordStrength();
+      const checkPwdStrength = pwdValidator.validate(SignUp.password);
+
+      if(!checkPwdStrength) {
+        throw new PasswordPolicyException('Password does not conform to the password policy. The policy enforces the following rules ' + pwdValidator.validate('joke', { list: true }))
+      }
+
+
       const genPassHash = generatePasswordHash(SignUp.password);
       const salt = genPassHash.salt;
       const hash = genPassHash.genHash;
@@ -56,8 +68,9 @@ export class IdentityService {
         googleId: null,
       };
 
-      const repository = await connection.getRepository(UserProfile);
       await repository.save(userProfile);
+
+      await sendVerificationMessage(userProfile, isValidPhoneNumber, isValidEmail);
 
       return "User signed up sucessfully";
     }
@@ -85,4 +98,12 @@ export class IdentityService {
       throw new Unauthorized("Invalid username or password");
     }
   }
+
+  public async VerifyAccount(token:string): Promise<any> {
+    if(!token) {
+      console.error('Passport JWT failed');
+    }
+    return "Account Verified"
+  }
+    
 }

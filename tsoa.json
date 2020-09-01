@@ -8,6 +8,16 @@
           "type": "http",
           "scheme": "bearer",
           "bearerFormat": "JWT"
+        },
+        "google": {
+          "type": "oauth2",
+          "authorizationUrl": "http://localhost:7000/auth/google",
+          "flow": "implicit",
+          "scopes": {
+            "profile": "profile",
+            "email": "email",
+            "phone": "phone"
+        }
         }
       },
       "outputDirectory": "src/middelware/tsoa",

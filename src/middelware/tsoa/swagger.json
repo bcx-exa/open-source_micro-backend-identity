@@ -65,6 +65,19 @@
 				"type": "http",
 				"scheme": "bearer",
 				"bearerFormat": "JWT"
+			},
+			"google": {
+				"type": "oauth2",
+				"flows": {
+					"implicit": {
+						"authorizationUrl": "http://localhost:7000/auth/google",
+						"scopes": {
+							"profile": "profile",
+							"email": "email",
+							"phone": "phone"
+						}
+					}
+				}
 			}
 		}
 	},
@@ -159,6 +172,49 @@
 						}
 					}
 				}
+			}
+		},
+		"/auth/verify": {
+			"get": {
+				"operationId": "VerifyGet",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Verify API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AuthController"
+				],
+				"security": [
+					{
+						"jwt-query": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/auth/google": {

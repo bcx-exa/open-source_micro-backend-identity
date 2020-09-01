@@ -27,6 +27,15 @@ export class InvalidFormat extends Error {
     }
 }
 
+export class PasswordPolicyException extends Error {
+  private statusCode: number;
+  constructor(message?: string, statusCode?: number) {
+      super(message);
+      this.name = "Password Policy Exception";
+      this.statusCode = statusCode;
+  }
+}
+
 export class Conflict extends Error {
     private statusCode: number;
     constructor(message?: string, statusCode?: number) {
@@ -65,6 +74,13 @@ export function globalErrorHandler(
       return res.status(422).json({
         message: "Validation Failed",
         details: err?.fields,
+      });
+    }
+
+    if (err instanceof PasswordPolicyException) {
+      return res.status(406).json({
+        name: err.name,
+        message: err.message,
       });
     }
     if (err instanceof Conflict) {

@@ -22,9 +22,8 @@ export function validatePasswordHash(password:string , dbHash: string, salt: str
     // Check if hash in db is the same as the one generated
     return userHash === dbHash;
 }
-
 // Issue jwt
-export async function issueJWT(identity: UserProfile ): Promise<any> {
+export async function issueJWT(identity: UserProfile, verification = false): Promise<any> {
 
     //Get and configure variables
     const expiresIn = '7d';
@@ -57,10 +56,18 @@ export async function issueJWT(identity: UserProfile ): Promise<any> {
     // Sign token
     const signedToken = jsonwebtoken.sign(payload, privKey.Parameter.Value, { expiresIn: expiresIn, algorithm: 'RS256'});
     
-    // Return bearer token
-    return {
-        statusCode: 200,
-        token: "Bearer " + signedToken,
-        expires: expiresIn
+    let result;
+
+    if(verification) {
+        result = signedToken;
     }
+    else {
+        result = { 
+            statusCode: 200,
+            token: "Bearer " + signedToken,
+            expires: expiresIn
+        };
+    }
+    // Return bearer token
+    return result;
 }

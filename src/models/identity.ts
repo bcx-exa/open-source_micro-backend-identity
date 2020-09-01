@@ -63,7 +63,7 @@ export class UserProfile {
   @Column()
   disabled: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   googleId: string;
 }
 

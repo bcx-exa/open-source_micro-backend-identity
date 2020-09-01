@@ -14,6 +14,7 @@ let initialized = false;
 export async function registerStrategies(): Promise<any> {
   if (initialized) return;
 
+  // JWT Strategies
   const ssm = new AWS.SSM({ region: process.env.REGION });
   const params = {
     Name: process.env.PUBLIC_KEY_NAME /* required */,
@@ -22,15 +23,43 @@ export async function registerStrategies(): Promise<any> {
 
   const pubKey = await ssm.getParameter(params).promise();
 
-  const options: StrategyOptions = {
+  const optionHeader: StrategyOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     issuer: process.env.API_DOMAIN,
     secretOrKey: pubKey.Parameter.Value,
     algorithms: ["RS256"],
   };
 
-  passport.use(
-    new Strategy(options, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {
+  // Look in auth header
+  passport.use('jwt',
+    new Strategy(optionHeader, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {
+      try {
+        const connection = await auroraConnectApi();
+        const repository = await connection.getRepository(UserProfile);
+        const user = await repository.findOne({ identity_id: jwtPayload.sub });
+
+        if (user) {
+          return done(null, user);
+        } else {
+          return done(null, false);
+        }
+      } catch (err) {
+        return done(err, false);
+      }
+    })
+  );
+
+  const optionQuery: StrategyOptions = {
+    jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
+    issuer: process.env.API_DOMAIN,
+    secretOrKey: pubKey.Parameter.Value,
+    algorithms: ["RS256"],
+  };
+
+
+  // Look in query string
+  passport.use('jwt-query',
+    new Strategy(optionQuery, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {
       try {
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(UserProfile);
@@ -87,7 +116,6 @@ export async function expressAuthentication(request: any, securityName: string, 
     session: false,
   });
 
-  console.log("securityName" + securityName);
   if (securityName == "google") {
     strategy = passport.authenticate(securityName, { scope: scopes[0] });
   }

@@ -37,6 +37,7 @@
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",
+    "password-validator": "^5.1.0",
     "reflect-metadata": "^0.1.13",
     "serverless-http": "^2.5.0",
     "shelljs": "^0.8.4",
