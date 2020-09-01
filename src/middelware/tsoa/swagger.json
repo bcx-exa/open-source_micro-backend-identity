@@ -160,6 +160,56 @@
 					}
 				}
 			}
+		},
+		"/auth/google": {
+			"get": {
+				"operationId": "SignInGooglePost",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AuthController"
+				],
+				"security": [
+					{
+						"google": [
+							"profile"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/google/callback": {
+			"get": {
+				"operationId": "SignInGoolgeCallbackPost",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AuthController"
+				],
+				"security": [
+					{
+						"google_callback": []
+					}
+				],
+				"parameters": []
+			}
 		}
 	},
 	"servers": [
