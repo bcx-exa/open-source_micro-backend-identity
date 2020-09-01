@@ -115,6 +115,8 @@ The project has the ability to deploy on.
 
 See the architecture below
 
+<img src="docs/architecture/architecture.svg" width='100%' height='100%' />
+
 ![Architecture](docs/architecture/architecture.svg)
 
 You can modify the architecture.drawio file inside the docs file should you wish to do so.

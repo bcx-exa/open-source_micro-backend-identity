@@ -24,6 +24,7 @@ resources:
           - DomainName: ${env:API_DOMAIN}
             ValidationDomain: ${env:API_DOMAIN}
         ValidationMethod: DNS
+
   Outputs:
     ApiGatewayCert:
       Value: 

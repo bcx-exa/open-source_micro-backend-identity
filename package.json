@@ -9,7 +9,7 @@
     "tsoa": "tsoa spec-and-routes",
     "test": "jest",
     "lint": "eslint . --ext .ts",
-    "deploy:dev": "sls deploy --config iac/resources/acm.serverless.yml --stage dev && node iac/crypto-keys/crypto.js && sls deploy --stage dev",
+    "deploy:dev": "sls deploy --config iac/resources/acm.serverless.yml --stage dev && node iac/crypto-keys/crypto.js && node iac/resources/pinpoint/pinpoint_domain_register.js && sls deploy --stage dev --config iac/resources/pinpoint/pinpoint.serverless.yml && sls deploy --stage dev",
     "destroy:dev": "sls remove --stage dev && sls remove --config iac/resources/acm.serverless.yml --stage dev ",
     "deploy:uat": "sls deploy --config iac/resources/acm.serverless.yml --stage uat && sls deploy --stage uat ",
     "deploy:prod": "sls deploy --config iac/resources/acm.serverless.yml --stage prod && sls deploy --stage prod"

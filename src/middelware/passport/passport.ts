@@ -44,24 +44,7 @@ export async function registerStrategies(): Promise<any> {
         } 
     }));
 
-    // Put your google oath-2 in here
-    // passport.use(new Strategy(options, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {     
-    //     try {
-    //         const connection = await auroraConnectApi();
-    //         const repository = await connection.getRepository(UserProfile);       
-    //         const user = await repository.findOne({ identity_id: jwtPayload.sub });
-    
-    //         if(user) {
-    //             return done(null, user); 
-    //         } else {
-    //             return done(null, false);
-    //         }
 
-    //     }
-    //     catch(err) {
-    //         return done(err, false);
-    //     } 
-    // }));
 
     initialized = true;
 }

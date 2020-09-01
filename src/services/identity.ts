@@ -76,16 +76,11 @@ export class IdentityService {
             const validPassword = validatePasswordHash(SignIn.password, findUser.password, findUser.salt);
             const Identity: UserProfile = findUser as UserProfile;
 
-            if(validPassword) { 
-                
-                if(findUser.email_verified) {
+            if(validPassword) {               
+                //if(findUser.email_verified) {
                     return issueJWT(Identity);
-                } 
-                else {
-                    throw new NotVerified("User email has not been verified");
-                }
+            
             }
-
             throw new Unauthorized("Invalid username or password");         
         } 
         else {

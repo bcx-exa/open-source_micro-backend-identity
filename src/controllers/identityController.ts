@@ -19,6 +19,18 @@ export class AuthController extends Controller {
   async SignInPost( @Body() SignIn: SignIn): Promise<any> {   
       return new IdentityService().SignIn(SignIn);
   }
+
+  @Post('signin')  
+  @Security('basic')
+  async ReadYourCoinsOnly( @Body() SignIn: SignIn): Promise<any> {   
+      return new IdentityService().SignIn(SignIn);
+  }
+
+  @Post('signin')  
+  @Security('admin')
+  async ReadAllCoins( @Body() SignIn: SignIn): Promise<any> {   
+      return new IdentityService().SignIn(SignIn);
+  }
 }
 
 

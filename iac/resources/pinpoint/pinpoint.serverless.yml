@@ -1,0 +1,44 @@
+service:
+  name: ${env:STAGE}-${self:provider.region}-${env:APP_NAME}
+plugins:
+  - serverless-dotenv-plugin
+custom:
+  dotenv:
+    basePath: environments/
+    exclude: # By default dotenv will add the env to your functions
+      - ACCESS_KEY_ID
+      - SECRET_ACCESS_KEY 
+provider:
+  name: aws
+  region: ${env:PINPOINT_REGION}
+  stage: ${env:STAGE, 'dev'}
+  stackName: ${self:service.name}-pinpoint-stack
+
+resources:
+  Resources:
+    PinpointApp:
+      Type: AWS::Pinpoint::App
+      Properties: 
+        Name: ${env:APP_NAME}
+    PinpointEmailChannel:
+      Type: AWS::Pinpoint::EmailChannel
+      Properties: 
+        ApplicationId: 
+          Ref: PinpointApp
+        Enabled: true
+        FromAddress: ${env:VERIFY_EMAIL_ADDRESS}
+        Identity: 
+          Fn::Join:
+          - ":"
+          - - "arn:aws:ses"
+            - ${env:PINPOINT_REGION}
+            - Ref: AWS::AccountId
+            - ${env:APP_NAME}/${env:API_DOMAIN}
+        # RoleArn: String
+    PinpointSMSChannel:
+      Type: AWS::Pinpoint::SMSChannel
+      Properties: 
+        ApplicationId: 
+          Ref: PinpointApp
+        Enabled: true
+        # ShortCode: String
