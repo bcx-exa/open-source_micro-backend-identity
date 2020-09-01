@@ -1,4 +1,4 @@
-import { Controller, Query, Response, SuccessResponse, Get, Body, Route, Post, Tags, Security } from "tsoa";
+import { Controller, Query, Response, SuccessResponse, Get, Body, Route, Post, Tags, Security, Request } from "tsoa";
 import { IdentityService } from "../services/identity";
 import { SignUp, SignIn } from "../models/identity";
 import { InternalServerError } from "../helpers/error-handling";
@@ -23,9 +23,25 @@ export class AuthController extends Controller {
   @Response<InternalServerError>("Verify API Internal Server Error")
   @SuccessResponse("200", "Account Verified!") // Custom success response
   @Get("verify")
-  @Security('jwt-query')
-  async VerifyGet(@Query() token: string): Promise<any> {
-    return new IdentityService().VerifyAccount(token);
+  @Security('jwt-verify')
+  async VerifyGet(@Query() token: string, @Request() req: any): Promise<any> {
+    return new IdentityService().VerifyAccount(token, req);
+  }
+
+  @Response<InternalServerError>("Profile API Internal Server Error")
+  @SuccessResponse("200", "Account Verified!") // Custom success response
+  @Post("profile")
+  @Security('jwt')
+  async ProfilePost(@Body() profile: SignUp): Promise<any> {
+    return profile;
+  }
+
+  @Response<InternalServerError>("Password Reset API Internal Server Error")
+  @SuccessResponse("200", "Account Verified!") // Custom success response
+  @Post("passwordreset")
+  @Security('jwt')
+  async PasswordResetPost(@Body() profile: SignUp): Promise<any> {
+    return profile;
   }
 
   @Get("google")

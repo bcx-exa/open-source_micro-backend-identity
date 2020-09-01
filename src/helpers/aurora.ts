@@ -34,7 +34,7 @@ export async function auroraConnectApi(): Promise<any> {
         }
     } 
     catch(e) {
-        throw new DbConnectionError('Aurroa API Connect Error: Generally this is cause by Aoura Auto Pause. Just restart the app!');
+        console.error('Aurroa API Connect Error: Generally this is cause by Aoura Auto Pause. Just restart the app!');
     }
 }
 

@@ -58,19 +58,22 @@ export async function registerStrategies(): Promise<any> {
 
 
   // Look in query string
-  passport.use('jwt-query',
+  passport.use('jwt-verify',
     new Strategy(optionQuery, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {
       try {
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(UserProfile);
-        const user = await repository.findOne({ identity_id: jwtPayload.sub });
+        const dbUser: UserProfile = await repository.findOne({ identity_id: jwtPayload.sub });     
 
-        if (user) {
+        const user = { dbUser: dbUser, jwt: jwtPayload };
+
+        if (dbUser) {
           return done(null, user);
         } else {
           return done(null, false);
         }
       } catch (err) {
+        console.log(err);
         return done(err, false);
       }
     })
@@ -108,12 +111,13 @@ export async function registerStrategies(): Promise<any> {
   initialized = true;
 }
 
+
 // This is what TSOA uses for the @Security Decorator
 export async function expressAuthentication(request: any, securityName: string, scopes?: string[]): Promise<any> {
   registerStrategies();
 
   let strategy: any = passport.authenticate(securityName, {
-    session: false,
+    session: false, 
   });
 
   if (securityName == "google") {
@@ -127,15 +131,16 @@ export async function expressAuthentication(request: any, securityName: string, 
     //console.log(scopes);
   }
 
-  const authResult = await new Promise((resolve) =>
-    strategy(request, request.res, (err, user) => {
+  const authResult = await new Promise((resolve, reject) =>
+    strategy(request, request.res, (err) => {
       if (err) {
+        reject(err);
         throw new Error("Passport Auth Result Error" + err);
       } else {
         if (securityName == "google_callback") {
           request.redirect("/");
         }
-        resolve(user);
+        resolve(request.user);
       }
     })
   );

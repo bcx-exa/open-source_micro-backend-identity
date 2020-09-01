@@ -16,9 +16,9 @@ export class IdentityService {
 
     const connection = await auroraConnectApi();
     const repository = await connection.getRepository(UserProfile);
-
-    repository.clear();
-
+    
+    //repository.clear();
+    
     let findUser: any;
 
     if (isValidEmail) {
@@ -75,7 +75,6 @@ export class IdentityService {
       return "User signed up sucessfully";
     }
   }
-
   public async SignIn(SignIn: SignIn): Promise<any> {
     const connection = await auroraConnectApi();
     const repository = await connection.getRepository(UserProfile);
@@ -98,12 +97,36 @@ export class IdentityService {
       throw new Unauthorized("Invalid username or password");
     }
   }
-
-  public async VerifyAccount(token:string): Promise<any> {
+  public async VerifyAccount(token:string, req: any): Promise<any> {
     if(!token) {
-      console.error('Passport JWT failed');
+      throw new Error('Passport JWT missed a trick, Token was empty');
     }
-    return "Account Verified"
+
+    const dbUser: UserProfile = req.user.dbUser;   
+    const jwtEmailVerified: boolean = req.user.jwt.profile.email_verified;
+    const jwtPhoneVerified: boolean = req.user.jwt.profile.phone_number_verified;
+
+    if(dbUser.email_verified && jwtEmailVerified) {
+      throw new Conflict('The user email address has already been verified, please login!');
+    }
+
+    if(dbUser.phone_number_verified && jwtPhoneVerified) {
+      throw new Conflict('The user phone number has already been verified, please login!');
+    }
+
+    if(!dbUser.email_verified && jwtEmailVerified) {
+      dbUser.email_verified = jwtEmailVerified
+    }
+
+    if(!dbUser.phone_number_verified && jwtPhoneVerified) {
+      dbUser.phone_number_verified = jwtPhoneVerified;
+    }
+
+    const connection = await auroraConnectApi();
+    const repository = await connection.getRepository(UserProfile);
+    await repository.save(dbUser);
+
+    return "Account Verified, please login!";
   }
     
 }

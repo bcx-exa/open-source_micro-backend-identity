@@ -202,7 +202,7 @@
 				],
 				"security": [
 					{
-						"jwt-query": []
+						"jwt-verify": []
 					}
 				],
 				"parameters": [
@@ -215,6 +215,94 @@
 						}
 					}
 				]
+			}
+		},
+		"/auth/profile": {
+			"post": {
+				"operationId": "ProfilePost",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Profile API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AuthController"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignUp"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/passwordreset": {
+			"post": {
+				"operationId": "PasswordResetPost",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Password Reset API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AuthController"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignUp"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/auth/google": {

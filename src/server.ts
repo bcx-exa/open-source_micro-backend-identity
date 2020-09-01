@@ -26,55 +26,72 @@ export class Server {
   }
 
   public async Start(): Promise<void> {    
-    //Import env variables
-    dotenv.config({ path: path.resolve(process.cwd(), './environments/') });
-    const env = process.env.NODE_ENV || 'local';
-    
+    try {
+      //Import env variables
 
-    // Open API connection to aurora serverless
-    await auroraConnectApi();
+      console.log('Starting Express Server');
+      dotenv.config({ path: path.resolve(process.cwd(), './environments/') });
+      const env = process.env.NODE_ENV || 'local';
+      
+      // console.log('Opening Aurora DB Connection');
+      // // Open API connection to aurora serverless
+      // await auroraConnectApi();
 
-    //Allow Cors
-    this.httpServer.use(cors());
+      //Allow Cors
+      console.log('Enabling CORS');
+      this.httpServer.use(cors());
 
-    //X-ray Segment Start
-    const appName = process.env.APP_NAME || 'micro-base'
-    this.httpServer.use(xrayExpress.openSegment(appName + '-startup'))
+      //X-ray Segment Start
+      console.log('Open X-Ray Segment');
+      const appName = process.env.APP_NAME || 'micro-base'
+      this.httpServer.use(xrayExpress.openSegment(appName + '-startup'))
 
-    //Add Passport Middelware to all routes
-    registerStrategies();
-    this.httpServer.use(passport.initialize());
+      //Add Passport Middelware to all routes
+      console.log('Registering Passport Strategies');
+      registerStrategies();
+      this.httpServer.use(passport.initialize());
+      
 
-    //Generate tsoa routes & spec
-    if(env === 'local') {
-      await execShellCommand("npm run tsoa");
-      credsConfigLocal();
-    }
+      //Generate tsoa routes & spec
 
-    //Register tsoa routes
-    const routes = await import('./middelware/tsoa/routes');
-    routes.RegisterRoutes(this.httpServer);
+      if(env === 'local') {
+        console.log('Generating TSOA specs');
+        await execShellCommand("npm run tsoa");
+        credsConfigLocal();
+      }
 
-    //X-Ray Segment End
-    this.httpServer.use(xrayExpress.closeSegment());
+      //Register tsoa routes
+      console.log('Getting routes from TSOA');
+      const routes = await import('./middelware/tsoa/routes');
+      routes.RegisterRoutes(this.httpServer);
+
+      //X-Ray Segment End
+      console.log('Ending X-Ray Segment');
+      this.httpServer.use(xrayExpress.closeSegment());
 
 
-    //Swagger-UI
-    this.httpServer.use("", swaggerUi.serve, async (_req: Request, res: Response) => {
-      return res.send(
-        swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json"))
-      );
-    });
-
-    // Global Error handling
-    this.httpServer.use(globalErrorHandler);
-
-    //Start Express Server
-    if (env === 'local') {
-      const port = process.env.PORT || 5000;
-      this.httpServer.listen(port, () => {
-        console.log(`Server listening on port http://localhost:${port}`);
+      //Swagger-UI
+      console.log('Launching Swagger-UI');
+      this.httpServer.use("", swaggerUi.serve, async (_req: Request, res: Response) => {
+        return res.send(
+          swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json"))
+        );
       });
+
+      // Global Error handling
+      console.log('Adding Global Error Handling');
+      this.httpServer.use(globalErrorHandler);
+
+      //Start Express Server
+      if (env === 'local') {
+        console.log('Starting Express Server Locally');
+        const port = process.env.PORT || 5000;
+        this.httpServer.listen(port, () => {
+          console.log(`Server listening on port http://localhost:${port}`);
+        });
+      }
+    } catch(e) {
+      console.error(e);
     }
   }
 }

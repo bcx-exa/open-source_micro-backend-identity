@@ -5,8 +5,12 @@ import { Server } from './server'
 
 // Get configured Express App
 const expressApp = new Server();
-expressApp.Start();
 
+try {
+    expressApp.Start();
+} catch(e) {
+    console.error(e);
+}
 // Export express App into serverless to be deployed in AWS
 export const app_bundle: APIGatewayProxyHandler = serverless(expressApp.httpServer);
 

@@ -74,13 +74,6 @@ resources:
 functions:
   base:
     handler: src/app.app_bundle
-    vpc:
-      securityGroupIds:
-        - Ref: AppSg
-      subnetIds:
-        - Ref: AppSubAz1
-        - Ref: AppSubAz2
-        - Ref: AppSubAz3
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
