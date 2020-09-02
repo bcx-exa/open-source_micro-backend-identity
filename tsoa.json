@@ -1,32 +1,30 @@
 {
-    "entryFile": "src/app.ts",
-    "noImplicitAdditionalProperties": "throw-on-extras",
-    "controllerPathGlobs": ["src/**/*Controller.ts"],
-    "spec": {
-      "securityDefinitions": {
-        "jwt": {
-          "type": "http",
-          "scheme": "bearer",
-          "bearerFormat": "JWT"
-        },
-        "google": {
-          "type": "oauth2",
-          "authorizationUrl": "http://localhost:7000/auth/google",
-          "flow": "implicit",
-          "scopes": {
-            "profile": "profile",
-            "email": "email",
-            "phone": "phone"
-           }
-        }
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/controllers/*.ts"],
+  "spec": {
+    "securityDefinitions": {
+      "jwt": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       },
-      "outputDirectory": "src/middelware/tsoa",
-      "specVersion": 3
+      "google": {
+        "type": "oauth2",
+        "authorizationUrl": "http://localhost:7000/auth/google",
+        "flow": "implicit",
+        "scopes": {
+          "profile": "profile",
+          "email": "email",
+          "phone": "phone"
+        }
+      }
     },
-    "routes": {
-      "authenticationModule": "src/middelware/passport/passport",
-      "routesDir": "src/middelware/tsoa"
-    }
+    "outputDirectory": "src/middelware/tsoa",
+    "specVersion": 3
+  },
+  "routes": {
+    "authenticationModule": "src/middelware/passport/passport",
+    "routesDir": "src/middelware/tsoa"
   }
-
-
+}

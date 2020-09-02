@@ -1,9 +1,9 @@
 import { StrategyOptions, Strategy, ExtractJwt, VerifiedCallback } from "passport-jwt";
 import passport from "passport";
 import AWS from "aws-sdk";
-import { UserProfile, UserIdentityJWT } from "../../models/identity";
+import { User } from "../../models/user";
 import "reflect-metadata";
-import { auroraConnectApi } from "../../helpers/aurora";
+import { auroraConnectApi } from "../../helpers/database/aurora";
 import googleoauth from "passport-google-oauth20";
 const GoogleStrategy = googleoauth.Strategy;
 //const GoogleStrategy = require("passport-google-oauth20").Strategy;
@@ -32,10 +32,10 @@ export async function registerStrategies(): Promise<any> {
 
   // Look in auth header
   passport.use('jwt',
-    new Strategy(optionHeader, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {
+    new Strategy(optionHeader, async (jwtPayload: any, done: VerifiedCallback) => {
       try {
         const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(UserProfile);
+        const repository = await connection.getRepository(User);
         const user = await repository.findOne({ identity_id: jwtPayload.sub });
 
         if (user) {
@@ -58,12 +58,12 @@ export async function registerStrategies(): Promise<any> {
 
 
   // Look in query string
-  passport.use('jwt-verify',
-    new Strategy(optionQuery, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {
+  passport.use('jwt-query',
+    new Strategy(optionQuery, async (jwtPayload: any, done: VerifiedCallback) => {
       try {
         const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(UserProfile);
-        const dbUser: UserProfile = await repository.findOne({ identity_id: jwtPayload.sub });     
+        const repository = await connection.getRepository(User);
+        const dbUser: User = await repository.findOne({ identity_id: jwtPayload.sub });     
 
         const user = { dbUser: dbUser, jwt: jwtPayload };
 
@@ -93,7 +93,7 @@ export async function registerStrategies(): Promise<any> {
         console.log("profile.id", profile.id);
         try {
           const connection = await auroraConnectApi();
-          const repository = await connection.getRepository(UserProfile);
+          const repository = await connection.getRepository(User);
           const user = await repository.findOne({ googleId: profile.id });
 
           if (user) {

@@ -1,12 +1,12 @@
-  Resources:
-    #Create VPC
-    Vpc:
-      Type: AWS::EC2::VPC
-      Properties:
-        CidrBlock: ${env:VPC}
-        EnableDnsSupport: true
-        EnableDnsHostnames: true
-        InstanceTenancy: default
-        Tags:
+Resources:
+  #Create VPC
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: ${env:VPC}
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
         - Key: Name
           Value: ${env:NODE_ENV}-${env:REGION}-${env:APP_NAME}-${env:VPC}

@@ -7,10 +7,10 @@ custom:
     basePath: environments/
     exclude: # By default dotenv will add the env to your functions
       - ACCESS_KEY_ID
-      - SECRET_ACCESS_KEY 
+      - SECRET_ACCESS_KEY
 provider:
   name: aws
-  region: 'us-east-1'
+  region: "us-east-1"
   stage: ${env:STAGE, 'dev'}
   stackName: ${self:service.name}-acm-stack
 
@@ -18,7 +18,7 @@ resources:
   Resources:
     ApiGatewayCert:
       Type: AWS::CertificateManager::Certificate
-      Properties: 
+      Properties:
         DomainName: ${env:API_DOMAIN}
         DomainValidationOptions:
           - DomainName: ${env:API_DOMAIN}
@@ -27,7 +27,7 @@ resources:
 
   Outputs:
     ApiGatewayCert:
-      Value: 
+      Value:
         Ref: ApiGatewayCert
       Export:
         Name: ${self:service.name}-ApiGatewayCert

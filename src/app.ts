@@ -1,19 +1,17 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import serverless from 'serverless-http';
-import 'source-map-support/register';
-import { Server } from './server'
+import { APIGatewayProxyHandler } from "aws-lambda";
+import serverless from "serverless-http";
+import "source-map-support/register";
+import { Server } from "./server";
 
 // Get configured Express App
 const expressApp = new Server();
 
 try {
-    expressApp.Start();
-} catch(e) {
-    console.error(e);
+  expressApp.Start();
+} catch (e) {
+  console.error(e);
 }
 // Export express App into serverless to be deployed in AWS
-export const app_bundle: APIGatewayProxyHandler = serverless(expressApp.httpServer);
-
-
-
-  
+export const app_bundle: APIGatewayProxyHandler = serverless(
+  expressApp.httpServer
+);

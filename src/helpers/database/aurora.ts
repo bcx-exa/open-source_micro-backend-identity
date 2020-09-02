@@ -1,6 +1,6 @@
 import { createConnection, getConnection } from "typeorm";
-import { DbConnectionError } from "../helpers/error-handling";
-import * as t1 from "../models/identity";
+import { DbConnectionError } from "../handlers/error-handling";
+import * as t1 from "../../models/user";
 import "reflect-metadata";
 import AWS from "aws-sdk";
 
@@ -24,17 +24,18 @@ export async function auroraConnectApi(): Promise<any> {
                 resourceArn: resourceSecretARN[0].Value,
                 region: process.env.REGION,
                 entities: [
-                    t1.UserProfile
+                    t1.User
                 ],
                 synchronize: true,
                 logging: false
             });
 
             return connection;
-        }
+                  }
     } 
-    catch(e) {
+    catch (e) {
         console.error('Aurroa API Connect Error: Generally this is cause by Aoura Auto Pause. Just restart the app!');
+        throw new DbConnectionError('Aurroa API Connect Error: Generally this is cause by Aoura Auto Pause. Just restart the app!');
     }
 }
 

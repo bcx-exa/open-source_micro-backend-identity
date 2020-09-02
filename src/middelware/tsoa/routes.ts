@@ -3,7 +3,9 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AuthController } from './../../controllers/identityController';
+import { AccountController } from './../../controllers/account';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { AuthenticationController } from './../../controllers/authentication';
 import { expressAuthentication } from './../passport/passport';
 import * as express from 'express';
 
@@ -18,24 +20,59 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name_": {
+    "Pick_User.-or-preferred_username-or-password-or-email-or-phone_number-or-given_name-or-family_name-or-address-or-birth_date-or-locale-or-picture_": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true }, "email": { "dataType": "string" }, "phone_number": { "dataType": "string" }, "given_name": { "dataType": "string" }, "family_name": { "dataType": "string" }, "address": { "dataType": "string" }, "birth_date": { "dataType": "datetime" }, "locale": { "dataType": "string" }, "picture": { "dataType": "string" } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UserProfileUpdate": {
+        "dataType": "refAlias",
+        "type": { "ref": "Pick_User.-or-preferred_username-or-password-or-email-or-phone_number-or-given_name-or-family_name-or-address-or-birth_date-or-locale-or-picture_", "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_User.preferred_username_": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "VerifyResend": {
+        "dataType": "refAlias",
+        "type": { "ref": "Pick_User.preferred_username_", "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PasswordResetRequest": {
+        "dataType": "refAlias",
+        "type": { "ref": "Pick_User.preferred_username_", "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_User.password_": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "password": { "dataType": "string", "required": true } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PasswordReset": {
+        "dataType": "refAlias",
+        "type": { "ref": "Pick_User.password_", "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_User.preferred_username-or-password-or-given_name-or-family_name_": {
         "dataType": "refAlias",
         "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true }, "given_name": { "dataType": "string" }, "family_name": { "dataType": "string" } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SignUp": {
         "dataType": "refAlias",
-        "type": { "ref": "Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name_", "validators": {} },
+        "type": { "ref": "Pick_User.preferred_username-or-password-or-given_name-or-family_name_", "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_UserProfile.preferred_username-or-password_": {
+    "Pick_User.preferred_username-or-password_": {
         "dataType": "refAlias",
         "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SignIn": {
         "dataType": "refAlias",
-        "type": { "ref": "Pick_UserProfile.preferred_username-or-password_", "validators": {} },
+        "type": { "ref": "Pick_User.preferred_username-or-password_", "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -48,10 +85,12 @@ export function RegisterRoutes(app: express.Express) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
-    app.post('/auth/signup',
+    app.post('/account/profile',
+        authenticateMiddleware([{ "jwt": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                SignUp: { "in": "body", "name": "SignUp", "required": true, "ref": "SignUp" },
+                profile: { "in": "body", "name": "profile", "required": true, "ref": "UserProfileUpdate" },
+                req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -63,17 +102,17 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new AuthController();
+            const controller = new AccountController();
 
 
-            const promise = controller.SignUpPost.apply(controller, validatedArgs as any);
+            const promise = controller.ProfilePost.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/auth/signin',
+    app.post('/account/verify/resend',
         function(request: any, response: any, next: any) {
             const args = {
-                SignIn: { "in": "body", "name": "SignIn", "required": true, "ref": "SignIn" },
+                username: { "in": "body", "name": "username", "required": true, "ref": "VerifyResend" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -85,15 +124,15 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new AuthController();
+            const controller = new AccountController();
 
 
-            const promise = controller.SignInPost.apply(controller, validatedArgs as any);
+            const promise = controller.VerifyResend.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.get('/auth/verify',
-        authenticateMiddleware([{ "jwt-verify": [] }]),
+    app.get('/account/verify',
+        authenticateMiddleware([{ "jwt-query": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
                 token: { "in": "query", "name": "token", "required": true, "dataType": "string" },
@@ -109,18 +148,17 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new AuthController();
+            const controller = new AccountController();
 
 
             const promise = controller.VerifyGet.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/auth/profile',
-        authenticateMiddleware([{ "jwt": [] }]),
+    app.post('/account/password/reset/request',
         function(request: any, response: any, next: any) {
             const args = {
-                profile: { "in": "body", "name": "profile", "required": true, "ref": "SignUp" },
+                body: { "in": "body", "name": "body", "required": true, "ref": "PasswordResetRequest" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -132,18 +170,20 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new AuthController();
+            const controller = new AccountController();
 
 
-            const promise = controller.ProfilePost.apply(controller, validatedArgs as any);
+            const promise = controller.PasswordRequestPost.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/auth/passwordreset',
-        authenticateMiddleware([{ "jwt": [] }]),
+    app.post('/account/password/reset',
+        authenticateMiddleware([{ "jwt-query": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                profile: { "in": "body", "name": "profile", "required": true, "ref": "SignUp" },
+                token: { "in": "query", "name": "token", "required": true, "dataType": "string" },
+                body: { "in": "body", "name": "body", "required": true, "ref": "PasswordReset" },
+                req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -155,10 +195,54 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new AuthController();
+            const controller = new AccountController();
 
 
             const promise = controller.PasswordResetPost.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.post('/auth/signup',
+        function(request: any, response: any, next: any) {
+            const args = {
+                signUp: { "in": "body", "name": "signUp", "required": true, "ref": "SignUp" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new AuthenticationController();
+
+
+            const promise = controller.SignUpPost.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.post('/auth/signin',
+        function(request: any, response: any, next: any) {
+            const args = {
+                signIn: { "in": "body", "name": "signIn", "required": true, "ref": "SignIn" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new AuthenticationController();
+
+
+            const promise = controller.SignInPost.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -177,7 +261,7 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new AuthController();
+            const controller = new AuthenticationController();
 
 
             const promise = controller.SignInGooglePost.apply(controller, validatedArgs as any);
@@ -199,7 +283,7 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new AuthController();
+            const controller = new AuthenticationController();
 
 
             const promise = controller.SignInGoolgeCallbackPost.apply(controller, validatedArgs as any);

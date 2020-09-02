@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 //https://www.iana.org/assignments/jwt/jwt.xhtml
 @Entity()
-export class UserProfile {
+export class User {
   @PrimaryGeneratedColumn("uuid")
   identity_id: string;
 
@@ -63,20 +63,12 @@ export class UserProfile {
   @Column()
   disabled: boolean;
 
+  @Column()
+  verification_attempts: number;
+
+  @Column()
+  account_locked: boolean;
+
   @Column({ nullable: true })
   googleId: string;
 }
-
-// JWT Model
-export interface UserIdentityJWT {
-  sub: string;
-  iss: string;
-  aud: string;
-  iat: number;
-  profile: ProfileJWT;
-}
-
-export type SignUp = Pick<UserProfile, "preferred_username" | "password" | "given_name" | "family_name">;
-export type SignIn = Pick<UserProfile, "preferred_username" | "password">;
-export type ProfileUpdate = Pick<UserProfile, "identity_id" | "email" | "preferred_username" | "phone_number" | "given_name" | "family_name" | "address" | "birth_date" | "created_at" | "email_verified" | "phone_number_verified" | "locale" | "picture" | "updated_at">;
-export type ProfileJWT = Pick<UserProfile, "identity_id" | "email" | "preferred_username" | "phone_number" | "given_name" | "family_name" | "address" | "birth_date" | "created_at" | "email_verified" | "phone_number_verified" | "locale" | "picture" | "updated_at">;

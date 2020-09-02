@@ -214,7 +214,7 @@ Resources:
     DependsOn: NatGatewayAz2
     Properties:
       RouteTableId:
-        Ref:  AppRouteAz2
+        Ref: AppRouteAz2
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId:
         Ref: NatGatewayAz2
@@ -224,7 +224,7 @@ Resources:
     DependsOn: NatGatewayAz3
     Properties:
       RouteTableId:
-        Ref:  AppRouteAz3
+        Ref: AppRouteAz3
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId:
         Ref: NatGatewayAz3
