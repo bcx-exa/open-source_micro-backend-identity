@@ -1,24 +1,24 @@
 import { SignIn, SignUp } from "../types/authentication";
 import { User } from "../models/user";
 import { profile } from "../types/scopes";
-import { validatePasswordHash, generatePasswordHash,issueJWT } from "../helpers/security/crypto";
+import { validatePasswordHash, generatePasswordHash, issueJWT } from "../helpers/security/crypto";
 import { v4 as uuidv4 } from "uuid";
 import { Conflict, Unauthorized, NotVerified, InvalidFormat, PasswordPolicyException } from "../helpers/handlers/error-handling";
 import { auroraConnectApi } from "../helpers/database/aurora";
-import { validateUsername,  validatePasswordStrength } from "../helpers/handlers/validation";
+import { validateUsername, validatePasswordStrength } from "../helpers/handlers/validation";
 import { sendVerificationMessage } from "../helpers/messaging/verification";
 
 export class AuthenticationService {
-  public async SignUp(signUp: SignUp): Promise<any> {    
+  public async SignUp(signUp: SignUp): Promise<any> {
     // Check if username is of type email or of type phone_number
     const validPreferredUsername = validateUsername(signUp.preferred_username);
     const isValidEmail = validPreferredUsername.isValidEmail;
     const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
-    
+
     //if not valid types, throw InvalidFormat
     if (!isValidEmail && !isValidPhoneNumber) {
       throw new InvalidFormat("Not a valid phone number or email address");
-    } 
+    }
 
     // Check if user exist
     const connection = await auroraConnectApi();
@@ -29,15 +29,15 @@ export class AuthenticationService {
     // If user exist throw conflict error
     if (findUser) {
       throw new Conflict("User Already Exists");
-    } 
+    }
 
     // Check password strength
     const pwdValidator = validatePasswordStrength();
     const checkPwdStrength = pwdValidator.validate(signUp.password);
 
-    // If pwd not strong enough throw 
-    if(!checkPwdStrength) {
-      throw new PasswordPolicyException('Password does not conform to the password policy. The policy enforces the following rules ' + pwdValidator.validate('joke', { list: true }))
+    // If pwd not strong enough throw
+    if (!checkPwdStrength) {
+      throw new PasswordPolicyException("Password does not conform to the password policy. The policy enforces the following rules " + pwdValidator.validate("joke", { list: true }));
     }
 
     // Hash user password
@@ -69,8 +69,9 @@ export class AuthenticationService {
       signed_up_local: true,
       disabled: false,
       googleId: null,
+      facebookId: null,
       verification_attempts: 1,
-      account_locked: false
+      account_locked: false,
     };
 
     // Save user to DB
@@ -79,10 +80,10 @@ export class AuthenticationService {
     // Send verification message async
     sendVerificationMessage(newUser, isValidPhoneNumber, isValidEmail);
 
-    // Return sucessful signUp 
+    // Return sucessful signUp
     return {
-      statusCode: 200, 
-      body: "User signed up sucessfully, please verify your account!" 
+      statusCode: 200,
+      body: "User signed up sucessfully, please verify your account!",
     };
   }
   public async SignIn(signIn: SignIn): Promise<any> {
@@ -90,11 +91,11 @@ export class AuthenticationService {
     const validPreferredUsername = validateUsername(signIn.preferred_username);
     const isValidEmail = validPreferredUsername.isValidEmail;
     const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
-    
+
     //if not valid types, throw InvalidFormat
     if (!isValidEmail && !isValidPhoneNumber) {
       throw new InvalidFormat("Not a valid phone number or email address");
-    } 
+    }
 
     // Connect to db to find user
     const connection = await auroraConnectApi();
@@ -102,29 +103,29 @@ export class AuthenticationService {
     const findUser = await repository.findOne({ preferred_username: signIn.preferred_username });
 
     // Can't find user throw unauthorized
-    if(!findUser) {
+    if (!findUser) {
       throw new Unauthorized("Invalid username or password");
-    } 
+    }
 
     // If account is locked throw
     if (findUser.account_locked) {
-      throw new Unauthorized("Your account has been locked as you have requested too many verification requests, please contact support!")
+      throw new Unauthorized("Your account has been locked as you have requested too many verification requests, please contact support!");
     }
 
     // Valid email address but email not verified
-    if(isValidEmail && !findUser.email_verified) {
+    if (isValidEmail && !findUser.email_verified) {
       throw new NotVerified("User email has not been verified");
     }
 
     // Valid phone number but phone number not verified
-    if(isValidPhoneNumber && !findUser.phone_number_verified) {
+    if (isValidPhoneNumber && !findUser.phone_number_verified) {
       throw new NotVerified("User phone number has not been verified");
     }
 
     // Validate password
     const validPassword = validatePasswordHash(signIn.password, findUser.password, findUser.salt);
     const dbUser: User = findUser as User;
-    
+
     const profileClaims: profile = {
       preferred_username: dbUser.preferred_username,
       given_name: dbUser.given_name,
@@ -134,12 +135,12 @@ export class AuthenticationService {
       locale: dbUser.locale,
       picture: dbUser.picture,
       birth_date: dbUser.birth_date,
-      updated_at: dbUser.updated_at
-    }
+      updated_at: dbUser.updated_at,
+    };
 
     // If valid, issue JWT
-    if (validPassword) {      
-        return issueJWT(dbUser.identity_id, '7d', false, profileClaims );
+    if (validPassword) {
+      return issueJWT(dbUser.identity_id, "7d", false, profileClaims);
     }
     // Throw unauthorized
     else {

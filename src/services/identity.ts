@@ -1,10 +1,10 @@
 import { UserProfile, SignIn, SignUp } from "../models/identity";
-import { validatePasswordHash, generatePasswordHash, issueJWT } from "../helpers/crypto";
+import { validatePasswordHash, generatePasswordHash, issueJWT } from "../helpers/security/crypto";
 import { v4 as uuidv4 } from "uuid";
-import { Conflict, Unauthorized, NotVerified, InvalidFormat, PasswordPolicyException } from "../helpers/error-handling";
-import { auroraConnectApi } from "../helpers/aurora";
-import { validateUsername, validatePasswordStrength } from "../helpers/validation";
-import { sendVerificationMessage } from "../helpers/pinpoint";
+import { Conflict, Unauthorized, NotVerified, InvalidFormat, PasswordPolicyException } from "../helpers/handlers/error-handling";
+import { auroraConnectApi } from "../helpers/database/aurora";
+import { validateUsername, validatePasswordStrength } from "../helpers/handlers/validation";
+import { sendVerificationMessage } from "../helpers/messaging/verification";
 
 export class IdentityService {
   public async SignUp(SignUp: SignUp): Promise<any> {

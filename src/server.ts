@@ -1,16 +1,16 @@
 import express, { Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
 import bodyParser from "body-parser";
-import { execShellCommand } from "./helpers/shell";
+import { execShellCommand } from "./helpers/cli/shell";
 import xrayExpress from "aws-xray-sdk-express";
 import dotenv from "dotenv-flow";
-import { credsConfigLocal } from "./middelware/aws/auth";
+import { credsConfigLocal } from "./helpers/security/aws";
 import path from "path";
 import cors from "cors";
 import passport from "passport";
 import { registerStrategies } from "./middelware/passport/passport";
-import { globalErrorHandler } from "./helpers/error-handling";
-import { auroraConnectApi } from "./helpers/aurora";
+import { globalErrorHandler } from "./helpers/handlers/error-handling";
+import { auroraConnectApi } from "./helpers/database/aurora";
 
 //import { auroraConnectApi } from './helpers/aurora';
 
@@ -30,10 +30,6 @@ export class Server {
       console.log("Starting Express Server");
       dotenv.config({ path: path.resolve(process.cwd(), "./environments/") });
       const env = process.env.NODE_ENV || "local";
-  public async Start(): Promise<void> {
-    //Import env variables
-    dotenv.config({ path: path.resolve(process.cwd(), "./environments/") });
-    const env = process.env.NODE_ENV || "local";
 
       //Allow Cors
       console.log("Enabling CORS");
@@ -44,52 +40,51 @@ export class Server {
       const appName = process.env.APP_NAME || "micro-base";
       this.httpServer.use(xrayExpress.openSegment(appName + "-startup"));
 
-    //X-ray Segment Start
-    const appName = process.env.APP_NAME || "micro-base";
-    this.httpServer.use(xrayExpress.openSegment(appName + "-startup"));
+      //Add Passport Middelware to all routes
+      registerStrategies();
+      this.httpServer.use(passport.initialize());
+      this.httpServer.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+      this.httpServer.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/failedlogin" }), function (_req, res) {
+        res.redirect("/");
+      });
 
-    //Add Passport Middelware to all routes
-    registerStrategies();
-    this.httpServer.use(passport.initialize());
-    this.httpServer.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-    this.httpServer.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/failedlogin" }), function (_req, res) {
-      res.redirect("/");
-    });
+      this.httpServer.get("/auth/facebook", passport.authenticate("facebook"));
+      this.httpServer.get("/auth/facebook/callback", passport.authenticate("facebook", { successRedirect: "/", failureRedirect: "/failedlogin" }), function (_req, res) {
+        res.redirect("/");
+      });
 
-    this.httpServer.get("/auth/facebook", passport.authenticate("facebook"));
-    this.httpServer.get("/auth/facebook/callback", passport.authenticate("facebook", { successRedirect: "/", failureRedirect: "/failedlogin" }), function (_req, res) {
-      res.redirect("/");
-    });
+      //Generate tsoa routes & spec
+      if (env === "local") {
+        await execShellCommand("npm run tsoa");
+        credsConfigLocal();
+      }
 
-    //Generate tsoa routes & spec
-    if (env === "local") {
-      await execShellCommand("npm run tsoa");
-      credsConfigLocal();
-    }
-
-    //Register tsoa routes
-    const routes = await import("./middelware/tsoa/routes");
-    routes.RegisterRoutes(this.httpServer);
+      //Register tsoa routes
+      const routes = await import("./middelware/tsoa/routes");
+      routes.RegisterRoutes(this.httpServer);
 
       //X-Ray Segment End
       console.log("Ending X-Ray Segment");
       this.httpServer.use(xrayExpress.closeSegment());
 
-    //Swagger-UI
-    this.httpServer.use("", swaggerUi.serve, async (_req: Request, res: Response) => {
-      return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
-    });
+      //Swagger-UI
+      this.httpServer.use("", swaggerUi.serve, async (_req: Request, res: Response) => {
+        return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
+      });
 
       // Global Error handling
       console.log("Adding Global Error Handling");
       this.httpServer.use(globalErrorHandler);
 
-    //Start Express Server
-    if (env === "local") {
-      const port = process.env.PORT || 5000;
-      this.httpServer.listen(port, () => {
-        console.log(`Server listening on port http://localhost:${port}`);
-      });
+      //Start Express Server
+      if (env === "local") {
+        const port = process.env.PORT || 5000;
+        this.httpServer.listen(port, () => {
+          console.log(`Server listening on port http://localhost:${port}`);
+        });
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 }
