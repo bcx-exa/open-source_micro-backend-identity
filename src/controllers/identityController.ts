@@ -23,20 +23,18 @@ export class AuthController extends Controller {
   @Response<InternalServerError>("Verify API Internal Server Error")
   @SuccessResponse("200", "Account Verified!") // Custom success response
   @Get("verify")
-  @Security('jwt-query')
+  @Security("jwt-query")
   async VerifyGet(@Query() token: string): Promise<any> {
     return new IdentityService().VerifyAccount(token);
   }
 
   @Get("google")
-  @Security("google", ["profile"])
-  async SignInGooglePost(): Promise<any> {
+  async SignInGoogle(): Promise<any> {
     return;
   }
 
-  @Get("google/callback")
-  @Security("google_callback")
-  async SignInGoolgeCallbackPost(): Promise<any> {
+  @Get("facebook")
+  async SignInFacebook(): Promise<any> {
     return;
   }
 }

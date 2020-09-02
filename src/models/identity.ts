@@ -65,6 +65,9 @@ export class UserProfile {
 
   @Column({ nullable: true })
   googleId: string;
+
+  @Column({ nullable: true })
+  facebookId: string;
 }
 
 // JWT Model

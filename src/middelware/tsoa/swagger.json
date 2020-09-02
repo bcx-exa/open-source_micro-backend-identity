@@ -71,11 +71,16 @@
 				"flows": {
 					"implicit": {
 						"authorizationUrl": "http://localhost:7000/auth/google",
-						"scopes": {
-							"profile": "profile",
-							"email": "email",
-							"phone": "phone"
-						}
+						"scopes": {}
+					}
+				}
+			},
+			"facebook": {
+				"type": "oauth2",
+				"flows": {
+					"implicit": {
+						"authorizationUrl": "http://localhost:7000/auth/facebook",
+						"scopes": {}
 					}
 				}
 			}
@@ -219,7 +224,7 @@
 		},
 		"/auth/google": {
 			"get": {
-				"operationId": "SignInGooglePost",
+				"operationId": "SignInGoogle",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -233,19 +238,13 @@
 				"tags": [
 					"AuthController"
 				],
-				"security": [
-					{
-						"google": [
-							"profile"
-						]
-					}
-				],
+				"security": [],
 				"parameters": []
 			}
 		},
-		"/auth/google/callback": {
+		"/auth/facebook": {
 			"get": {
-				"operationId": "SignInGoolgeCallbackPost",
+				"operationId": "SignInFacebook",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -259,11 +258,7 @@
 				"tags": [
 					"AuthController"
 				],
-				"security": [
-					{
-						"google_callback": []
-					}
-				],
+				"security": [],
 				"parameters": []
 			}
 		}

@@ -1,9 +1,9 @@
 import { UserProfile, SignIn, SignUp } from "../models/identity";
-import { validatePasswordHash, generatePasswordHash,issueJWT } from "../helpers/crypto";
+import { validatePasswordHash, generatePasswordHash, issueJWT } from "../helpers/crypto";
 import { v4 as uuidv4 } from "uuid";
 import { Conflict, Unauthorized, NotVerified, InvalidFormat, PasswordPolicyException } from "../helpers/error-handling";
 import { auroraConnectApi } from "../helpers/aurora";
-import { validateUsername,  validatePasswordStrength } from "../helpers/validation";
+import { validateUsername, validatePasswordStrength } from "../helpers/validation";
 import { sendVerificationMessage } from "../helpers/pinpoint";
 
 export class IdentityService {
@@ -30,14 +30,12 @@ export class IdentityService {
     if (findUser) {
       throw new Conflict("User Already Exists");
     } else {
-
       const pwdValidator = validatePasswordStrength();
       const checkPwdStrength = pwdValidator.validate(SignUp.password);
 
-      if(!checkPwdStrength) {
-        throw new PasswordPolicyException('Password does not conform to the password policy. The policy enforces the following rules ' + pwdValidator.validate('joke', { list: true }))
+      if (!checkPwdStrength) {
+        throw new PasswordPolicyException("Password does not conform to the password policy. The policy enforces the following rules " + pwdValidator.validate("joke", { list: true }));
       }
-
 
       const genPassHash = generatePasswordHash(SignUp.password);
       const salt = genPassHash.salt;
@@ -66,6 +64,7 @@ export class IdentityService {
         signed_up_local: true,
         disabled: false,
         googleId: null,
+        facebookId: null,
       };
 
       await repository.save(userProfile);
@@ -99,11 +98,10 @@ export class IdentityService {
     }
   }
 
-  public async VerifyAccount(token:string): Promise<any> {
-    if(!token) {
-      console.error('Passport JWT failed');
+  public async VerifyAccount(token: string): Promise<any> {
+    if (!token) {
+      console.error("Passport JWT failed");
     }
-    return "Account Verified"
+    return "Account Verified";
   }
-    
 }
