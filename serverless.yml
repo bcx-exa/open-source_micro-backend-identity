@@ -5,20 +5,19 @@ custom:
     basePath: environments/
     exclude: # By default dotenv will add the env to your functions
       - ACCESS_KEY_ID
-      - SECRET_ACCESS_KEY 
+      - SECRET_ACCESS_KEY
   webpack:
     webpackConfig: ./webpack.config.js
-    includeModules: 
+    includeModules:
       forceInclude:
         - typeorm-aurora-data-api-driver
         - data-api-client
-
 
   customDomain:
     domainName: ${env:API_DOMAIN}
     certificateName: ${env:API_DOMAIN}
     createRoute53Record: true
-    endpointType: 'edge'
+    endpointType: "edge"
     securityPolicy: tls_1_2
     hostedZoneId: ${env:HOSTED_ZONE_ID}
     apiType: rest
@@ -29,14 +28,14 @@ plugins:
   - serverless-webpack
   - serverless-offline
   - serverless-domain-manager
-  
+
 provider:
   name: aws
   region: ${env:REGION, 'eu-west-2'}
   stage: ${env:STAGE, 'dev'}
   stackName: ${self:service.name}-stack
   runtime: nodejs12.x
-  role: IdentityRole       
+  role: IdentityRole
   tracing:
     apiGateway: true
     lambda: true
@@ -59,8 +58,7 @@ resources:
         Fn::Equals:
           - ${env:MYSQL}
           - true
-      NotProd:
-        !Not [!Equals ['${env:NODE_ENV}', prod]]
+      NotProd: !Not [!Equals ["${env:NODE_ENV}", prod]]
   - Resources:
   - ${file(iac/resources/vpc.serverless.yml)}
   - ${file(iac/resources/subnet.serverless.yml)}
@@ -74,14 +72,6 @@ resources:
 functions:
   base:
     handler: src/app.app_bundle
-    vpc:
-      securityGroupIds:
-        - Ref: AppSg
-      subnetIds:
-        - Ref: AppSubAz1
-        - Ref: AppSubAz2
-        - Ref: AppSubAz3
     events:
       - http: ANY /
-      - http: 'ANY {proxy+}'
-
+      - http: "ANY {proxy+}"

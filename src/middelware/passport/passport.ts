@@ -1,9 +1,9 @@
 import { StrategyOptions, Strategy, ExtractJwt, VerifiedCallback } from "passport-jwt";
 import passport from "passport";
 import AWS from "aws-sdk";
-import { UserProfile, UserIdentityJWT } from "../../models/identity";
+import { User } from "../../models/user";
 import "reflect-metadata";
-import { auroraConnectApi } from "../../helpers/aurora";
+import { auroraConnectApi } from "../../helpers/database/aurora";
 import googleoauth from "passport-google-oauth20";
 import facebookoauth from "passport-facebook";
 import { v4 as uuidv4 } from "uuid";
@@ -39,7 +39,7 @@ export async function registerStrategies(): Promise<any> {
     new Strategy(optionHeader, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {
       try {
         const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(UserProfile);
+        const repository = await connection.getRepository(User);
         const user = await repository.findOne({ identity_id: jwtPayload.sub });
 
         if (user) {
@@ -66,15 +66,18 @@ export async function registerStrategies(): Promise<any> {
     new Strategy(optionQuery, async (jwtPayload: UserIdentityJWT, done: VerifiedCallback) => {
       try {
         const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(UserProfile);
-        const user = await repository.findOne({ identity_id: jwtPayload.sub });
+        const repository = await connection.getRepository(User);
+        const dbUser: User = await repository.findOne({ identity_id: jwtPayload.sub });     
 
-        if (user) {
+        const user = { dbUser: dbUser, jwt: jwtPayload };
+
+        if (dbUser) {
           return done(null, user);
         } else {
           return done(null, false);
         }
       } catch (err) {
+        console.log(err);
         return done(err, false);
       }
     })
@@ -91,7 +94,7 @@ export async function registerStrategies(): Promise<any> {
       async function (_accessToken, _refreshToken, profile, done) {
         try {
           const connection = await auroraConnectApi();
-          const repository = await connection.getRepository(UserProfile);
+          const repository = await connection.getRepository(User);
           const user = await repository.findOne({ googleId: profile.id });
           if (user) {
             user.given_name = profile._json.given_name;
@@ -216,12 +219,13 @@ export async function registerStrategies(): Promise<any> {
   initialized = true;
 }
 
+
 // This is what TSOA uses for the @Security Decorator
 export async function expressAuthentication(request: any, securityName: string, scopes?: string[]): Promise<any> {
   registerStrategies();
 
   let strategy: any = passport.authenticate(securityName, {
-    session: false,
+    session: false, 
   });
 
   if (securityName == "google") {
@@ -235,15 +239,16 @@ export async function expressAuthentication(request: any, securityName: string, 
     //console.log(scopes);
   }
 
-  const authResult = await new Promise((resolve) =>
-    strategy(request, request.res, (err, user) => {
+  const authResult = await new Promise((resolve, reject) =>
+    strategy(request, request.res, (err) => {
       if (err) {
+        reject(err);
         throw new Error("Passport Auth Result Error" + err);
       } else {
         if (securityName == "google_callback") {
           request.redirect("/");
         }
-        resolve(user);
+        resolve(request.user);
       }
     })
   );

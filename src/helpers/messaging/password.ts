@@ -1,8 +1,8 @@
 import AWS from 'aws-sdk';
-import { issueJWT } from './crypto';
-import { UserProfile } from '../models/identity';
+import { issueJWT } from '../security/crypto';
+import { User } from '../../models/user';
 
-export async function sendVerificationMessage(userProfile: UserProfile, isPhoneNumber: boolean, isEmail: boolean):Promise<any> {
+export async function sendPasswordResetRequest(user: User, isPhoneNumber: boolean, isEmail: boolean):Promise<any> {
 
   //Create a new Pinpoint object.
   const pinpoint = new AWS.Pinpoint({ region: process.env.PINPOINT_REGION });
@@ -10,15 +10,22 @@ export async function sendVerificationMessage(userProfile: UserProfile, isPhoneN
   const getApp = getApps.ApplicationsResponse.Item.filter((item) => { return item.Name === process.env.APP_NAME });
   const applicationId = getApp[0].Id;
   const messageType = "TRANSACTIONAL";  
-  const destination = userProfile.preferred_username;
+  const destination = user.preferred_username;
   const protocol = process.env.NODE_ENV == 'local' ? 'http://' : 'https://'
-  const currentDomain = process.env.NODE_ENV == 'local' ? 'localhost' +  ":" + process.env.PORT : process.env.API_DOMAIN;
-  let message = 'Welcome! Please verify your account by clicking on this link: '+ protocol + currentDomain + '/auth/verify?token=';
-  let params;
+  const currentDomain = process.env.NODE_ENV == 'local' ? 'localhost' +  ":" + process.env.UI_PORT : process.env.UI_DOMAIN;
+  let message = 'You or someone else have requested a password reset, '
+  message += 'please click the link to reset your password: '
+  message += protocol + currentDomain + '/account/password/reset?token=';
   
+  let params;
+  const passworedReset = {
+    password_reset: true,
+  }
+
   if(isPhoneNumber) {
-    userProfile.phone_number_verified = true;
-    const jwt = await issueJWT(userProfile, true);
+    user.phone_number_verified = true;
+
+    const jwt = await issueJWT(user.identity_id, '1d', true, passworedReset);
     message += jwt; 
     //const shortCode = '';
     params = {
@@ -40,8 +47,7 @@ export async function sendVerificationMessage(userProfile: UserProfile, isPhoneN
     };
   }
   if(isEmail) {
-    userProfile.email_verified = true;
-    const jwt = await issueJWT(userProfile, true);
+    const jwt = await issueJWT(user.identity_id, '1d', true, passworedReset);
     message += jwt; 
     params = {
       ApplicationId: applicationId,

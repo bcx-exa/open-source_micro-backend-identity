@@ -65,7 +65,7 @@ Resources:
         - Key: Name
           Value: DbSg
         - Key: Security group name
-          Value:  DbSg
+          Value: DbSg
   DbSgAppMySqlIngress:
     DependsOn: DbSg
     Condition: MySql
@@ -108,4 +108,3 @@ Resources:
         Fn::GetAtt:
           - AlbSg
           - GroupId
-  

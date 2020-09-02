@@ -7,7 +7,7 @@ custom:
     basePath: environments/
     exclude: # By default dotenv will add the env to your functions
       - ACCESS_KEY_ID
-      - SECRET_ACCESS_KEY 
+      - SECRET_ACCESS_KEY
 provider:
   name: aws
   region: ${env:PINPOINT_REGION}
@@ -18,27 +18,27 @@ resources:
   Resources:
     PinpointApp:
       Type: AWS::Pinpoint::App
-      Properties: 
+      Properties:
         Name: ${env:APP_NAME}
     PinpointEmailChannel:
       Type: AWS::Pinpoint::EmailChannel
-      Properties: 
-        ApplicationId: 
+      Properties:
+        ApplicationId:
           Ref: PinpointApp
         Enabled: true
         FromAddress: ${env:VERIFY_EMAIL_ADDRESS}
-        Identity: 
+        Identity:
           Fn::Join:
-          - ":"
-          - - "arn:aws:ses"
-            - ${env:PINPOINT_REGION}
-            - Ref: AWS::AccountId
-            - ${env:APP_NAME}/${env:API_DOMAIN}
+            - ":"
+            - - "arn:aws:ses"
+              - ${env:PINPOINT_REGION}
+              - Ref: AWS::AccountId
+              - ${env:APP_NAME}/${env:API_DOMAIN}
         # RoleArn: String
     PinpointSMSChannel:
       Type: AWS::Pinpoint::SMSChannel
-      Properties: 
-        ApplicationId: 
+      Properties:
+        ApplicationId:
           Ref: PinpointApp
         Enabled: true
         # ShortCode: String

@@ -25,15 +25,24 @@ export class Server {
   }
 
   public async Start(): Promise<void> {
+    try {
+      //Import env variables
+      console.log("Starting Express Server");
+      dotenv.config({ path: path.resolve(process.cwd(), "./environments/") });
+      const env = process.env.NODE_ENV || "local";
+  public async Start(): Promise<void> {
     //Import env variables
     dotenv.config({ path: path.resolve(process.cwd(), "./environments/") });
     const env = process.env.NODE_ENV || "local";
 
-    // Open API connection to aurora serverless
-    await auroraConnectApi();
+      //Allow Cors
+      console.log("Enabling CORS");
+      this.httpServer.use(cors());
 
-    //Allow Cors
-    this.httpServer.use(cors());
+      //X-ray Segment Start
+      console.log("Open X-Ray Segment");
+      const appName = process.env.APP_NAME || "micro-base";
+      this.httpServer.use(xrayExpress.openSegment(appName + "-startup"));
 
     //X-ray Segment Start
     const appName = process.env.APP_NAME || "micro-base";
@@ -62,16 +71,18 @@ export class Server {
     const routes = await import("./middelware/tsoa/routes");
     routes.RegisterRoutes(this.httpServer);
 
-    //X-Ray Segment End
-    this.httpServer.use(xrayExpress.closeSegment());
+      //X-Ray Segment End
+      console.log("Ending X-Ray Segment");
+      this.httpServer.use(xrayExpress.closeSegment());
 
     //Swagger-UI
     this.httpServer.use("", swaggerUi.serve, async (_req: Request, res: Response) => {
       return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
     });
 
-    // Global Error handling
-    this.httpServer.use(globalErrorHandler);
+      // Global Error handling
+      console.log("Adding Global Error Handling");
+      this.httpServer.use(globalErrorHandler);
 
     //Start Express Server
     if (env === "local") {

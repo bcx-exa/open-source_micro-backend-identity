@@ -15,7 +15,84 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name_": {
+			"Pick_User.-or-preferred_username-or-password-or-email-or-phone_number-or-given_name-or-family_name-or-address-or-birth_date-or-locale-or-picture_": {
+				"properties": {
+					"preferred_username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phone_number": {
+						"type": "string"
+					},
+					"given_name": {
+						"type": "string"
+					},
+					"family_name": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"birth_date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"locale": {
+						"type": "string"
+					},
+					"picture": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"preferred_username",
+					"password"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"UserProfileUpdate": {
+				"$ref": "#/components/schemas/Pick_User.-or-preferred_username-or-password-or-email-or-phone_number-or-given_name-or-family_name-or-address-or-birth_date-or-locale-or-picture_"
+			},
+			"Pick_User.preferred_username_": {
+				"properties": {
+					"preferred_username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"preferred_username"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"VerifyResend": {
+				"$ref": "#/components/schemas/Pick_User.preferred_username_"
+			},
+			"PasswordResetRequest": {
+				"$ref": "#/components/schemas/Pick_User.preferred_username_"
+			},
+			"Pick_User.password_": {
+				"properties": {
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"PasswordReset": {
+				"$ref": "#/components/schemas/Pick_User.password_"
+			},
+			"Pick_User.preferred_username-or-password-or-given_name-or-family_name_": {
 				"properties": {
 					"preferred_username": {
 						"type": "string"
@@ -38,9 +115,9 @@
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
 			"SignUp": {
-				"$ref": "#/components/schemas/Pick_UserProfile.preferred_username-or-password-or-given_name-or-family_name_"
+				"$ref": "#/components/schemas/Pick_User.preferred_username-or-password-or-given_name-or-family_name_"
 			},
-			"Pick_UserProfile.preferred_username-or-password_": {
+			"Pick_User.preferred_username-or-password_": {
 				"properties": {
 					"preferred_username": {
 						"type": "string"
@@ -57,7 +134,7 @@
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
 			"SignIn": {
-				"$ref": "#/components/schemas/Pick_UserProfile.preferred_username-or-password_"
+				"$ref": "#/components/schemas/Pick_User.preferred_username-or-password_"
 			}
 		},
 		"securitySchemes": {
@@ -99,6 +176,226 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/account/profile": {
+			"post": {
+				"operationId": "ProfilePost",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Profile API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Account"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserProfileUpdate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/account/verify/resend": {
+			"post": {
+				"operationId": "VerifyResend",
+				"responses": {
+					"200": {
+						"description": "Verification Message Resent!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Verification Message API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Account"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/VerifyResend"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/account/verify": {
+			"get": {
+				"operationId": "VerifyGet",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Verify API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Account"
+				],
+				"security": [
+					{
+						"jwt-query": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/account/password/reset/request": {
+			"post": {
+				"operationId": "PasswordRequestPost",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Verify API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Account"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PasswordResetRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/account/password/reset": {
+			"post": {
+				"operationId": "PasswordResetPost",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Verify API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Account"
+				],
+				"security": [
+					{
+						"jwt-query": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PasswordReset"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/auth/signup": {
 			"post": {
 				"operationId": "SignUpPost",
@@ -123,7 +420,7 @@
 					}
 				},
 				"tags": [
-					"AuthController"
+					"Authentication"
 				],
 				"security": [],
 				"parameters": [],
@@ -163,7 +460,7 @@
 					}
 				},
 				"tags": [
-					"AuthController"
+					"Authentication"
 				],
 				"security": [],
 				"parameters": [],
@@ -177,49 +474,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/auth/verify": {
-			"get": {
-				"operationId": "VerifyGet",
-				"responses": {
-					"200": {
-						"description": "Account Verified!",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					},
-					"Verify API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"AuthController"
-				],
-				"security": [
-					{
-						"jwt-query": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "token",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
 			}
 		},
 		"/auth/google": {
@@ -236,7 +490,7 @@
 					}
 				},
 				"tags": [
-					"AuthController"
+					"Authentication"
 				],
 				"security": [],
 				"parameters": []
@@ -256,7 +510,7 @@
 					}
 				},
 				"tags": [
-					"AuthController"
+					"Authentication"
 				],
 				"security": [],
 				"parameters": []
