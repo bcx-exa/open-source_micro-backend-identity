@@ -12,12 +12,12 @@
       "google": {
         "type": "oauth2",
         "authorizationUrl": "http://localhost:7000/auth/google",
-        "flow": "implicit",
-        "scopes": {
-          "profile": "profile",
-          "email": "email",
-          "phone": "phone"
-        }
+        "flow": "implicit"
+      },
+      "facebook": {
+        "type": "oauth2",
+        "authorizationUrl": "http://localhost:7000/auth/facebook",
+        "flow": "implicit"
       }
     },
     "outputDirectory": "src/middelware/tsoa",

@@ -247,7 +247,6 @@ export function RegisterRoutes(app: express.Express) {
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.get('/auth/google',
-        authenticateMiddleware([{ "google": ["profile"] }]),
         function(request: any, response: any, next: any) {
             const args = {
             };
@@ -264,12 +263,11 @@ export function RegisterRoutes(app: express.Express) {
             const controller = new AuthenticationController();
 
 
-            const promise = controller.SignInGooglePost.apply(controller, validatedArgs as any);
+            const promise = controller.SignInGoogle.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.get('/auth/google/callback',
-        authenticateMiddleware([{ "google_callback": [] }]),
+    app.get('/auth/facebook',
         function(request: any, response: any, next: any) {
             const args = {
             };
@@ -286,7 +284,7 @@ export function RegisterRoutes(app: express.Express) {
             const controller = new AuthenticationController();
 
 
-            const promise = controller.SignInGoolgeCallbackPost.apply(controller, validatedArgs as any);
+            const promise = controller.SignInFacebook.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

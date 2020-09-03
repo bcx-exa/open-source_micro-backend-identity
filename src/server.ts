@@ -10,7 +10,9 @@ import cors from "cors";
 import passport from "passport";
 import { registerStrategies } from "./middelware/passport/passport";
 import { globalErrorHandler } from "./helpers/handlers/error-handling";
+import { auroraConnectApi } from "./helpers/database/aurora";
 
+//import { auroraConnectApi } from './helpers/aurora';
 
 export class Server {
   public httpServer: any;
@@ -39,20 +41,25 @@ export class Server {
       this.httpServer.use(xrayExpress.openSegment(appName + "-startup"));
 
       //Add Passport Middelware to all routes
-      console.log("Registering Passport Strategies");
       registerStrategies();
       this.httpServer.use(passport.initialize());
+      this.httpServer.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+      this.httpServer.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/failedlogin" }), function (_req, res) {
+        res.redirect("/");
+      });
+
+      this.httpServer.get("/auth/facebook", passport.authenticate("facebook"));
+      this.httpServer.get("/auth/facebook/callback", passport.authenticate("facebook", { successRedirect: "/", failureRedirect: "/failedlogin" }), function (_req, res) {
+        res.redirect("/");
+      });
 
       //Generate tsoa routes & spec
-
       if (env === "local") {
-        console.log("Generating TSOA specs");
         await execShellCommand("npm run tsoa");
         credsConfigLocal();
       }
 
       //Register tsoa routes
-      console.log("Getting routes from TSOA");
       const routes = await import("./middelware/tsoa/routes");
       routes.RegisterRoutes(this.httpServer);
 
@@ -61,18 +68,9 @@ export class Server {
       this.httpServer.use(xrayExpress.closeSegment());
 
       //Swagger-UI
-      console.log("Launching Swagger-UI");
-      this.httpServer.use(
-        "",
-        swaggerUi.serve,
-        async (_req: Request, res: Response) => {
-          return res.send(
-            swaggerUi.generateHTML(
-              await import("./middelware/tsoa/swagger.json")
-            )
-          );
-        }
-      );
+      this.httpServer.use("", swaggerUi.serve, async (_req: Request, res: Response) => {
+        return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
+      });
 
       // Global Error handling
       console.log("Adding Global Error Handling");
@@ -80,7 +78,6 @@ export class Server {
 
       //Start Express Server
       if (env === "local") {
-        console.log("Starting Express Server Locally");
         const port = process.env.PORT || 5000;
         this.httpServer.listen(port, () => {
           console.log(`Server listening on port http://localhost:${port}`);
