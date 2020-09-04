@@ -11,6 +11,8 @@ import passport from "passport";
 import { registerStrategies } from "./middelware/passport/passport";
 import { globalErrorHandler } from "./helpers/handlers/error-handling";
 import { auroraConnectApi } from "./helpers/database/aurora";
+import { issueJWT } from "./helpers/security/crypto";
+import { profile } from "./types/scopes";
 
 //import { auroraConnectApi } from './helpers/aurora';
 
@@ -44,13 +46,35 @@ export class Server {
       registerStrategies();
       this.httpServer.use(passport.initialize());
       this.httpServer.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-      this.httpServer.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/failedlogin" }), function (_req, res) {
-        res.redirect("/");
+      this.httpServer.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/failedlogin" }), async function (_req, res) {
+        const profileClaims: profile = {
+          preferred_username: _req.user.preferred_username,
+          given_name: _req.user.given_name,
+          family_name: _req.user.family_name,
+          address: _req.user.address,
+          created_at: _req.user.created_at,
+          locale: _req.user.locale,
+          picture: _req.user.picture,
+          birth_date: _req.user.birth_date,
+          updated_at: _req.user.updated_at,
+        };
+        res.send(await issueJWT(_req.user.identity_id, "7d", false, profileClaims));
       });
 
       this.httpServer.get("/auth/facebook", passport.authenticate("facebook"));
-      this.httpServer.get("/auth/facebook/callback", passport.authenticate("facebook", { successRedirect: "/", failureRedirect: "/failedlogin" }), function (_req, res) {
-        res.redirect("/");
+      this.httpServer.get("/auth/facebook/callback", passport.authenticate("facebook", { successRedirect: "/", failureRedirect: "/failedlogin" }), async function (_req, res) {
+        const profileClaims: profile = {
+          preferred_username: _req.user.preferred_username,
+          given_name: _req.user.given_name,
+          family_name: _req.user.family_name,
+          address: _req.user.address,
+          created_at: _req.user.created_at,
+          locale: _req.user.locale,
+          picture: _req.user.picture,
+          birth_date: _req.user.birth_date,
+          updated_at: _req.user.updated_at,
+        };
+        res.send(await issueJWT(_req.user.identity_id, "7d", false, profileClaims));
       });
 
       //Generate tsoa routes & spec
