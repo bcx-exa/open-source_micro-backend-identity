@@ -32,7 +32,7 @@ export async function registerStrategies(): Promise<any> {
     secretOrKey: pubKey.Parameter.Value,
     algorithms: ["RS256"],
   };
-
+  
   // Look in auth header
   passport.use(
     "jwt",
