@@ -13,7 +13,7 @@ export type UserProfileUpdate = Pick<
   | "given_name"
   | "family_name"
   | "address"
-  | "birth_date"
+  | "birthdate"
   | "locale"
   | "picture"
   >;

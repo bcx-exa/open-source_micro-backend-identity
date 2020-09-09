@@ -1,65 +1,52 @@
 import { SignIn, SignUp } from "../types/authentication";
 import { User } from "../models/user";
-import { profile } from "../types/scopes";
-import { validatePasswordHash, generatePasswordHash, issueJWT } from "../helpers/security/crypto";
-import { v4 as uuidv4 } from "uuid";
-import { Conflict, Unauthorized, NotVerified, InvalidFormat, PasswordPolicyException } from "../helpers/handlers/error-handling";
-import { auroraConnectApi } from "../helpers/database/aurora";
-import { validateUsername, validatePasswordStrength } from "../helpers/handlers/validation";
-import { sendVerificationMessage } from "../helpers/messaging/verification";
+import { Client } from "../models/client";
+import { validatePasswordHash, generatePasswordHash } from "../components/security/crypto";
+import { Conflict, Unauthorized, NotVerified, InvalidFormat } from "../components/handlers/error-handling";
+import { auroraConnectApi } from "../components/database/aurora";
+import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
+import { sendVerificationMessage } from "../components/messaging/account-verification";
+import { findUserByUsername } from "../components/database/find-user";
+import { generateIdToken } from "../components/security/tokens";
+import { v4 as uuidv4 } from 'uuid';
 
 export class AuthenticationService {
-  public async SignUp(signUp: SignUp): Promise<any> {
+  public async SignUp(body: SignUp): Promise<any> {
     // Check if username is of type email or of type phone_number
-    const validPreferredUsername = validateUsername(signUp.preferred_username);
+    const validPreferredUsername = validateUsername(body.preferred_username);
     const isValidEmail = validPreferredUsername.isValidEmail;
     const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
 
-    //if not valid types, throw InvalidFormat
-    if (!isValidEmail && !isValidPhoneNumber) {
-      throw new InvalidFormat("Not a valid phone number or email address");
-    }
-
-    // Check if user exist
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    const find = isValidEmail ? { email: signUp.preferred_username } : { phone_number: signUp.preferred_username };
-    const findUser = await repository.findOne(find);
-
+    // Check if user exists
+    const findUser = await findUserByUsername(body.preferred_username, validPreferredUsername);
+    
     // If user exist throw conflict error
     if (findUser) {
       throw new Conflict("User Already Exists");
     }
-
     // Check password strength
-    const pwdValidator = validatePasswordStrength();
-    const checkPwdStrength = pwdValidator.validate(signUp.password);
-
-    // If pwd not strong enough throw
-    if (!checkPwdStrength) {
-      throw new PasswordPolicyException("Password does not conform to the password policy. The policy enforces the following rules " + pwdValidator.validate("joke", { list: true }));
-    }
+    validatePasswordStrength(body.password);
 
     // Hash user password
-    const genPassHash = generatePasswordHash(signUp.password);
+    const genPassHash = generatePasswordHash(body.password);
     const salt = genPassHash.salt;
     const hash = genPassHash.genHash;
     const date = new Date();
 
     // Create user object
     const newUser: User = {
-      identity_id: uuidv4(),
+      user_id: uuidv4(),
       salt: salt,
-      preferred_username: signUp.preferred_username,
+      preferred_username: body.preferred_username,
       password: hash, // This is the hash
-      given_name: signUp.given_name,
-      family_name: signUp.family_name,
+      given_name: body.given_name,
+      family_name: body.family_name,
       picture: null,
-      phone_number: isValidPhoneNumber ? signUp.preferred_username : null,
+      phone_number: isValidPhoneNumber ? body.preferred_username : null,
       address: null,
       locale: null,
-      email: isValidEmail ? signUp.preferred_username : null,
-      birth_date: null,
+      email: isValidEmail ? body.preferred_username : null,
+      birthdate: null,
       email_verified: false,
       phone_number_verified: false,
       created_at: date,
@@ -72,35 +59,68 @@ export class AuthenticationService {
       facebookId: null,
       verification_attempts: 1,
       account_locked: false,
+      user_groups: null
     };
 
     // Save user to DB
+    const connection = await auroraConnectApi();
+    const repository = await connection.getRepository(User);
     await repository.save(newUser);
 
     // Send verification message async
     sendVerificationMessage(newUser, isValidPhoneNumber, isValidEmail);
 
-    // Return sucessful signUp
+    // Return sucessful body
     return {
       statusCode: 200,
       body: "User signed up sucessfully, please verify your account!",
     };
   }
-  public async SignIn(signIn: SignIn): Promise<any> {
+
+  public async SignIn(response_type: string, scope:
+                      string, client_id: string, client_secret: string, state: string, body: SignIn): Promise<any> {
+    
+    
+    // Check for valid response type
+    if (response_type !== 'implicit') {
+      throw new InvalidFormat('Only implicit flow supported at this stage!');
+    }
+
+    // Check for valid scopes
+    if (scope !== 'openid') {
+      throw new InvalidFormat('Only supported scope for local signin is openid!');
+    }
+
+    // Connect to db to find authorized clients
+    const connection = await auroraConnectApi();
+    const repository = await connection.getRepository(Client);
+    const findClient = await repository.findOne({ client_id: client_id });
+
+    // Check if client exists
+    if (!findClient) {
+      throw new Unauthorized('Not a valid client id or client secret!');
+    }
+    
+    // Validate client secret
+    const validateClientSecret = validatePasswordHash(client_secret, findClient.client_secret, findClient.client_secret_salt);
+
+    console.log(validateClientSecret);
+    if (!validateClientSecret) {
+      throw new Unauthorized('Not a valid client id or client secret!');
+    }
+
+    // Validate state
+    if (findClient.state !== state) {
+      throw new Unauthorized('State mismatch');
+    }
+  
     // Check if username is of type email or of type phone_number
-    const validPreferredUsername = validateUsername(signIn.preferred_username);
+    const validPreferredUsername = validateUsername(body.preferred_username);
     const isValidEmail = validPreferredUsername.isValidEmail;
     const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
 
-    //if not valid types, throw InvalidFormat
-    if (!isValidEmail && !isValidPhoneNumber) {
-      throw new InvalidFormat("Not a valid phone number or email address");
-    }
-
     // Connect to db to find user
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    const findUser = await repository.findOne({ preferred_username: signIn.preferred_username });
+    const findUser = await findUserByUsername(body.preferred_username, validPreferredUsername);
 
     // Can't find user throw unauthorized
     if (!findUser) {
@@ -109,7 +129,9 @@ export class AuthenticationService {
 
     // If account is locked throw
     if (findUser.account_locked) {
-      throw new Unauthorized("Your account has been locked as you have requested too many verification requests, please contact support!");
+      let errorMessage = "Your account has been locked ";
+      errorMessage += "as you have requested too many verification requests, please contact support";
+      throw new Unauthorized(errorMessage);
     }
 
     // Valid email address but email not verified
@@ -123,24 +145,16 @@ export class AuthenticationService {
     }
 
     // Validate password
-    const validPassword = validatePasswordHash(signIn.password, findUser.password, findUser.salt);
-    const dbUser: User = findUser as User;
+    const validPassword = validatePasswordHash(body.password, findUser.password, findUser.salt);
 
-    const profileClaims: profile = {
-      preferred_username: dbUser.preferred_username,
-      given_name: dbUser.given_name,
-      family_name: dbUser.family_name,
-      address: dbUser.address,
-      created_at: dbUser.created_at,
-      locale: dbUser.locale,
-      picture: dbUser.picture,
-      birth_date: dbUser.birth_date,
-      updated_at: dbUser.updated_at,
-    };
 
     // If valid, issue JWT
     if (validPassword) {
-      return issueJWT(dbUser.identity_id, "7d", false, profileClaims);
+      const idToken = await generateIdToken(findUser);
+      return {
+        id_token: idToken,
+        token_type: "bearer"
+      }
     }
     // Throw unauthorized
     else {

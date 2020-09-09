@@ -6,10 +6,10 @@
 #       PointInTimeRecoverySpecification:
 #         PointInTimeRecoveryEnabled: true
 #       KeySchema:
-#         - AttributeName: identity_id
+#         - AttributeName: user_id
 #           KeyType: HASH
 #       AttributeDefinitions:
-#         - AttributeName: identity_id
+#         - AttributeName: user_id
 #           AttributeType: S
 #         - AttributeName: email
 #           AttributeType: S

@@ -1,10 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { ManyToMany, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { UserGroup } from "./user-group";
 
 //https://www.iana.org/assignments/jwt/jwt.xhtml
 @Entity()
 export class User {
   @PrimaryGeneratedColumn("uuid")
-  identity_id: string;
+  user_id: string;
+
+  @Column({ nullable: true })
+  googleId: string;
+
+  @Column({ nullable: true })
+  facebookId: string;
 
   @Column({ length: 100 })
   preferred_username: string;
@@ -16,10 +23,19 @@ export class User {
   password: string;
 
   @Column({ nullable: true, length: 100 })
+  name?: string;
+
+  @Column({ nullable: true, length: 100 })
   given_name?: string;
 
   @Column({ nullable: true, length: 100 })
   family_name?: string;
+
+  @Column({ nullable: true, length: 100 })
+  nickname?: string;
+
+  @Column({ nullable: true, length: 100 })
+  gender?: string;
 
   @Column({ nullable: true, length: 100 })
   picture?: string;
@@ -37,7 +53,7 @@ export class User {
   locale?: string;
 
   @Column("datetime", { nullable: true })
-  birth_date?: Date;
+  birthdate?: Date;
 
   @Column("datetime")
   created_at: Date;
@@ -69,9 +85,7 @@ export class User {
   @Column()
   account_locked: boolean;
 
-  @Column({ nullable: true })
-  googleId: string;
-
-  @Column({ nullable: true })
-  facebookId: string;
+  //Join tables on user group side
+  @ManyToMany(() => UserGroup, user_group => user_group.users, { nullable: true })
+  user_groups: UserGroup[];
 }

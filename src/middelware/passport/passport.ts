@@ -3,7 +3,7 @@ import passport from "passport";
 import AWS from "aws-sdk";
 import { User } from "../../models/user";
 import "reflect-metadata";
-import { auroraConnectApi } from "../../helpers/database/aurora";
+import { auroraConnectApi } from "../../components/database/aurora";
 import googleoauth from "passport-google-oauth20";
 import facebookoauth from "passport-facebook";
 import { v4 as uuidv4 } from "uuid";
@@ -40,7 +40,7 @@ export async function registerStrategies(): Promise<any> {
       try {
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(User);
-        const user = await repository.findOne({ identity_id: jwtPayload.sub });
+        const user = await repository.findOne({ user_id: jwtPayload.sub });
 
         if (user) {
           return done(null, user);
@@ -67,7 +67,7 @@ export async function registerStrategies(): Promise<any> {
       try {
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(User);
-        const dbUser: User = await repository.findOne({ identity_id: jwtPayload.sub });
+        const dbUser: User = await repository.findOne({ user_id: jwtPayload.sub });
 
         const user = { dbUser: dbUser, jwt: jwtPayload };
 
@@ -108,7 +108,7 @@ export async function registerStrategies(): Promise<any> {
           } else {
             const date = new Date();
             const userProfile: User = {
-              identity_id: uuidv4(),
+              user_id: uuidv4(),
               salt: "",
               preferred_username: profile._json.email,
               password: "No Password",
@@ -119,7 +119,7 @@ export async function registerStrategies(): Promise<any> {
               address: null,
               locale: profile._json.locale,
               email: profile._json.email,
-              birth_date: null,
+              birthdate: null,
               email_verified: profile._json.email_verified,
               phone_number_verified: false,
               created_at: date,
@@ -132,6 +132,7 @@ export async function registerStrategies(): Promise<any> {
               facebookId: null,
               account_locked: false,
               verification_attempts: 0,
+              user_groups: null
             };
             await repository.save(userProfile);
             return done(null, userProfile);
@@ -166,7 +167,7 @@ export async function registerStrategies(): Promise<any> {
           } else {
             const date = new Date();
             const userProfile: User = {
-              identity_id: uuidv4(),
+              user_id: uuidv4(),
               salt: "",
               preferred_username: profile._json.email,
               password: "No Password",
@@ -177,7 +178,7 @@ export async function registerStrategies(): Promise<any> {
               address: null,
               locale: null,
               email: profile._json.email,
-              birth_date: null,
+              birthdate: null,
               email_verified: false,
               phone_number_verified: false,
               created_at: date,
@@ -190,6 +191,7 @@ export async function registerStrategies(): Promise<any> {
               facebookId: profile.id,
               account_locked: false,
               verification_attempts: 0,
+              user_groups: null
             };
             await repository.save(userProfile);
             return done(null, userProfile);
@@ -202,14 +204,14 @@ export async function registerStrategies(): Promise<any> {
   );
 
   passport.serializeUser(function (user: any, done) {
-    done(null, user.identity_id);
+    done(null, user.user_id);
   });
 
   passport.deserializeUser(async function (_id, done) {
     try {
       const connection = await auroraConnectApi();
       const repository = await connection.getRepository(User);
-      const user = await repository.findOne({ identity_id: _id });
+      const user = await repository.findOne({ user_id: _id });
       if (user) {
         return done(null, user);
       } else {

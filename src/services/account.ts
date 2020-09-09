@@ -1,11 +1,12 @@
 import { UserProfileUpdate, VerifyResend, PasswordResetRequest, PasswordReset } from "../types/account";
 import { User } from "../models/user";
-import { generatePasswordHash } from "../helpers/security/crypto";
-import { Conflict, Unauthorized, InvalidFormat, PasswordPolicyException } from "../helpers/handlers/error-handling";
-import { auroraConnectApi } from "../helpers/database/aurora";
-import { validateUsername,  validatePasswordStrength } from "../helpers/handlers/validation";
-import { sendVerificationMessage } from "../helpers/messaging/verification";
-import { sendPasswordResetRequest } from "../helpers/messaging/password";
+import { generatePasswordHash } from "../components/security/crypto";
+import { Conflict, Unauthorized } from "../components/handlers/error-handling";
+import { auroraConnectApi } from "../components/database/aurora";
+import { validateUsername,  validatePasswordStrength } from "../components/handlers/validation";
+import { sendVerificationMessage } from "../components/messaging/account-verification";
+import { sendPasswordResetRequest } from "../components/messaging/password-reset";
+import { findUserByUsername } from "../components/database/find-user";
 
 export class AccountService {
   public async VerifyAccount(token:string, req: any): Promise<any> {
@@ -51,20 +52,12 @@ export class AccountService {
   }
   public async VerifyResend(body: VerifyResend): Promise<any> {
     // Check if username is of type email or of type phone_number
-    const validPreferredUsername = validateUsername(body.preferred_username);
-    const isValidEmail = validPreferredUsername.isValidEmail;
-    const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
-    
-    //if not valid types, throw InvalidFormat
-    if (!isValidEmail && !isValidPhoneNumber) {
-      throw new InvalidFormat("Not a valid phone number or email address");
-    } 
+    const validatePreferredUsername = validateUsername(body.preferred_username);
+    const isValidEmail = validatePreferredUsername.isValidEmail;
+    const isValidPhoneNumber = validatePreferredUsername.isValidPhoneNumber;
 
     // Check if user exist
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    const find = isValidEmail ? { email: body.preferred_username } : { phone_number: body.preferred_username };
-    const findUser = await repository.findOne(find);
+    const findUser = await findUserByUsername(body.preferred_username, validateUsername);
 
     // Can't find user throw unauthorized
     if(!findUser) {
@@ -86,6 +79,8 @@ export class AccountService {
     }
 
     // Save users
+    const connection = await auroraConnectApi();
+    const repository = await connection.getRepository(User);
     repository.save(findUser);
 
     // If account locked, throw account locked
@@ -105,14 +100,7 @@ export class AccountService {
   }
   public async ProfileUpdate(profile: UserProfileUpdate, req: any): Promise<any> {    
     // Check if username is of type email or of type phone_number
-    const validPreferredUsername = validateUsername(profile.preferred_username);
-    const isValidEmail = validPreferredUsername.isValidEmail;
-    const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
-    
-    //if not valid types, throw InvalidFormat
-    if (!isValidEmail && !isValidPhoneNumber) {
-      throw new InvalidFormat("Not a valid phone number or email address");
-    }
+    await validateUsername(profile.preferred_username);
 
     // Extract info from req object
     const dbUser: User = req.user.dbUser;  
@@ -120,16 +108,10 @@ export class AccountService {
     // Only update password if user choose to do so
     if (profile.password) {
       // Check password strength
-      const pwdValidator = validatePasswordStrength();
-      const checkPwdStrength = pwdValidator.validate(profile.password);
-  
-      // If pwd not strong enough throw error
-      if(!checkPwdStrength) {
-        throw new PasswordPolicyException('Password does not conform to the password policy. The policy enforces the following rules ' + pwdValidator.validate('joke', { list: true }))
-      }
+      validatePasswordStrength(profile.password);
       
       // Hash user password
-      const genPassHash = generatePasswordHash(profile.password);
+      const genPassHash = await generatePasswordHash(profile.password);
       const salt = genPassHash.salt;
       const hash = genPassHash.genHash;  
       
@@ -156,7 +138,7 @@ export class AccountService {
     dbUser.given_name = profile.given_name;
     dbUser.family_name = profile.family_name;
     dbUser.address = profile.address;
-    dbUser.birth_date = profile.birth_date;
+    dbUser.birthdate = profile.birthdate;
     dbUser.locale = profile.locale;
     dbUser.picture = profile.picture;
 
@@ -174,18 +156,10 @@ export class AccountService {
     const validPreferredUsername = validateUsername(body.preferred_username);
     const isValidEmail = validPreferredUsername.isValidEmail;
     const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
-     
-    //if not valid types, throw InvalidFormat
-    if (!isValidEmail && !isValidPhoneNumber) {
-      throw new InvalidFormat("Not a valid phone number or email address");
-    }
 
     // Check if user exist
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    const find = isValidEmail ? { email: body.preferred_username } : { phone_number: body.preferred_username };
-    const findUser = await repository.findOne(find);
-    
+    const findUser = await findUserByUsername(body.preferred_username, validPreferredUsername);
+
     //If user doesn't exist throw error
     if (!findUser) {
       throw new Unauthorized("Invalid username or password");
@@ -221,13 +195,7 @@ export class AccountService {
     }
 
     // Check password strength
-    const pwdValidator = validatePasswordStrength();
-    const checkPwdStrength = pwdValidator.validate(body.password);
-
-    // If pwd not strong enough throw error
-    if(!checkPwdStrength) {
-      throw new PasswordPolicyException('Password does not conform to the password policy. The policy enforces the following rules ' + pwdValidator.validate('joke', { list: true }))
-    }
+    validatePasswordStrength(body.password);
 
     // Hash user password
     const genPassHash = generatePasswordHash(body.password);
@@ -250,5 +218,4 @@ export class AccountService {
       body: "Password has been reset, please try login!"
     }
   }  
-
 }

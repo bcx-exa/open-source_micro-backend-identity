@@ -1,20 +1,20 @@
 import express, { Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
 import bodyParser from "body-parser";
-import { execShellCommand } from "./helpers/cli/shell";
+import { execShellCommand } from "./components/cli/shell";
 import xrayExpress from "aws-xray-sdk-express";
 import dotenv from "dotenv-flow";
-import { credsConfigLocal } from "./helpers/security/aws";
+import { credsConfigLocal } from "./components/security/aws";
 import path from "path";
 import cors from "cors";
 import passport from "passport";
 import { registerStrategies } from "./middelware/passport/passport";
-import { globalErrorHandler } from "./helpers/handlers/error-handling";
-import { auroraConnectApi } from "./helpers/database/aurora";
-import { issueJWT } from "./helpers/security/crypto";
-import { profile } from "./types/scopes";
+import { globalErrorHandler } from "./components/handlers/error-handling";
+// import { auroraConnectApi } from "./components/database/aurora";
+// import { issueJWT } from "./components/security/crypto";
+// import { profile } from "./types/scopes";
 
-//import { auroraConnectApi } from './helpers/aurora';
+//import { auroraConnectApi } from './components/aurora';
 
 export class Server {
   public httpServer: any;
@@ -45,37 +45,37 @@ export class Server {
       //Add Passport Middelware to all routes
       registerStrategies();
       this.httpServer.use(passport.initialize());
-      this.httpServer.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-      this.httpServer.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/failedlogin" }), async function (_req, res) {
-        const profileClaims: profile = {
-          preferred_username: _req.user.preferred_username,
-          given_name: _req.user.given_name,
-          family_name: _req.user.family_name,
-          address: _req.user.address,
-          created_at: _req.user.created_at,
-          locale: _req.user.locale,
-          picture: _req.user.picture,
-          birth_date: _req.user.birth_date,
-          updated_at: _req.user.updated_at,
-        };
-        res.send(await issueJWT(_req.user.identity_id, "7d", false, profileClaims));
-      });
+      // this.httpServer.get("/auth/google", passport.authenticate("google", { scope: ["openid", "profile", "email"] }));
+      // this.httpServer.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/failedlogin" }), async function (_req, res) {
+      //   const profileClaims: profile = {
+      //     preferred_username: _req.user.preferred_username,
+      //     given_name: _req.user.given_name,
+      //     family_name: _req.user.family_name,
+      //     address: _req.user.address,
+      //     created_at: _req.user.created_at,
+      //     locale: _req.user.locale,
+      //     picture: _req.user.picture,
+      //     birthdate: _req.user.birthdate,
+      //     updated_at: _req.user.updated_at,
+      //   };
+      //   res.send(await issueJWT(_req.user.user_id, "7d", false, profileClaims));
+      // });
 
-      this.httpServer.get("/auth/facebook", passport.authenticate("facebook"));
-      this.httpServer.get("/auth/facebook/callback", passport.authenticate("facebook", { successRedirect: "/", failureRedirect: "/failedlogin" }), async function (_req, res) {
-        const profileClaims: profile = {
-          preferred_username: _req.user.preferred_username,
-          given_name: _req.user.given_name,
-          family_name: _req.user.family_name,
-          address: _req.user.address,
-          created_at: _req.user.created_at,
-          locale: _req.user.locale,
-          picture: _req.user.picture,
-          birth_date: _req.user.birth_date,
-          updated_at: _req.user.updated_at,
-        };
-        res.send(await issueJWT(_req.user.identity_id, "7d", false, profileClaims));
-      });
+      // this.httpServer.get("/auth/facebook", passport.authenticate("facebook"));
+      // this.httpServer.get("/auth/facebook/callback", passport.authenticate("facebook", { successRedirect: "/", failureRedirect: "/failedlogin" }), async function (_req, res) {
+      //   const profileClaims: profile = {
+      //     preferred_username: _req.user.preferred_username,
+      //     given_name: _req.user.given_name,
+      //     family_name: _req.user.family_name,
+      //     address: _req.user.address,
+      //     created_at: _req.user.created_at,
+      //     locale: _req.user.locale,
+      //     picture: _req.user.picture,
+      //     birthdate: _req.user.birthdate,
+      //     updated_at: _req.user.updated_at,
+      //   };
+      //   res.send(await issueJWT(_req.user.user_id, "7d", false, profileClaims));
+      // });
 
       //Generate tsoa routes & spec
       if (env === "local") {

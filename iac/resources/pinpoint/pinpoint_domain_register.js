@@ -1,6 +1,6 @@
-const auth = require("./helpers/aws");
+const auth = require("./components/aws");
 const dotenv = require("dotenv-flow");
-const ses = require("./helpers/ses");
+const ses = require("./components/ses");
 const path = require("path");
 
 async function run() {

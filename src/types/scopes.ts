@@ -1,12 +1,24 @@
 import { User } from '../models/user';
 
+
+
+export type openid = 
+  { sub: string,
+    iss: string,
+    aud: string,
+    iat: number,
+    auth_time: number };
+
 export type profile = Pick<
   User,
+  | "nickname"
+  | "gender"
+  | "name"
   | "preferred_username"
   | "given_name"
   | "family_name"
   | "address"
-  | "birth_date"
+  | "birthdate"
   | "created_at"
   | "locale"
   | "picture"

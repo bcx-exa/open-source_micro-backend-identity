@@ -1,0 +1,277 @@
+<mxfile host="1535b04e-72e4-4e3c-bc11-8ec48725a483" modified="2020-09-07T07:06:08.485Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.48.2 Chrome/78.0.3904.130 Electron/7.3.2 Safari/537.36" etag="cm_RnCOCugztbZR2nZ6N" version="13.1.3">
+    <diagram id="pUXx-3Z7_ycYUZh1yO9O" name="Page-1">
+        <mxGraphModel dx="1046" dy="336" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-202" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="50" width="1279" height="1082" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-109" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="249" y="339" width="222.82" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-103" value="Oath 2.0 Google &amp;amp; Facebook" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="696.5" y="92" width="100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-105" value="Resource Owner" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="289" y="379" width="115" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-110" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="649" y="603.72" width="227.5" height="315.28" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-112" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1190.25" y="673.72" width="170" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-114" value="User" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.user;" parent="1" vertex="1">
+                    <mxGeometry x="305.25" y="412.97" width="31.25" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-120" value="Identity Microservice" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.lambda;fillColor=#F58534;gradientColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="753.87" y="640.72" width="26.5" height="33" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-124" value="Client" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="707.25" y="611.72" width="115" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-125" value="Resource Server" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="1219.25" y="678.72" width="115" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-126" value="" style="html=1;aspect=fixed;strokeColor=none;shadow=0;align=center;verticalAlign=top;fillColor=#3B8DF1;shape=mxgraph.gcp2.cloud_server" parent="1" vertex="1">
+                    <mxGeometry x="1220.25" y="710.72" width="40" height="35.6" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-127" value="API" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="1220.25" y="754.22" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-128" value="" style="shape=cylinder2;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1300.25" y="701.72" width="40" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-129" value="DB" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="1300.25" y="754.22" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-130" value="User who owns the data" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="349" y="265.70000000000005" width="98.75" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-131" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="345.31500000000005" y="326.6999999999998" as="sourcePoint"/>
+                        <mxPoint x="345.31500000000005" y="326.70000000000005" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-132" value="Application that wants the data" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="679.63" y="523.7" width="98.75" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-133" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="8q8ekwE0IZedJlm-Vp6M-132" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="728.38" y="599.7" as="sourcePoint"/>
+                        <mxPoint x="729.0100000000001" y="598.72" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-134" value="Where the data is stored and protected" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="1228.38" y="839.72" width="98.75" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-135" value="" style="endArrow=classic;html=1;" parent="1" source="8q8ekwE0IZedJlm-Vp6M-134" target="8q8ekwE0IZedJlm-Vp6M-112" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="565.876487741014" y="629.72" as="sourcePoint"/>
+                        <mxPoint x="565.8800000000001" y="688.74" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-136" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1049" y="199" width="250" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-137" value="Authorization Server" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="1109" y="241.22000000000003" width="122.5" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-140" value="The entity that grants the client temporary access to the resource server" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="1120.88" y="64.01999999999998" width="98.75" height="75.96" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-141" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="8q8ekwE0IZedJlm-Vp6M-140" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1169.63" y="199.98000000000002" as="sourcePoint"/>
+                        <mxPoint x="1170.26" y="199" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-145" value="" style="html=1;aspect=fixed;strokeColor=none;shadow=0;align=center;verticalAlign=top;fillColor=#3B8DF1;shape=mxgraph.gcp2.cloud_server" parent="1" vertex="1">
+                    <mxGeometry x="1150.25" y="273.4000000000001" width="40" height="35.6" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-147" value="" style="endArrow=classic;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=0.014;exitY=0.913;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="8q8ekwE0IZedJlm-Vp6M-136" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1049" y="309.01920013298786" as="sourcePoint"/>
+                        <mxPoint x="472.1300000000001" y="471" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-148" value="Step 3 - Google asks user login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-147" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1517" y="-2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-149" value="" style="endArrow=classic;html=1;exitX=1.006;exitY=0.934;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="474.03692" y="508.47299999999996" as="sourcePoint"/>
+                        <mxPoint x="650" y="662.0690178669188" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-158" value="Step 1 - User Clicks on &lt;br&gt;login with Google" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-149" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3239" relative="1" as="geometry">
+                        <mxPoint x="19.61" y="7.9" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-150" value="" style="endArrow=classic;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1049" y="306" as="sourcePoint"/>
+                        <mxPoint x="472.1300000000001" y="414" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-151" value="Step 5 - Google asks user to give client &lt;br&gt;permissions to access his data" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-150" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1517" y="-2" relative="1" as="geometry">
+                        <mxPoint x="-24.879999999999995" y="9.14" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-152" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="8q8ekwE0IZedJlm-Vp6M-136" target="8q8ekwE0IZedJlm-Vp6M-110" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1211.9988031812213" y="369" as="sourcePoint"/>
+                        <mxPoint x="1039" y="543.02" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-153" value="Step 7 - Authorization server gives &lt;br&gt;authorization code, which gets exchanged &lt;br&gt;for a access token" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-152" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1517" y="-2" relative="1" as="geometry">
+                        <mxPoint x="39.309999999999995" y="-0.7999999999999972" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-156" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="472.1300000000001" y="441" as="sourcePoint"/>
+                        <mxPoint x="1045.87" y="334.51" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-157" value="Step 4- User logs in" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-156" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1517" y="-2" relative="1" as="geometry">
+                        <mxPoint x="-97.06" y="19.040000000000006" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-160" value="" style="endArrow=classic;html=1;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="472.1300000000001" y="379.32020524995687" as="sourcePoint"/>
+                        <mxPoint x="1049" y="275.49708016619115" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-161" value="Step 6 - User says yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-160" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1517" y="-2" relative="1" as="geometry">
+                        <mxPoint x="-138.55" y="21.82" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-168" value="DB" style="shape=cylinder2;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=11.985363913143601;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="736.5" y="809.72" width="60" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-169" value="" style="endArrow=classic;html=1;" parent="1" target="8q8ekwE0IZedJlm-Vp6M-168" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="767.12" y="699" as="sourcePoint"/>
+                        <mxPoint x="564.62" y="779.7" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-180" value="Step 10 - User Data Save &lt;br&gt;or Updated" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-169" vertex="1" connectable="0">
+                    <mxGeometry x="-0.4192" y="-4" relative="1" as="geometry">
+                        <mxPoint x="-9.12" y="23.47" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-170" value="" style="endArrow=classic;html=1;exitX=0.69;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="8q8ekwE0IZedJlm-Vp6M-110" target="8q8ekwE0IZedJlm-Vp6M-136" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="869" y="559" as="sourcePoint"/>
+                        <mxPoint x="919" y="509" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-171" value="Step 2 - Asks Google for&amp;nbsp;&lt;br&gt;access to user info&lt;br&gt;using scopes&lt;br&gt;&amp;amp; grant type of CODE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-170" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3309" y="-2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-173" value="" style="endArrow=classic;html=1;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="876.5" y="713.5366109785209" as="sourcePoint"/>
+                        <mxPoint x="1190.25" y="708.9599045346067" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-174" value="Step 8 - Get user info using the access token" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-173" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1278" y="3" relative="1" as="geometry">
+                        <mxPoint y="1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-175" value="" style="endArrow=classic;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1.014;entryY=0.368;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1190.25" y="750.2200000000003" as="sourcePoint"/>
+                        <mxPoint x="880" y="750.3430400000007" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-176" value="Step 9 - User data gets returned" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-175" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1278" y="3" relative="1" as="geometry">
+                        <mxPoint x="-8.96" y="-2.55" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-177" value="Browser" style="verticalLabelPosition=bottom;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;align=center;outlineConnect=0;shape=mxgraph.citrix.browser;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="360.25" y="404.49" width="27.5" height="41.97" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-181" value="" style="endArrow=classic;html=1;exitX=-0.015;exitY=0.426;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="645.5874999999996" y="724.0292800000002" as="sourcePoint"/>
+                        <mxPoint x="409" y="519" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-182" value="Step 11 - User gets &lt;br&gt;ID Token" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-181" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3239" relative="1" as="geometry">
+                        <mxPoint x="-12.490000000000002" y="-9.69" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-183" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="219" y="783.72" width="245" height="285.28" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-184" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.573;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="8q8ekwE0IZedJlm-Vp6M-110" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="339" y="520" as="sourcePoint"/>
+                        <mxPoint x="419" y="529" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-185" value="Step 12 - User gets &lt;br&gt;Access Token" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-184" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3239" relative="1" as="geometry">
+                        <mxPoint x="-12.490000000000002" y="-9.69" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-191" value="Internal Microservices" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.lambda;fillColor=#F58534;gradientColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="326.37" y="808.44" width="26.5" height="33" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-192" value="DB" style="shape=cylinder2;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=11.985363913143601;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="309.62" y="956" width="60" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-193" value="" style="endArrow=classic;html=1;" parent="1" target="8q8ekwE0IZedJlm-Vp6M-192" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="340" y="869" as="sourcePoint"/>
+                        <mxPoint x="137.12" y="999.7" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-201" value="Step 14 - Get/Post/Put/Delete Data" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-193" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2495" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-197" value="" style="endArrow=classic;html=1;" parent="1" target="8q8ekwE0IZedJlm-Vp6M-183" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="339" y="519" as="sourcePoint"/>
+                        <mxPoint x="659" y="794.3754400000003" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-198" value="Step 13 - User browser uses&lt;br&gt;&amp;nbsp;access token&lt;br&gt;to access the &lt;br&gt;required internal resources" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-197" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3239" relative="1" as="geometry">
+                        <mxPoint x="44.41" y="90.56" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-199" value="" style="endArrow=classic;html=1;entryX=0.203;entryY=1.017;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="8q8ekwE0IZedJlm-Vp6M-109" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="294" y="779" as="sourcePoint"/>
+                        <mxPoint x="39" y="619" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8q8ekwE0IZedJlm-Vp6M-200" value="Step 15 - Internal microservice&lt;br&gt;returns result of request" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="8q8ekwE0IZedJlm-Vp6M-199" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3239" relative="1" as="geometry">
+                        <mxPoint x="-50.08" y="-60.609999999999985" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

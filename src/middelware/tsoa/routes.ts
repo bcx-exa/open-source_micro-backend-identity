@@ -8,6 +8,8 @@ import { AccountController } from './../../controllers/account';
 import { AuthenticationController } from './../../controllers/authentication';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthorizationController } from './../../controllers/authorization';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ClientController } from './../../controllers/client';
 import { expressAuthentication } from './../passport/passport';
 import * as express from 'express';
 
@@ -22,14 +24,14 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_User.-or-preferred_username-or-password-or-email-or-phone_number-or-given_name-or-family_name-or-address-or-birth_date-or-locale-or-picture_": {
+    "Pick_User.-or-preferred_username-or-password-or-email-or-phone_number-or-given_name-or-family_name-or-address-or-birthdate-or-locale-or-picture_": {
         "dataType": "refAlias",
-        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true }, "email": { "dataType": "string" }, "phone_number": { "dataType": "string" }, "given_name": { "dataType": "string" }, "family_name": { "dataType": "string" }, "address": { "dataType": "string" }, "birth_date": { "dataType": "datetime" }, "locale": { "dataType": "string" }, "picture": { "dataType": "string" } }, "validators": {} },
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "preferred_username": { "dataType": "string", "required": true }, "password": { "dataType": "string", "required": true }, "email": { "dataType": "string" }, "phone_number": { "dataType": "string" }, "given_name": { "dataType": "string" }, "family_name": { "dataType": "string" }, "address": { "dataType": "string" }, "birthdate": { "dataType": "datetime" }, "locale": { "dataType": "string" }, "picture": { "dataType": "string" } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserProfileUpdate": {
         "dataType": "refAlias",
-        "type": { "ref": "Pick_User.-or-preferred_username-or-password-or-email-or-phone_number-or-given_name-or-family_name-or-address-or-birth_date-or-locale-or-picture_", "validators": {} },
+        "type": { "ref": "Pick_User.-or-preferred_username-or-password-or-email-or-phone_number-or-given_name-or-family_name-or-address-or-birthdate-or-locale-or-picture_", "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_User.preferred_username_": {
@@ -229,6 +231,11 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/auth/signin',
         function(request: any, response: any, next: any) {
             const args = {
+                response_type: { "in": "query", "name": "response_type", "required": true, "dataType": "string" },
+                scope: { "in": "query", "name": "scope", "required": true, "dataType": "string" },
+                client_id: { "in": "query", "name": "client_id", "required": true, "dataType": "string" },
+                client_secret: { "in": "query", "name": "client_secret", "required": true, "dataType": "string" },
+                state: { "in": "query", "name": "state", "required": true, "dataType": "string" },
                 signIn: { "in": "body", "name": "signIn", "required": true, "ref": "SignIn" },
             };
 
@@ -290,11 +297,10 @@ export function RegisterRoutes(app: express.Express) {
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/authz/groups',
+    app.get('/authz/user',
         authenticateMiddleware([{ "jwt": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                signUp: { "in": "body", "name": "signUp", "required": true, "ref": "SignUp" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -309,15 +315,14 @@ export function RegisterRoutes(app: express.Express) {
             const controller = new AuthorizationController();
 
 
-            const promise = controller.GroupsPost.apply(controller, validatedArgs as any);
+            const promise = controller.GetUser.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/authz/scopes',
-        authenticateMiddleware([{ "jwt": [] }]),
+    app.post('/oauth/client',
         function(request: any, response: any, next: any) {
             const args = {
-                signUp: { "in": "body", "name": "signUp", "required": true, "ref": "SignUp" },
+                body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "clientSecret": { "dataType": "string", "required": true }, "clientName": { "dataType": "string", "required": true } } },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -329,10 +334,75 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new AuthorizationController();
+            const controller = new ClientController();
 
 
-            const promise = controller.ScopePost.apply(controller, validatedArgs as any);
+            const promise = controller.CreateClient.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/oauth/clients',
+        function(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ClientController();
+
+
+            const promise = controller.GetAllClients.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/oauth/client',
+        function(request: any, response: any, next: any) {
+            const args = {
+                clientName: { "in": "query", "name": "clientName", "required": true, "dataType": "string" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ClientController();
+
+
+            const promise = controller.GetClient.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.delete('/oauth/client',
+        function(request: any, response: any, next: any) {
+            const args = {
+                body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "clientName": { "dataType": "string", "required": true } } },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ClientController();
+
+
+            const promise = controller.DeleteClient.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

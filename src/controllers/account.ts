@@ -1,7 +1,7 @@
 import { Controller, Query, Request, Response, SuccessResponse, Get, Body, Route, Post, Tags, Security } from "tsoa";
 import { AccountService } from "../services/account";
 import { UserProfileUpdate, VerifyResend, PasswordResetRequest, PasswordReset } from "../types/account";
-import { InternalServerError } from "../helpers/handlers/error-handling";
+import { InternalServerError } from "../components/handlers/error-handling";
 
 @Route("account") // route name => localhost:xxx/SignUp
 @Tags("Account") // => Under SignUpController tag
