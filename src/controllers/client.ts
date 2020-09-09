@@ -1,4 +1,4 @@
-import { Controller, Response, SuccessResponse, Delete, Get, Body, Post, Route, Tags, Query } from "tsoa";
+import { Controller, Path, Response, SuccessResponse, Delete, Get, Body, Post, Route, Tags, Query } from "tsoa";
 import { InternalServerError } from "../components/handlers/error-handling";
 import { ClientService } from "../services/client";
 
@@ -9,8 +9,8 @@ export class ClientController extends Controller {
     @SuccessResponse("201", "Created") // Custom success response
     @Post("client") //specify the request type
     //@Security('jwt')
-    async CreateClient(@Body() body: {clientName: string, clientSecret: string}): Promise<any> {
-        return new ClientService().creatOauthClient(body); 
+    async CreateOrUpdateOauthClient(@Body() body: {clientName: string, clientSecret: string}): Promise<any> {
+        return new ClientService().createOrUpdateOauthClient(body); 
     }
     
     @Response<InternalServerError>("Oauth Client API Internal Server Error")
@@ -23,17 +23,17 @@ export class ClientController extends Controller {
 
     @Response<InternalServerError>("Oauth Client API Internal Server Error")
     @SuccessResponse("201", "Created") // Custom success response
-    @Get("client") //specify the request type
+    @Get("client/{clientName}") //specify the request type
     //@Security('jwt')
-    async GetClient(@Query() clientName: string): Promise<any> {
+    async GetClient(@Path() clientName: string): Promise<any> {
         return new ClientService().getOauthClients(clientName); 
     }
 
     @Response<InternalServerError>("Oauth Client API Internal Server Error")
     @SuccessResponse("201", "Created") // Custom success response
-    @Delete("client") //specify the request type
+    @Delete("client/{clientName}") //specify the request type
     //@Security('jwt')
-    async DeleteClient(@Body() body: {clientName: string}): Promise<any> {
-        return new ClientService().deleteOauthClients(body); 
+    async DeleteClient(@Path() clientName: string): Promise<any> {
+        return new ClientService().deleteOauthClients(clientName); 
     }
 }

@@ -1,9 +1,9 @@
-import { ManyToMany, JoinTable, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { ManyToMany, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 import { ScopeGroup } from "./scope-group";
 
 //https://www.iana.org/assignments/jwt/jwt.xhtml
 @Entity()
-export class Scope {
+export class Scopes {
   @PrimaryGeneratedColumn("uuid")
   scope_id: string;
 

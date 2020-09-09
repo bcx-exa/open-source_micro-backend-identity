@@ -92,6 +92,282 @@
 			"PasswordReset": {
 				"$ref": "#/components/schemas/Pick_User.password_"
 			},
+			"User": {
+				"properties": {
+					"user_id": {
+						"type": "string"
+					},
+					"googleId": {
+						"type": "string"
+					},
+					"facebookId": {
+						"type": "string"
+					},
+					"preferred_username": {
+						"type": "string"
+					},
+					"salt": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"given_name": {
+						"type": "string"
+					},
+					"family_name": {
+						"type": "string"
+					},
+					"nickname": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"picture": {
+						"type": "string"
+					},
+					"phone_number": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"locale": {
+						"type": "string"
+					},
+					"birthdate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"email_verified": {
+						"type": "boolean"
+					},
+					"phone_number_verified": {
+						"type": "boolean"
+					},
+					"signed_up_local": {
+						"type": "boolean"
+					},
+					"signed_up_google": {
+						"type": "boolean"
+					},
+					"signed_up_facebook": {
+						"type": "boolean"
+					},
+					"disabled": {
+						"type": "boolean"
+					},
+					"verification_attempts": {
+						"type": "number",
+						"format": "double"
+					},
+					"account_locked": {
+						"type": "boolean"
+					},
+					"user_groups": {
+						"items": {
+							"$ref": "#/components/schemas/UserGroup"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"user_id",
+					"googleId",
+					"facebookId",
+					"preferred_username",
+					"salt",
+					"password",
+					"created_at",
+					"updated_at",
+					"email_verified",
+					"phone_number_verified",
+					"signed_up_local",
+					"signed_up_google",
+					"signed_up_facebook",
+					"disabled",
+					"verification_attempts",
+					"account_locked",
+					"user_groups"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ScopeGroup": {
+				"properties": {
+					"scope_group_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"disabled": {
+						"type": "boolean"
+					},
+					"scopes": {
+						"items": {
+							"$ref": "#/components/schemas/Scopes"
+						},
+						"type": "array"
+					},
+					"userGroups": {
+						"items": {
+							"$ref": "#/components/schemas/UserGroup"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"scope_group_id",
+					"name",
+					"description",
+					"created_at",
+					"updated_at",
+					"disabled",
+					"scopes",
+					"userGroups"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Scopes": {
+				"properties": {
+					"scope_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"disabled": {
+						"type": "boolean"
+					},
+					"scope_groups": {
+						"items": {
+							"$ref": "#/components/schemas/ScopeGroup"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"scope_id",
+					"name",
+					"description",
+					"created_at",
+					"updated_at",
+					"disabled",
+					"scope_groups"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserGroup": {
+				"properties": {
+					"user_group_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"disabled": {
+						"type": "boolean"
+					},
+					"users": {
+						"items": {
+							"$ref": "#/components/schemas/User"
+						},
+						"type": "array"
+					},
+					"scope_groups": {
+						"items": {
+							"$ref": "#/components/schemas/ScopeGroup"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"user_group_id",
+					"name",
+					"created_at",
+					"updated_at",
+					"disabled",
+					"users",
+					"scope_groups"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserGroupRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"user_group_id": {
+						"type": "string"
+					},
+					"users": {
+						"items": {
+							"$ref": "#/components/schemas/User"
+						},
+						"type": "array"
+					},
+					"scope_groups": {
+						"items": {
+							"$ref": "#/components/schemas/ScopeGroup"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Pick_User.preferred_username-or-password-or-given_name-or-family_name_": {
 				"properties": {
 					"preferred_username": {
@@ -396,6 +672,46 @@
 				}
 			}
 		},
+		"/admin/usergroup": {
+			"post": {
+				"operationId": "CreateOrUpdateUserGroup",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"UserGroup API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserGroupRequest"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/auth/signup": {
 			"post": {
 				"operationId": "SignUpPost",
@@ -557,43 +873,9 @@
 				"parameters": []
 			}
 		},
-		"/authz/user": {
-			"get": {
-				"operationId": "GetUser",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					},
-					"Signup API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Authorization"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": []
-			}
-		},
 		"/oauth/client": {
 			"post": {
-				"operationId": "CreateClient",
+				"operationId": "CreateOrUpdateOauthClient",
 				"responses": {
 					"201": {
 						"description": "Created",
@@ -641,7 +923,39 @@
 						}
 					}
 				}
-			},
+			}
+		},
+		"/oauth/clients": {
+			"get": {
+				"operationId": "GetAllClients",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth Client API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Oauth Admin"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/oauth/client/{clientName}": {
 			"get": {
 				"operationId": "GetClient",
 				"responses": {
@@ -670,7 +984,7 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "query",
+						"in": "path",
 						"name": "clientName",
 						"required": true,
 						"schema": {
@@ -705,55 +1019,16 @@
 					"Oauth Admin"
 				],
 				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"clientName": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"clientName"
-								],
-								"type": "object"
-							}
+				"parameters": [
+					{
+						"in": "path",
+						"name": "clientName",
+						"required": true,
+						"schema": {
+							"type": "string"
 						}
 					}
-				}
-			}
-		},
-		"/oauth/clients": {
-			"get": {
-				"operationId": "GetAllClients",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					},
-					"Oauth Client API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Oauth Admin"
-				],
-				"security": [],
-				"parameters": []
+				]
 			}
 		}
 	},

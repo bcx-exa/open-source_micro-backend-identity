@@ -6,7 +6,7 @@ import { InvalidFormat } from '../components/handlers/error-handling';
 
 export class ClientService {
   
-    public async creatOauthClient(body: {clientName: string, clientSecret: string}): Promise<any> {
+    public async createOrUpdateOauthClient(body: {clientName: string, clientSecret: string}): Promise<any> {
         
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(Client);
@@ -69,16 +69,16 @@ export class ClientService {
         return findClients;
     }
     
-    public async deleteOauthClients(body: {clientName: string}): Promise<any> {
+    public async deleteOauthClients(clientName: string): Promise<any> {
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(Client);
-        const findClient = await repository.findOne({ client_name: body.clientName });
+        const findClient = await repository.findOne({ client_name: clientName });
 
         if (!findClient) {
             throw new InvalidFormat("No client found by this name");
         }
 
-        await repository.delete({ client_name: body.clientName });
+        await repository.delete({ client_name: clientName });
 
         return "Client has been successfully deleted";
     } 

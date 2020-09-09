@@ -1,5 +1,5 @@
 import { ManyToMany, JoinTable, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
-import { Scope } from "./scope"
+import { Scopes } from "./scope";
 import { UserGroup } from "./user-group";
 
 //https://www.iana.org/assignments/jwt/jwt.xhtml
@@ -23,9 +23,9 @@ export class ScopeGroup {
   @Column()
   disabled: boolean;
 
-  @ManyToMany(() => Scope, { nullable: true })
+  @ManyToMany(() => Scopes, { nullable: true })
   @JoinTable()
-  scopes: Scope[];
+  scopes: Scopes[];
 
   @ManyToMany(() => UserGroup, user_group => user_group.scope_groups, { nullable: true })
   userGroups: UserGroup[];
