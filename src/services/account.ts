@@ -6,7 +6,7 @@ import { auroraConnectApi } from "../components/database/aurora";
 import { validateUsername,  validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
 import { sendPasswordResetRequest } from "../components/messaging/password-reset";
-import { findUserByUsername } from "../components/database/find-user";
+import { findUserByUsername } from "../components/database/db-helpers";
 
 export class AccountService {
   public async VerifyAccount(token:string, req: any): Promise<any> {

@@ -1,6 +1,6 @@
 import { signJWT } from '../security/crypto';
 import { User } from '../../models/user';
-import { openid } from '../../types/scopes';
+import { openid } from '../../types/openid-scopes';
 import { sendPinpointMessage } from './pinpoint';
 
 export async function sendPasswordResetRequest(user: User, isPhoneNumber: boolean, isEmail: boolean): Promise<void> {

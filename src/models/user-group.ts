@@ -22,9 +22,9 @@ export class UserGroup {
 
   @ManyToMany(() => User, { nullable: true })
   @JoinTable()
-  users: User[];
+  users?: User[];
 
   @ManyToMany(() => ScopeGroup, { nullable: true })
   @JoinTable()
-  scope_groups: ScopeGroup[];
+  scope_groups?: ScopeGroup[];
 }

@@ -1,6 +1,6 @@
 import { User } from '../../models/user';
 import { signJWT, calculateExp } from './crypto';
-import { openid, profile } from "../../types/scopes";
+import { openid, profile } from "../../types/openid-scopes";
 
 export async function generateIdToken(dbUser: User): Promise<any> {
     // openid claims

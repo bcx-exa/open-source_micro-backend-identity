@@ -25,9 +25,9 @@ export class ScopeGroup {
 
   @ManyToMany(() => Scopes, { nullable: true })
   @JoinTable()
-  scopes: Scopes[];
+  scopes?: Scopes[];
 
   @ManyToMany(() => UserGroup, user_group => user_group.scope_groups, { nullable: true })
-  userGroups: UserGroup[];
+  user_groups?: UserGroup[];
 
 }

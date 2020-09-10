@@ -1,7 +1,7 @@
 
 import { signJWT } from '../security/crypto';
 import { User } from '../../models/user';
-import { openid, phone, email } from '../../types/scopes';
+import { openid, phone, email } from '../../types/openid-scopes';
 import { sendPinpointMessage } from './pinpoint';
 
 export async function sendVerificationMessage(user: User, isPhoneNumber: boolean, isEmail: boolean):Promise<any> {

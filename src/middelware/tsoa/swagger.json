@@ -59,7 +59,7 @@
 			"UserProfileUpdate": {
 				"$ref": "#/components/schemas/Pick_User.-or-preferred_username-or-password-or-email-or-phone_number-or-given_name-or-family_name-or-address-or-birthdate-or-locale-or-picture_"
 			},
-			"Pick_User.preferred_username_": {
+			"VerifyResend": {
 				"properties": {
 					"preferred_username": {
 						"type": "string"
@@ -69,15 +69,21 @@
 					"preferred_username"
 				],
 				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"VerifyResend": {
-				"$ref": "#/components/schemas/Pick_User.preferred_username_"
+				"additionalProperties": false
 			},
 			"PasswordResetRequest": {
-				"$ref": "#/components/schemas/Pick_User.preferred_username_"
+				"properties": {
+					"preferred_username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"preferred_username"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
-			"Pick_User.password_": {
+			"PasswordReset": {
 				"properties": {
 					"password": {
 						"type": "string"
@@ -87,30 +93,193 @@
 					"password"
 				],
 				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
+				"additionalProperties": false
 			},
-			"PasswordReset": {
-				"$ref": "#/components/schemas/Pick_User.password_"
+			"SignUp": {
+				"properties": {
+					"preferred_username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"given_name": {
+						"type": "string"
+					},
+					"family_name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"preferred_username",
+					"password",
+					"given_name",
+					"family_name"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
-			"User": {
+			"SignIn": {
+				"properties": {
+					"preferred_username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"preferred_username",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ScopeRequestId": {
+				"properties": {
+					"scope_id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserGroupRequestId": {
+				"properties": {
+					"user_group_id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ScopeGroupRequest": {
+				"properties": {
+					"scope_group_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"scopes": {
+						"items": {
+							"$ref": "#/components/schemas/ScopeRequestId"
+						},
+						"type": "array"
+					},
+					"user_groups": {
+						"items": {
+							"$ref": "#/components/schemas/UserGroupRequestId"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ScopeGroupRequestId": {
+				"properties": {
+					"scope_group_id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ScopeRequest": {
+				"properties": {
+					"scope_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"scope_groups": {
+						"items": {
+							"$ref": "#/components/schemas/ScopeGroupRequestId"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserRequestId": {
 				"properties": {
 					"user_id": {
 						"type": "string"
-					},
-					"googleId": {
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserGroupRequest": {
+				"properties": {
+					"name": {
 						"type": "string"
 					},
-					"facebookId": {
+					"user_group_id": {
+						"type": "string"
+					},
+					"users": {
+						"items": {
+							"$ref": "#/components/schemas/UserRequestId"
+						},
+						"type": "array"
+					},
+					"scope_groups": {
+						"items": {
+							"$ref": "#/components/schemas/ScopeGroupRequestId"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserRequest": {
+				"properties": {
+					"user_id": {
 						"type": "string"
 					},
 					"preferred_username": {
 						"type": "string"
 					},
-					"salt": {
-						"type": "string"
-					},
 					"password": {
 						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"locale": {
+						"type": "string"
+					},
+					"birthdate": {
+						"type": "string",
+						"format": "date-time"
 					},
 					"name": {
 						"type": "string"
@@ -130,257 +299,11 @@
 					"picture": {
 						"type": "string"
 					},
-					"phone_number": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"address": {
-						"type": "string"
-					},
-					"locale": {
-						"type": "string"
-					},
-					"birthdate": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updated_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"email_verified": {
-						"type": "boolean"
-					},
-					"phone_number_verified": {
-						"type": "boolean"
-					},
-					"signed_up_local": {
-						"type": "boolean"
-					},
-					"signed_up_google": {
-						"type": "boolean"
-					},
-					"signed_up_facebook": {
-						"type": "boolean"
-					},
-					"disabled": {
-						"type": "boolean"
-					},
-					"verification_attempts": {
-						"type": "number",
-						"format": "double"
-					},
-					"account_locked": {
-						"type": "boolean"
-					},
 					"user_groups": {
 						"items": {
-							"$ref": "#/components/schemas/UserGroup"
+							"$ref": "#/components/schemas/UserGroupRequestId"
 						},
 						"type": "array"
-					}
-				},
-				"required": [
-					"user_id",
-					"googleId",
-					"facebookId",
-					"preferred_username",
-					"salt",
-					"password",
-					"created_at",
-					"updated_at",
-					"email_verified",
-					"phone_number_verified",
-					"signed_up_local",
-					"signed_up_google",
-					"signed_up_facebook",
-					"disabled",
-					"verification_attempts",
-					"account_locked",
-					"user_groups"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ScopeGroup": {
-				"properties": {
-					"scope_group_id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updated_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"disabled": {
-						"type": "boolean"
-					},
-					"scopes": {
-						"items": {
-							"$ref": "#/components/schemas/Scopes"
-						},
-						"type": "array"
-					},
-					"userGroups": {
-						"items": {
-							"$ref": "#/components/schemas/UserGroup"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"scope_group_id",
-					"name",
-					"description",
-					"created_at",
-					"updated_at",
-					"disabled",
-					"scopes",
-					"userGroups"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Scopes": {
-				"properties": {
-					"scope_id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updated_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"disabled": {
-						"type": "boolean"
-					},
-					"scope_groups": {
-						"items": {
-							"$ref": "#/components/schemas/ScopeGroup"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"scope_id",
-					"name",
-					"description",
-					"created_at",
-					"updated_at",
-					"disabled",
-					"scope_groups"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UserGroup": {
-				"properties": {
-					"user_group_id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updated_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"disabled": {
-						"type": "boolean"
-					},
-					"users": {
-						"items": {
-							"$ref": "#/components/schemas/User"
-						},
-						"type": "array"
-					},
-					"scope_groups": {
-						"items": {
-							"$ref": "#/components/schemas/ScopeGroup"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"user_group_id",
-					"name",
-					"created_at",
-					"updated_at",
-					"disabled",
-					"users",
-					"scope_groups"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UserGroupRequest": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"user_group_id": {
-						"type": "string"
-					},
-					"users": {
-						"items": {
-							"$ref": "#/components/schemas/User"
-						},
-						"type": "array"
-					},
-					"scope_groups": {
-						"items": {
-							"$ref": "#/components/schemas/ScopeGroup"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"name"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Pick_User.preferred_username-or-password-or-given_name-or-family_name_": {
-				"properties": {
-					"preferred_username": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"given_name": {
-						"type": "string"
-					},
-					"family_name": {
-						"type": "string"
 					}
 				},
 				"required": [
@@ -388,29 +311,7 @@
 					"password"
 				],
 				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"SignUp": {
-				"$ref": "#/components/schemas/Pick_User.preferred_username-or-password-or-given_name-or-family_name_"
-			},
-			"Pick_User.preferred_username-or-password_": {
-				"properties": {
-					"preferred_username": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"preferred_username",
-					"password"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"SignIn": {
-				"$ref": "#/components/schemas/Pick_User.preferred_username-or-password_"
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -672,46 +573,6 @@
 				}
 			}
 		},
-		"/admin/usergroup": {
-			"post": {
-				"operationId": "CreateOrUpdateUserGroup",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					},
-					"UserGroup API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Admin"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserGroupRequest"
-							}
-						}
-					}
-				}
-			}
-		},
 		"/auth/signup": {
 			"post": {
 				"operationId": "SignUpPost",
@@ -873,89 +734,7 @@
 				"parameters": []
 			}
 		},
-		"/oauth/client": {
-			"post": {
-				"operationId": "CreateOrUpdateOauthClient",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					},
-					"Oauth Client API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Oauth Admin"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"clientSecret": {
-										"type": "string"
-									},
-									"clientName": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"clientSecret",
-									"clientName"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/oauth/clients": {
-			"get": {
-				"operationId": "GetAllClients",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					},
-					"Oauth Client API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Oauth Admin"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/oauth/client/{clientName}": {
+		"/client/{clientName}": {
 			"get": {
 				"operationId": "GetClient",
 				"responses": {
@@ -979,7 +758,7 @@
 					}
 				},
 				"tags": [
-					"Oauth Admin"
+					"OAuth Clients"
 				],
 				"security": [],
 				"parameters": [
@@ -1016,7 +795,7 @@
 					}
 				},
 				"tags": [
-					"Oauth Admin"
+					"OAuth Clients"
 				],
 				"security": [],
 				"parameters": [
@@ -1029,6 +808,700 @@
 						}
 					}
 				]
+			}
+		},
+		"/client": {
+			"get": {
+				"operationId": "GetAllClients",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth Client API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"OAuth Clients"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateOrUpdateOauthClient",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth Client API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"OAuth Clients"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"clientSecret": {
+										"type": "string"
+									},
+									"clientName": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"clientSecret",
+									"clientName"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/scopegroup/{scope_group_id}": {
+			"get": {
+				"operationId": "GetScopeGroup",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scope Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "scope_group_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteUserGroup",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scope Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "scope_group_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/scopegroup": {
+			"get": {
+				"operationId": "GetScopeGroups",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scope Groups"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "PostScopeGroups",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scope Groups"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ScopeGroupRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/scope/{scope_id}": {
+			"get": {
+				"operationId": "GetScope",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "scope_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteScope",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "scope_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/scope": {
+			"get": {
+				"operationId": "GetScopes",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "PostScope",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ScopeRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/usergroup/{user_group_id}": {
+			"get": {
+				"operationId": "GetUserGroup",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "user_group_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteUserGroup",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "user_group_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/usergroup": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Groups"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "PostUserGroups",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Groups"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserGroupRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/{user_id}": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "user_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteUsers",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "user_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "PostUsers",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserRequest"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "PutUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserRequest"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

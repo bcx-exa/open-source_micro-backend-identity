@@ -23,6 +23,6 @@ export class Scopes {
   disabled: boolean;
 
   @ManyToMany(() => ScopeGroup, scope_group => scope_group.scopes, { nullable: true })
-  scope_groups: ScopeGroup[];
+  scope_groups?: ScopeGroup[];
 
 }

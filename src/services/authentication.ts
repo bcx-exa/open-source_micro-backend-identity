@@ -6,7 +6,7 @@ import { Conflict, Unauthorized, NotVerified, InvalidFormat } from "../component
 import { auroraConnectApi } from "../components/database/aurora";
 import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
-import { findUserByUsername } from "../components/database/find-user";
+import { findUserByUsername } from "../components/database/db-helpers";
 import { generateIdToken } from "../components/security/tokens";
 import { v4 as uuidv4 } from 'uuid';
 

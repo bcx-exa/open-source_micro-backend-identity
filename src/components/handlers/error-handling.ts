@@ -9,6 +9,15 @@ export class Unauthorized extends Error {
   }
 }
 
+export class NotFound extends Error {
+  private statusCode: number;
+  constructor(message?: string, statusCode?: number) {
+    super(message);
+    this.name = "Not Found";
+    this.statusCode = statusCode;
+  }
+}
+
 export class NotVerified extends Error {
   private statusCode: number;
   constructor(message?: string, statusCode?: number) {
@@ -75,7 +84,12 @@ export function globalErrorHandler(
       details: err?.fields,
     });
   }
-
+  if (err instanceof NotFound) {
+    return res.status(404).json({
+      name: err.name,
+      message: err.message,
+    });
+  }
   if (err instanceof PasswordPolicyException) {
     return res.status(406).json({
       name: err.name,

@@ -1,4 +1,12 @@
-import { User } from '../models/user';
 // Authentication Request Types
-export type SignUp = Pick<User,"preferred_username" | "password" | "given_name" | "family_name">;
-export type SignIn = Pick<User, "preferred_username" | "password">;
+export interface SignUp {
+  preferred_username: string,
+  password: string,
+  given_name: string,
+  family_name: string
+}
+
+export interface SignIn {
+  preferred_username: string,
+  password: string
+}

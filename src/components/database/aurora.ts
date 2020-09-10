@@ -1,5 +1,5 @@
 import { createConnection, getConnection } from "typeorm";
-import { DbConnectionError } from "../handlers/error-handling";
+//import { DbConnectionError } from "../handlers/error-handling";
 import { User } from "../../models/user";
 import { UserGroup } from "../../models/user-group";
 import { Scopes } from "../../models/scope";

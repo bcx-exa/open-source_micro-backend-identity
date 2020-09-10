@@ -1,9 +1,20 @@
 import { User } from '../models/user';
 
 // Account types
-export type VerifyResend = Pick<User, "preferred_username">;
-export type PasswordResetRequest = Pick<User, "preferred_username">;
-export type PasswordReset = Pick<User, 'password'>;
+export interface VerifyResend
+{
+  preferred_username: string  
+}
+export interface PasswordResetRequest
+{
+  preferred_username: string  
+}
+
+export interface PasswordReset {
+  password: string
+}
+
+
 export type UserProfileUpdate = Pick<
   User,
   | "preferred_username"

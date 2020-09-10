@@ -87,5 +87,5 @@ export class User {
 
   //Join tables on user group side
   @ManyToMany(() => UserGroup, user_group => user_group.users, { nullable: true })
-  user_groups: UserGroup[];
+  user_groups?: UserGroup[];
 }
