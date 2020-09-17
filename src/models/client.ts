@@ -5,19 +5,16 @@ import { UserGroup } from "./user-group";
 @Entity()
 export class Client {
   @PrimaryGeneratedColumn("uuid")
-  client_id: string;
+  client_id?: string;
   
   @Column()
-  client_name: string;
+  client_name?: string;
   
   @Column()
-    client_secret: string;
+  client_secret?: string;
     
   @Column()
-  client_secret_salt: string;
-    
-  @Column()
-  state: string;
+  client_secret_salt?: string;
 
   @Column("datetime")
   created_at: Date;

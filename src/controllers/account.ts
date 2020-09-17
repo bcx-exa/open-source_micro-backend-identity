@@ -1,21 +1,12 @@
 import { Controller, Query, Request, Response, SuccessResponse, Get, Body, Route, Post, Tags, Security } from "tsoa";
 import { AccountService } from "../services/account";
-import { UserProfileUpdate, VerifyResend, PasswordResetRequest, PasswordReset } from "../types/account";
+import { VerifyResend, PasswordResetRequest, PasswordReset } from "../types/account";
 import { InternalServerError } from "../components/handlers/error-handling";
 
 @Route("account") // route name => localhost:xxx/SignUp
 @Tags("Account") // => Under SignUpController tag
 export class AccountController extends Controller {
   
-  // Get user profile from JWT
-  @Response<InternalServerError>("Profile API Internal Server Error")
-  @SuccessResponse("200", "Account Verified!") // Custom success response
-  @Post("profile")
-  @Security('jwt')
-  async ProfilePost(@Body() profile: UserProfileUpdate, @Request() req: any ): Promise<any> {
-    return new AccountService().ProfileUpdate(profile, req);
-  }
-
   @Response<InternalServerError>("Verification Message API Internal Server Error")
   @SuccessResponse("200", "Verification Message Resent!") // Custom success response
   @Post("verify/resend")

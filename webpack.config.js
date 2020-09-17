@@ -39,7 +39,7 @@ module.exports = {
           transpileOnly: true,
           experimentalWatchApi: true,
         },
-      },
+      }
     ],
   },
   plugins: [

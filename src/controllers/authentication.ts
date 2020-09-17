@@ -23,6 +23,12 @@ export class AuthenticationController extends Controller {
     return new AuthenticationService().SignIn(response_type, scope, client_id, client_secret, state, signIn);
   }
 
+  @Get("openid")
+  @Security('openid')
+  async testing(): Promise<any> {
+    return;
+  }
+
   @Get("google")
   async SignInGoogle(): Promise<any> {
     return;

@@ -1,30 +1,44 @@
 {
-  "entryFile": "src/app.ts",
-  "noImplicitAdditionalProperties": "throw-on-extras",
-  "controllerPathGlobs": ["src/controllers/*.ts"],
-  "spec": {
-    "securityDefinitions": {
-      "jwt": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      },
-      "google": {
-        "type": "oauth2",
-        "authorizationUrl": "http://localhost:7000/auth/google",
-        "flow": "implicit"
-      },
-      "facebook": {
-        "type": "oauth2",
-        "authorizationUrl": "http://localhost:7000/auth/facebook",
-        "flow": "implicit"
-      }
-    },
-    "outputDirectory": "src/middelware/tsoa",
-    "specVersion": 3
-  },
-  "routes": {
-    "authenticationModule": "src/middelware/passport/passport",
-    "routesDir": "src/middelware/tsoa"
-  }
+	"entryFile": "src/app.ts",
+	"noImplicitAdditionalProperties": "throw-on-extras",
+	"controllerPathGlobs": ["src/controllers/*.ts"],
+	"spec": {
+		"securityDefinitions": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			},
+			"oauth": {
+				"type": "oauth2",
+				"authorizationUrl": "http://localhost:3000/oidc/auth",
+				"flow": "implicit",
+				"scopes": {
+					"openid": "modify things",
+					"profile": "read things",
+					"email": "Get user info"
+				}
+			},
+			"openid": {
+				"type": "openIdConnect",
+				"openIdConnectUrl": "http://localhost:3000/oidc/.well-known/openid-configuration"
+			},
+			"google": {
+				"type": "oauth2",
+				"authorizationUrl": "http://localhost:7000/auth/google",
+				"flow": "implicit"
+			},
+			"facebook": {
+				"type": "oauth2",
+				"authorizationUrl": "http://localhost:7000/auth/facebook",
+				"flow": "implicit"
+			}
+		},
+		"outputDirectory": "src/middelware/tsoa",
+		"specVersion": 3
+	},
+	"routes": {
+		"authenticationModule": "src/middelware/passport/passport",
+		"routesDir": "src/middelware/tsoa"
+	}
 }

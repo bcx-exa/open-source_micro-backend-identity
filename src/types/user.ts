@@ -1,16 +1,16 @@
-import { UserGroupRequestId } from "./user-groups";
-
-export interface UserRequestId
+export interface User_UserGroup_Request
 {
-    user_id?: string
+    user_group_id: string,
+    name?: string,
+    description?: string
 }
 
 export interface UserRequest 
 {
     user_id?: string,
-    preferred_username: string,
-    password: string,
-    phone?: string,
+    preferred_username?: string,
+    password?: string,
+    phone_number?: string,
     email?: string,
     address?: string,
     locale?: string,
@@ -21,7 +21,9 @@ export interface UserRequest
     nickname?: string,
     gender?: string,
     picture?: string,
-    user_groups?: UserGroupRequestId[]
+    user_groups?: User_UserGroup_Request[]
 }
+
+
 
 

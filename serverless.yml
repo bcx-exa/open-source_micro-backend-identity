@@ -67,7 +67,6 @@ resources:
   - ${file(iac/resources/sg.serverless.yml)}
   - ${file(iac/resources/aurora.serverless.yml)}
   - ${file(iac/resources/iam.serverless.yml)}
-  - ${file(iac/archived/dynamodb.serverless.yml)}
 
 functions:
   base:

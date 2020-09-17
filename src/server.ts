@@ -10,11 +10,12 @@ import cors from "cors";
 import passport from "passport";
 import { registerStrategies } from "./middelware/passport/passport";
 import { globalErrorHandler } from "./components/handlers/error-handling";
-// import { auroraConnectApi } from "./components/database/aurora";
-// import { issueJWT } from "./components/security/crypto";
-// import { profile } from "./types/scopes";
-
-//import { auroraConnectApi } from './components/aurora';
+import { Provider } from 'oidc-provider';
+import helmet from 'helmet';
+import routes from './middelware/oidc/routes/express';
+import configuration from './middelware/oidc/support/configuration';
+import set from 'lodash/set';
+import Account from './middelware/oidc/support/account';
 
 export class Server {
   public httpServer: any;
@@ -45,56 +46,67 @@ export class Server {
       //Add Passport Middelware to all routes
       registerStrategies();
       this.httpServer.use(passport.initialize());
-      // this.httpServer.get("/auth/google", passport.authenticate("google", { scope: ["openid", "profile", "email"] }));
-      // this.httpServer.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/failedlogin" }), async function (_req, res) {
-      //   const profileClaims: profile = {
-      //     preferred_username: _req.user.preferred_username,
-      //     given_name: _req.user.given_name,
-      //     family_name: _req.user.family_name,
-      //     address: _req.user.address,
-      //     created_at: _req.user.created_at,
-      //     locale: _req.user.locale,
-      //     picture: _req.user.picture,
-      //     birthdate: _req.user.birthdate,
-      //     updated_at: _req.user.updated_at,
-      //   };
-      //   res.send(await issueJWT(_req.user.user_id, "7d", false, profileClaims));
-      // });
-
-      // this.httpServer.get("/auth/facebook", passport.authenticate("facebook"));
-      // this.httpServer.get("/auth/facebook/callback", passport.authenticate("facebook", { successRedirect: "/", failureRedirect: "/failedlogin" }), async function (_req, res) {
-      //   const profileClaims: profile = {
-      //     preferred_username: _req.user.preferred_username,
-      //     given_name: _req.user.given_name,
-      //     family_name: _req.user.family_name,
-      //     address: _req.user.address,
-      //     created_at: _req.user.created_at,
-      //     locale: _req.user.locale,
-      //     picture: _req.user.picture,
-      //     birthdate: _req.user.birthdate,
-      //     updated_at: _req.user.updated_at,
-      //   };
-      //   res.send(await issueJWT(_req.user.user_id, "7d", false, profileClaims));
-      // });
 
       //Generate tsoa routes & spec
       if (env === "local") {
         await execShellCommand("npm run tsoa");
         credsConfigLocal();
       }
-
+      
       //Register tsoa routes
-      const routes = await import("./middelware/tsoa/routes");
-      routes.RegisterRoutes(this.httpServer);
+      const routesTSOA = await import("./middelware/tsoa/routes");
+      routesTSOA.RegisterRoutes(this.httpServer);
 
+      // OIDC 
+      //const provider = new Provider(`http://localhost:${process.env.PORT}`, { ...configuration } );
+      configuration.findAccount = Account.findAccount;
+      const provider = new Provider('http://localhost:3000', {  
+      clients: [
+        {
+          client_id: 'development-implicit',
+          application_type: 'web',
+          token_endpoint_auth_method: 'none',
+          response_types: ['id_token'],
+          grant_types: ['implicit'],
+          redirect_uris: ['http://localhost:3001'], // this fails two regular validations http: and localhost
+        },
+      ],
+    });
+
+      const { invalidate: orig } = provider.Client.Schema.prototype;
+
+      provider.Client.Schema.prototype.invalidate = function invalidate(message, code) {
+        if (code === 'implicit-force-https' || code === 'implicit-forbid-localhost') {
+          return;
+        }
+
+        orig.call(this, message);
+      };
+
+      // OIDC Views
+      this.httpServer.use(helmet());
+      this.httpServer.set('views', path.join(__dirname, 'views'));
+      this.httpServer.set('view engine', 'ejs');
+
+      const prod = process.env.NODE_ENV === 'production';
+
+      if (prod) {
+        set(configuration, 'cookies.short.secure', true);
+        set(configuration, 'cookies.long.secure', true);
+      }
+
+      // Add OIDC Routes
+      routes(this.httpServer, provider);
+      this.httpServer.use('/oidc',provider.callback);
+
+      //Swagger-UI
+      this.httpServer.use("/", swaggerUi.serve, async (_req: Request, res: Response) => {
+        return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
+      });
+            
       //X-Ray Segment End
       console.log("Ending X-Ray Segment");
       this.httpServer.use(xrayExpress.closeSegment());
-
-      //Swagger-UI
-      this.httpServer.use("", swaggerUi.serve, async (_req: Request, res: Response) => {
-        return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
-      });
 
       // Global Error handling
       console.log("Adding Global Error Handling");

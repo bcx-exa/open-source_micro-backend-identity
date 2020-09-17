@@ -1,4 +1,4 @@
-import { UserProfileUpdate, VerifyResend, PasswordResetRequest, PasswordReset } from "../types/account";
+import { VerifyResend, PasswordResetRequest, PasswordReset } from "../types/account";
 import { User } from "../models/user";
 import { generatePasswordHash } from "../components/security/crypto";
 import { Conflict, Unauthorized } from "../components/handlers/error-handling";
@@ -97,60 +97,7 @@ export class AccountService {
       body: 'Verification message resent!'
     }
    
-  }
-  public async ProfileUpdate(profile: UserProfileUpdate, req: any): Promise<any> {    
-    // Check if username is of type email or of type phone_number
-    await validateUsername(profile.preferred_username);
-
-    // Extract info from req object
-    const dbUser: User = req.user.dbUser;  
-    
-    // Only update password if user choose to do so
-    if (profile.password) {
-      // Check password strength
-      validatePasswordStrength(profile.password);
-      
-      // Hash user password
-      const genPassHash = await generatePasswordHash(profile.password);
-      const salt = genPassHash.salt;
-      const hash = genPassHash.genHash;  
-      
-      dbUser.salt = salt;
-      dbUser.password = hash;
-    } 
-    
-    // If email got updated, verify it
-    if (dbUser.email !== profile.email) {
-      dbUser.email = profile.email;
-      sendVerificationMessage(dbUser, false, true);
-    }
-
-    // If phone got updated, verify it
-    if (dbUser.phone_number !== profile.phone_number) {
-      dbUser.phone_number = profile.phone_number;
-      sendVerificationMessage(dbUser, true, false);
-    }
-    
-    // update user properties
-    dbUser.preferred_username = profile.preferred_username; 
-    dbUser.email = profile.email;
-    dbUser.phone_number = profile.phone_number;
-    dbUser.given_name = profile.given_name;
-    dbUser.family_name = profile.family_name;
-    dbUser.address = profile.address;
-    dbUser.birthdate = profile.birthdate;
-    dbUser.locale = profile.locale;
-    dbUser.picture = profile.picture;
-
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    repository.save(dbUser);
-    
-    return {
-      statusCode: 200,
-      body: "Profile Updated!" 
-    };
-  }  
+  } 
   public async PasswordResetRequest(body: PasswordResetRequest): Promise<any> {
     // Check if username is of type email or of type phone_number
     const validPreferredUsername = validateUsername(body.preferred_username);

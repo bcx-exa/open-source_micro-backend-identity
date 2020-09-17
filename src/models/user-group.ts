@@ -11,6 +11,9 @@ export class UserGroup {
   @Column({ length: 100 })
   name: string;
 
+  @Column({ length: 300 })
+  description: string;
+
   @Column("datetime")
   created_at: Date;
 
@@ -20,11 +23,11 @@ export class UserGroup {
   @Column()
   disabled: boolean;
 
-  @ManyToMany(() => User, { nullable: true })
+  @ManyToMany(() => User, users => users.user_groups, { nullable: true})
   @JoinTable()
   users?: User[];
 
-  @ManyToMany(() => ScopeGroup, { nullable: true })
+  @ManyToMany(() => ScopeGroup, scope_groups => scope_groups.user_groups, { nullable: true })
   @JoinTable()
   scope_groups?: ScopeGroup[];
 }

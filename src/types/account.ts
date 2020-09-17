@@ -15,17 +15,4 @@ export interface PasswordReset {
 }
 
 
-export type UserProfileUpdate = Pick<
-  User,
-  | "preferred_username"
-  | "password"
-  | "email"
-  | "phone_number"
-  | "given_name"
-  | "family_name"
-  | "address"
-  | "birthdate"
-  | "locale"
-  | "picture"
-  >;
 

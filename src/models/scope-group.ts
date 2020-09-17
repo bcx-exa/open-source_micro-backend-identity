@@ -23,7 +23,7 @@ export class ScopeGroup {
   @Column()
   disabled: boolean;
 
-  @ManyToMany(() => Scopes, { nullable: true })
+  @ManyToMany(() => Scopes, scopes => scopes.scope_groups, { nullable: true })
   @JoinTable()
   scopes?: Scopes[];
 
