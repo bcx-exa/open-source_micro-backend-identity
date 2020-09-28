@@ -1,0 +1,36 @@
+import { ManyToOne, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { User } from './user';
+import { Client } from './client';
+//https://www.iana.org/assignments/jwt/jwt.xhtml
+@Entity()
+export class Oauth {
+  @PrimaryGeneratedColumn("uuid")
+  oauth_id: string;
+
+  @Column({length: 100, nullable: true })
+  token_link?: string;
+
+  @Column({length: 50})
+  token_type: string;
+
+  @Column({ length: 300 })
+  token: string;
+
+  @ManyToOne(() => Client, client => client.tokens)
+  client: Client;
+
+  @ManyToOne(() => User, user => user.tokens)
+  user: User;
+
+  @Column({ length: 300, nullable: true })
+  redirect_uri?: string;
+
+  @Column("datetime")
+  created_at: Date;
+
+  @Column("datetime")
+  updated_at: Date;
+
+  @Column()
+  disabled: boolean;
+}
