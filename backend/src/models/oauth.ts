@@ -13,7 +13,7 @@ export class Oauth {
   @Column({length: 50})
   token_type: string;
 
-  @Column({ length: 300 })
+  @Column({ length: 7000 })
   token: string;
 
   @ManyToOne(() => Client, client => client.tokens)

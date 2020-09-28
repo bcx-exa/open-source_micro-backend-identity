@@ -36,6 +36,6 @@ async function verifyClient(clientId, clientSecret, done) {
 }
 
 export async function passportHTTP() {
-  passport.use(new BasicStrategy(verifyClient));
+  passport.use('basic', new BasicStrategy(verifyClient));
 }
 

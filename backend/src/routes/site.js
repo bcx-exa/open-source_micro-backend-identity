@@ -6,7 +6,7 @@ module.exports.index = (_request, response) => response.send('OAuth 2.0 Server')
 
 module.exports.loginForm = (_request, response) => response.render('login');
 
-module.exports.login = passport.authenticate('local', { successReturnToOrRedirect: '/', failureRedirect: '/login' })
+module.exports.login = passport.authenticate('local', { session: true, successReturnToOrRedirect: '/', failureRedirect: '/login' })
 
 module.exports.logout = (request, response) => {
   request.logout();

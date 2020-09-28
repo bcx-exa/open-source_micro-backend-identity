@@ -14,21 +14,6 @@ export async function registerStrategies(): Promise<any> {
   try {
     if (initialized) return;
 
-
-
-    // passport.serializeUser((user: User, done) => done(null, user.user_id));
-    // passport.deserializeUser(async (id, done) => {
-    //   try {
-    //     const connection = await auroraConnectApi();
-    //     const repository = await connection.getRepository(User);
-    //     const findUser = await repository.findOne({ user_id: id });
-
-    //     return done(null, findUser);
-    //   } catch (e) {
-    //     return done(e);
-    //     }
-    // }); 
-    
     await passportLocal();
     await passportHTTP();
     await passportJWT('jwt', ExtractJwt.fromAuthHeaderAsBearerToken());

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import passport from "passport";
 import AWS from "aws-sdk";
 import oauth2orize from 'oauth2orize';
@@ -8,9 +9,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { Oauth } from "../../models/oauth";
 import { User } from '../../models/user';
 import { generateTokens } from '../../components/security/tokens';
-import { DbConnectionError, NotFound, Unauthorized } from "../../components/handlers/error-handling";
+import { DbConnectionError, InternalServerError, NotFound, Unauthorized } from "../../components/handlers/error-handling";
 import jsonwebtoken from 'jsonwebtoken';
-import { ensureLoggedIn } from '../../components/handlers/ensureloggedIn'
+import login from 'connect-ensure-login'
 import { openid } from "../../types/openid-scopes";
 import { signJWT, calculateExp } from '../../components/security/crypto';
 
@@ -18,20 +19,20 @@ import { signJWT, calculateExp } from '../../components/security/crypto';
 const server = oauth2orize.createServer();
 
 // This will add the client id to the cookie
-server.serializeClient((client, done) => done(null, client.id));
+server.serializeClient((client, done) => done(null, client));
 // This will use the id from the cookie to get the client object from the DB
-server.deserializeClient(async (id, done) => {
+server.deserializeClient(async (client, done) => {
   try {
     const connection = await auroraConnectApi();
     const repository = await connection.getRepository(Client);  
-    const client = await repository.findOne({ client_id: id });
+    const findClient = await repository.findOne({ client_id: client.client_id });
   
-    if (!client) {
+    if (!findClient) {
       const err = new DbConnectionError("No client found");
       return done(err);
     }
   
-    return done(null, client); 
+    return done(null, findClient); 
 
   } catch (err) {
     return done(err);
@@ -39,7 +40,7 @@ server.deserializeClient(async (id, done) => {
 });
 
 // Issue Tokens
-async function issueTokens(user_id, client_id, done) {
+async function issueTokens(user, client, done) {
   try {
     const connection = await auroraConnectApi();
     const uRepository = await connection.getRepository(User);
@@ -47,23 +48,23 @@ async function issueTokens(user_id, client_id, done) {
     const oRepository = await connection.getRepository(Oauth);
   
     // Get Client
-    const client = await cRepository.findOne({ client_id: client_id });
+    const findClient = await cRepository.findOne({ client_id: client.client_id });
   
-    if (!client) {
+    if (!findClient) {
       const error = new NotFound('Client Not Found');
       return done(error);
     }
   
     // Get User
-    const user = await uRepository.findOne({ user_id: user_id });
+    const findUser = await uRepository.findOne({ user_id: user.user_id });
   
-    if (!user) {
+    if (!findUser) {
       const error = new NotFound('User Not Found');
       return done(error);
     }
   
     // Generate tokens
-    const tokens = await generateTokens(user);
+    const tokens = await generateTokens(findUser);
     const date = new Date();
     
     // Create id token 
@@ -116,7 +117,7 @@ async function issueTokens(user_id, client_id, done) {
       return done(error);
     }
     // Just check if you can pass id token like this
-    return done(null, tokens.access_token, tokens.refresh_token, tokens.id_token);
+    return done(null, tokens.access_token, tokens.refresh_token);
   } catch (e) {
     return done(e);
   }
@@ -174,38 +175,42 @@ server.grant(oauth2orize.grant.code(async (client, redirectUri, user, _ares, don
 
 // Register code exchange method
 server.exchange(oauth2orize.exchange.code(async (client, code, redirectUri, done) => {
-  
-  // Check if token is still valid
+  try {
+      // Check if token is still valid
   // passport.authenticate('jwt-query', {
   //   session: false,
   // });
   
-  const connection = await auroraConnectApi();
-  const repository = await connection.getRepository(Oauth);
-  const dbOauth = await repository.findOne({ token: code })
+    const connection = await auroraConnectApi();
+    const repository = await connection.getRepository(Oauth);
+    const dbOauth = await repository.findOne({ token: code })
+    
+    if (!dbOauth) {
+      const error = new NotFound('No auth code found');
+      return done(error);
+    }
   
-  if (!dbOauth) {
-    const error = new NotFound('No auth code found');
-    return done(error);
-  }
-
-  if (client !== dbOauth.client) {
-    return done(null, false);
-  }
-
-  if (redirectUri !== dbOauth.redirect_uri) {
-    return done(null, false);
-  }
-
-  // delete code from db, it's now been used
-  await repository.delete(dbOauth);
-
-  await issueTokens(dbOauth.user_id, client.client_id, done);
+    if (client !== dbOauth.client) {
+      return done(null, false);
+    }
+  
+    if (redirectUri !== dbOauth.redirect_uri) {
+      return done(null, false);
+    }
+  
+    // delete code from db, it's now been used
+    await repository.delete(dbOauth);
+  
+    await issueTokens(dbOauth.user, client, done);
+  } catch (e) {
+    throw new InternalServerError('Oauth2orize Code Exchange Error');
+  } 
 }));
 
 // issue new tokens and remove the old ones
 server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshToken, _scope, done) => {
-  // Get public key
+  try {
+    // Get public key
   const ssm = new AWS.SSM({ region: process.env.REGION });
   const params = {
     Name: process.env.PUBLIC_KEY_NAME,
@@ -272,11 +277,13 @@ server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshToken, _
 
   // Create new tokens ones
   await issueTokens(dbUser.user_id, dbClient.client_id, done);
+  } catch (e) {
+    throw new InternalServerError('Refresh Token Error');
+  }
 }));
 
-export function authorization() {
-  ensureLoggedIn("/login"),
-    
+export const authorization = [
+  login.ensureLoggedIn('/login'),
   server.authorization(async(clientId, redirectUri, done) => {
     const connection = await auroraConnectApi();
     const cRepository = await connection.getRepository(Client);
@@ -286,38 +293,47 @@ export function authorization() {
       const err = new NotFound('No matching client_id/client_secret found');
       return done(err);
     }
-    if (client.redirect_uri !== redirectUri) {
-      const err = new Unauthorized('Redirect URI mismatch');
-      return done(err);
-    }
+    // if (client.redirect_uri !== redirectUri) {
+    //   const err = new Unauthorized('Redirect URI mismatch');
+    //   return done(err);
+    // }
 
     return done(null, client, redirectUri);
-}, async (client, user, done) => {
-    const connection = await auroraConnectApi();
-    const oRepository = await connection.getRepository(Oauth);
-    const oauthRecord = await oRepository.findOne({ client: client, user: user, token_type: 'access_token' });
+  }, async (client, user, done) => {
+    try {
+      const connection = await auroraConnectApi();
+      const oRepository = await connection.getRepository(Oauth);
+      const oauthRecord = await oRepository.findOne({ client_id: client.client_id, user_id: user.user_id, token_type: 'access_token' });
     
     if (oauthRecord) {
       return done(null, true);
     }
 
     return done(null, false);
+    } catch (e) {
+      return done(null, false);
+    }
+    
   }),
   (request, response) => {
-    response.render('dialog', { transactionId: request.oauth2.transactionID, user: request.user, client: request.oauth2.client });
+      response.render('dialog', { transactionId: request.oauth2.transactionID, user: request.user, client: request.oauth2.client });
   }
-}
+]
 
-export async function decision() {
-  ensureLoggedIn('/login'),
+    
+  
+
+export const decision = [
+  login.ensureLoggedIn('/login'),
   // says if user cancelled request
   server.decision(function(req, done) {
     return done(null, { cancel: false, scope: req.scope })
   })
-}
+]
 
-export async function token() {
-    passport.authenticate(['basic'], { session: false }),
+export const token = [
+    //console.log('got to token'),
+    //passport.authenticate('basic', { session: false }),
     server.token(),
     server.errorHandler()
-}
+]
