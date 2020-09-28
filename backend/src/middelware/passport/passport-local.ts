@@ -52,7 +52,7 @@ export async function passportLocal() {
         return done(err);
       }
 
-      return done(null, findUser.user_id);
+      return done(null, findUser);
     }));
   }
 

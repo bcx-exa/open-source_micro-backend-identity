@@ -4,11 +4,12 @@
   "description": "Boilerplate for creating identity microservice",
   "main": "src/app.ts",
   "scripts": {
-    "dev": "eslint . --ext .ts && nodemon --inspect",
+    "dev": "eslint . --ext .ts && nodemon",
     "offline": "eslint . --ext .ts && serverless offline start",
     "tsoa": "tsoa spec-and-routes",
     "test": "jest",
     "lint": "eslint . --ext .ts",
+    "debug": "nodemon --inspect",
     "deploy:dev": "node iac/crypto-keys/crypto.js && sls deploy --config iac/resources/pinpoint/pinpoint.serverless.yml --stage dev && node iac/resources/pinpoint/pinpoint_domain_register.js && sls deploy --stage dev",
     "destroy:dev": "sls remove --stage dev && sls remove --config iac/resources/acm.serverless.yml --stage dev ",
     "deploy:uat": "sls deploy --config iac/resources/acm.serverless.yml --stage uat && sls deploy --stage uat ",

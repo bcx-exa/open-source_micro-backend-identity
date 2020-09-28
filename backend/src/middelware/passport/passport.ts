@@ -14,23 +14,44 @@ export async function registerStrategies(): Promise<any> {
   try {
     if (initialized) return;
 
-    passport.serializeUser((user: User, done) => done(null, user.user_id));
-    passport.deserializeUser(async (id, done) => {
-      try {
-        const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(User);
-        const findUser = await repository.findOne({ user_id: id });
 
-        return done(null, findUser);
-      } catch (e) {
-        return done(e);
-        }
-    }); 
+
+    // passport.serializeUser((user: User, done) => done(null, user.user_id));
+    // passport.deserializeUser(async (id, done) => {
+    //   try {
+    //     const connection = await auroraConnectApi();
+    //     const repository = await connection.getRepository(User);
+    //     const findUser = await repository.findOne({ user_id: id });
+
+    //     return done(null, findUser);
+    //   } catch (e) {
+    //     return done(e);
+    //     }
+    // }); 
     
     await passportLocal();
     await passportHTTP();
     await passportJWT('jwt', ExtractJwt.fromAuthHeaderAsBearerToken());
     await passportJWT('jwt-query', ExtractJwt.fromUrlQueryParameter('token'));
+
+    passport.serializeUser(function (user: any, done) {
+      done(null, user);
+    });
+  
+    passport.deserializeUser(async function (user:any , done) {
+      try {
+        const connection = await auroraConnectApi();
+        const repository = await connection.getRepository(User);
+        const findUser = await repository.findOne({ user_id: user.user_id });
+        if (findUser) {
+          return done(null, findUser);
+        } else {
+          return done(null, false);
+        }
+      } catch (err) {
+        return done(err, false);
+      }
+    });
 
 
     initialized = true;
@@ -48,7 +69,7 @@ export async function expressAuthentication(request: any, securityName: string, 
 
   // used in sign in
   if (securityName === 'local') {
-    strategy = passport.authenticate(securityName, { successRedirect: '/home', failureRedirect: '/login' });
+    strategy = passport.authenticate(securityName, { successRedirect: '/', failureRedirect: '/login' });
   }
   
   // used in password reset, verify account & protecting of api's

@@ -1,4 +1,4 @@
-import { Client } from '@/models/client';
+import { Client } from '../../models/client';
 import passport from 'passport';
 import { BasicStrategy } from 'passport-http';
 import { auroraConnectApi } from "../../components/database/aurora";

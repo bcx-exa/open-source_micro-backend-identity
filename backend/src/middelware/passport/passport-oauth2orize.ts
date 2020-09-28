@@ -10,7 +10,7 @@ import { User } from '../../models/user';
 import { generateTokens } from '../../components/security/tokens';
 import { DbConnectionError, NotFound, Unauthorized } from "../../components/handlers/error-handling";
 import jsonwebtoken from 'jsonwebtoken';
-import login from 'connect-ensure-login';
+import { ensureLoggedIn } from '../../components/handlers/ensureloggedIn'
 import { openid } from "../../types/openid-scopes";
 import { signJWT, calculateExp } from '../../components/security/crypto';
 
@@ -123,7 +123,7 @@ async function issueTokens(user_id, client_id, done) {
 }
 
 // Register code grant method
-server.grant(oauth2orize.grant.code(async (client, redirectUri, user, ares, done) => {  
+server.grant(oauth2orize.grant.code(async (client, redirectUri, user, _ares, done) => {  
   try {
     // openid claims
     const openidClaims: openid = {
@@ -274,10 +274,10 @@ server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshToken, _
   await issueTokens(dbUser.user_id, dbClient.client_id, done);
 }));
 
-export async function authorization() {
-  login.ensureLoggedIn(),
+export function authorization() {
+  ensureLoggedIn("/login"),
     
-  server.authorization((clientId, redirectUri, done) => {
+  server.authorization(async(clientId, redirectUri, done) => {
     const connection = await auroraConnectApi();
     const cRepository = await connection.getRepository(Client);
     const client = await cRepository.findOne({ client_id: clientId });
@@ -292,10 +292,10 @@ export async function authorization() {
     }
 
     return done(null, client, redirectUri);
-}, (client, user, done) => {
+}, async (client, user, done) => {
     const connection = await auroraConnectApi();
     const oRepository = await connection.getRepository(Oauth);
-    const oauthRecord = await oRepository.findOne({ client: client, user: user, token_type: 'code' });
+    const oauthRecord = await oRepository.findOne({ client: client, user: user, token_type: 'access_token' });
     
     if (oauthRecord) {
       return done(null, true);
@@ -309,7 +309,7 @@ export async function authorization() {
 }
 
 export async function decision() {
-  login.ensureLoggedIn(),
+  ensureLoggedIn('/login'),
   // says if user cancelled request
   server.decision(function(req, done) {
     return done(null, { cancel: false, scope: req.scope })
@@ -317,7 +317,7 @@ export async function decision() {
 }
 
 export async function token() {
-  passport.authenticate(['basic', 'oauth2-client-password'], { session: false }),
-  server.token(),
-  server.errorHandler(),
+    passport.authenticate(['basic'], { session: false }),
+    server.token(),
+    server.errorHandler()
 }

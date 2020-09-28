@@ -13,6 +13,9 @@ import cookieParser from "cookie-parser";
 import ejs from 'ejs';
 import { registerStrategies } from "./middelware/passport/passport";
 import { globalErrorHandler } from "./components/handlers/error-handling";
+import session from 'express-session';
+import { index, loginForm, login, logout, account } from './routes/site';
+import { authorization, decision, token } from './middelware/passport/passport-oauth2orize';
 
 export class Server {
   public httpServer: any;
@@ -36,10 +39,15 @@ export class Server {
         credsConfigLocal();
       }
 
+      // Initiate view engine
       this.httpServer.engine('ejs', ejs.__express);
       this.httpServer.set('view engine', 'ejs');
       this.httpServer.set('views', path.join(__dirname, './views'));
       this.httpServer.use(cookieParser());
+      this.httpServer.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+
+
+
       
       //Allow Cors
       console.log("Enabling CORS");
@@ -53,7 +61,20 @@ export class Server {
       //Add Passport Middelware to all routes
       registerStrategies();
       this.httpServer.use(passport.initialize());
+      this.httpServer.use(passport.session());
 
+      // API's for oauth test
+      this.httpServer.get('/', index);
+      this.httpServer.get('/login', loginForm);
+      this.httpServer.post('/login', login);
+      this.httpServer.get('/logout', logout);
+      this.httpServer.get('/account', account);  
+      this.httpServer.get('/dialog/authorize', authorization);
+      this.httpServer.post('/dialog/authorize/decision', decision);
+      this.httpServer.post('/oauth/token', token); 
+      // app.get('/api/userinfo', routes.user.info);
+      // app.get('/api/clientinfo', routes.client.info);
+      
       //Generate tsoa routes & spec
       if (env === "local") {
         await execShellCommand("npm run tsoa");
@@ -68,15 +89,7 @@ export class Server {
         return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
       });
 
-      //login
-      this.httpServer.get('/login', (_req, res) => {
-        res.send('Login Page');
-      });
-
-      //Home
-      this.httpServer.get('/home', (_req, res) => {
-        res.send('you have been logged in!');
-      });
+      
 
       //X-Ray Segment End
       console.log("Ending X-Ray Segment");
