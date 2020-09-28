@@ -40,7 +40,7 @@ server.deserializeClient(async (client, done) => {
 });
 
 // Issue Tokens
-async function issueTokens(user, client, done) {
+async function issueTokens(user_id, client_id, done) {
   try {
     const connection = await auroraConnectApi();
     const uRepository = await connection.getRepository(User);
@@ -48,23 +48,23 @@ async function issueTokens(user, client, done) {
     const oRepository = await connection.getRepository(Oauth);
   
     // Get Client
-    const findClient = await cRepository.findOne({ client_id: client.client_id });
+    const client = await cRepository.findOne({ client_id: client_id });
   
-    if (!findClient) {
+    if (!client) {
       const error = new NotFound('Client Not Found');
       return done(error);
     }
   
     // Get User
-    const findUser = await uRepository.findOne({ user_id: user.user_id });
+    const user = await uRepository.findOne({ user_id: user_id });
   
-    if (!findUser) {
+    if (!user) {
       const error = new NotFound('User Not Found');
       return done(error);
     }
   
     // Generate tokens
-    const tokens = await generateTokens(findUser);
+    const tokens = await generateTokens(user);
     const date = new Date();
     
     // Create id token 
@@ -201,7 +201,7 @@ server.exchange(oauth2orize.exchange.code(async (client, code, redirectUri, done
     // delete code from db, it's now been used
     await repository.delete(dbOauth);
   
-    await issueTokens(dbOauth.user, client, done);
+    await issueTokens(dbOauth.user_id, client.client_id, done);
   } catch (e) {
     throw new InternalServerError('Oauth2orize Code Exchange Error');
   } 
@@ -316,6 +316,7 @@ export const authorization = [
     
   }),
   (request, response) => {
+      console.log(request.oauth2);
       response.render('dialog', { transactionId: request.oauth2.transactionID, user: request.user, client: request.oauth2.client });
   }
 ]
@@ -332,8 +333,7 @@ export const decision = [
 ]
 
 export const token = [
-    //console.log('got to token'),
-    //passport.authenticate('basic', { session: false }),
+    passport.authenticate('basic', { session: false }),
     server.token(),
     server.errorHandler()
 ]
