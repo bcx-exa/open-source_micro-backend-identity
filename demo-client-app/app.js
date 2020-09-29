@@ -22,9 +22,9 @@ const { AuthorizationCode } = require('simple-oauth2');
     scope: 'openid profile email phone',
     state: '3(#0/!~'
   });
- 
-  app.get('/auth', (req, res) => {
-    console.log(authorizationUri);
+  
+  // initiates authorization request
+  app.get('/', (req, res) => {
     res.redirect(authorizationUri);
   });
 
@@ -46,11 +46,6 @@ const { AuthorizationCode } = require('simple-oauth2');
     return res.status(500).json('Authentication failed');
   }
 });
-
-app.get('/', (req, res) => {
-  res.send('Hello<br><a href="/auth">Log in with Github</a>');
-});
-
  
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
