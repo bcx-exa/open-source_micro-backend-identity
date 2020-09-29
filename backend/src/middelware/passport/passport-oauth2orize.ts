@@ -229,7 +229,9 @@ server.exchange(
       let tokenDecoded;
       const pubKey = await ssm.getParameter(params).promise();
       try {
-        tokenDecoded = jsonwebtoken.verify(refreshToken, pubKey);
+        tokenDecoded = jsonwebtoken.verify(refreshToken, pubKey.Parameter.Value, {
+          algorithms: ["RS256"],
+        });
       } catch (e) {
         return done(e);
       }
@@ -257,7 +259,7 @@ server.exchange(
       }
 
       // Check if you can find matching id token
-      const dbIdToken = await oRepository.find({
+      const dbIdToken = await oRepository.findOne({
         token_link: tokenDecoded.token_link,
         token_type: "id_token",
       });
@@ -268,7 +270,7 @@ server.exchange(
       }
 
       // Check if you can find matching access token
-      const dbAccessToken = await oRepository.find({
+      const dbAccessToken = await oRepository.findOne({
         token_link: tokenDecoded.token_link,
         token_type: "access_token",
       });
@@ -279,7 +281,7 @@ server.exchange(
       }
 
       // Check refresh token valid
-      const dbRefreshToken = await oRepository.find({
+      const dbRefreshToken = await oRepository.findOne({
         token: refreshToken,
         token_type: "refresh_token",
       });
@@ -355,7 +357,7 @@ export const decision = [
 ];
 
 export const token = [
-  passport.authenticate("basic", { session: false }),
+  passport.authenticate(["basic", "oauth2-client-password"], { session: false }),
   server.token(),
   server.errorHandler(),
 ];
