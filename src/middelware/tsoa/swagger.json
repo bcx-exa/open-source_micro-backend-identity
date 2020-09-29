@@ -1,0 +1,2021 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"InternalServerError": {
+				"properties": {
+					"stack": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"VerifyResend": {
+				"properties": {
+					"preferred_username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"preferred_username"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PasswordResetRequest": {
+				"properties": {
+					"preferred_username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"preferred_username"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PasswordReset": {
+				"properties": {
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SignUp": {
+				"properties": {
+					"preferred_username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"given_name": {
+						"type": "string"
+					},
+					"family_name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"preferred_username",
+					"password",
+					"given_name",
+					"family_name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SignIn": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ClientPost": {
+				"properties": {
+					"client_name": {
+						"type": "string"
+					},
+					"client_secret": {
+						"type": "string"
+					},
+					"redirect_uri": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"client_name",
+					"client_secret",
+					"redirect_uri"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ScopeGroup_Scope_Request": {
+				"properties": {
+					"scope_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"scope_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ScopeGroup_UserGroup_Request": {
+				"properties": {
+					"user_group_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user_group_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ScopeGroupRequest": {
+				"properties": {
+					"scope_group_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"scopes": {
+						"items": {
+							"$ref": "#/components/schemas/ScopeGroup_Scope_Request"
+						},
+						"type": "array"
+					},
+					"user_groups": {
+						"items": {
+							"$ref": "#/components/schemas/ScopeGroup_UserGroup_Request"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Scope_ScopeGroup_Request": {
+				"properties": {
+					"scope_group_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"scope_group_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ScopeRequest": {
+				"properties": {
+					"scope_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"scope_groups": {
+						"items": {
+							"$ref": "#/components/schemas/Scope_ScopeGroup_Request"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserGroup_User_Request": {
+				"properties": {
+					"user_id": {
+						"type": "string"
+					},
+					"preferred_username": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserGorup_ScopeGroup_Request": {
+				"properties": {
+					"scope_group_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"scope_group_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserGroupRequest": {
+				"properties": {
+					"user_group_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"users": {
+						"items": {
+							"$ref": "#/components/schemas/UserGroup_User_Request"
+						},
+						"type": "array"
+					},
+					"scope_groups": {
+						"items": {
+							"$ref": "#/components/schemas/UserGorup_ScopeGroup_Request"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"User_UserGroup_Request": {
+				"properties": {
+					"user_group_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user_group_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserRequest": {
+				"properties": {
+					"user_id": {
+						"type": "string"
+					},
+					"preferred_username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"phone_number": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"locale": {
+						"type": "string"
+					},
+					"birthdate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"name": {
+						"type": "string"
+					},
+					"given_name": {
+						"type": "string"
+					},
+					"family_name": {
+						"type": "string"
+					},
+					"nickname": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"picture": {
+						"type": "string"
+					},
+					"user_groups": {
+						"items": {
+							"$ref": "#/components/schemas/User_UserGroup_Request"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			},
+			"oauth": {
+				"type": "oauth2",
+				"flows": {
+					"implicit": {
+						"authorizationUrl": "http://localhost:3000/oidc/auth",
+						"scopes": {
+							"openid": "modify things",
+							"profile": "read things",
+							"email": "Get user info"
+						}
+					}
+				}
+			},
+			"openid": {
+				"type": "openIdConnect",
+				"openIdConnectUrl": "http://localhost:3000/oidc/.well-known/openid-configuration"
+			},
+			"google": {
+				"type": "oauth2",
+				"flows": {
+					"implicit": {
+						"authorizationUrl": "http://localhost:7000/auth/google",
+						"scopes": {}
+					}
+				}
+			},
+			"facebook": {
+				"type": "oauth2",
+				"flows": {
+					"implicit": {
+						"authorizationUrl": "http://localhost:7000/auth/facebook",
+						"scopes": {}
+					}
+				}
+			}
+		}
+	},
+	"info": {
+		"title": "micro-identity",
+		"version": "0.0.1",
+		"description": "Boilerplate for creating identity microservice",
+		"license": {
+			"name": "MIT"
+		},
+		"contact": {
+			"name": "Martin Greyling"
+		}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/account/verify_resend": {
+			"post": {
+				"operationId": "VerifyResend",
+				"responses": {
+					"200": {
+						"description": "Verification Message Resent!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Verification Message API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Account"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/VerifyResend"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/account/verify": {
+			"get": {
+				"operationId": "VerifyGet",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Verify API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Account"
+				],
+				"security": [
+					{
+						"jwt-query": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/account/password_reset_request": {
+			"post": {
+				"operationId": "PasswordRequestPost",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Verify API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Account"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PasswordResetRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/account/password_reset": {
+			"post": {
+				"operationId": "PasswordResetPost",
+				"responses": {
+					"200": {
+						"description": "Account Verified!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Verify API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Account"
+				],
+				"security": [
+					{
+						"jwt-query": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PasswordReset"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/initial_scope_creation": {
+			"post": {
+				"operationId": "AddDefaultSchema",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/signup": {
+			"post": {
+				"operationId": "SignUpPost",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Signup API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignUp"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"get": {
+				"operationId": "LoginGet",
+				"responses": {
+					"200": {
+						"description": "User Logged In!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Signin API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "LoginPost",
+				"responses": {
+					"200": {
+						"description": "User Logged In!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Signin API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignIn"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/logout": {
+			"get": {
+				"operationId": "LogoutGet",
+				"responses": {
+					"200": {
+						"description": "User Logged In!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Signin API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "LogoutPost",
+				"responses": {
+					"200": {
+						"description": "User Logged In!",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Signin API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignIn"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/google": {
+			"get": {
+				"operationId": "SignInGoogle",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/facebook": {
+			"get": {
+				"operationId": "SignInFacebook",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/client/{clientName}": {
+			"get": {
+				"operationId": "GetClient",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth Client API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clients"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "clientName",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteClient",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth Client API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clients"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "clientName",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "softDelete",
+						"required": false,
+						"schema": {
+							"default": true,
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/client": {
+			"get": {
+				"operationId": "GetClients",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth Client API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clients"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateClient",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth Client API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clients"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ClientPost"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "UpdateClient",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth Client API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clients"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ClientPost"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/oauth/authorize": {
+			"get": {
+				"operationId": "GetAuthorize",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authorization - OAuth 2.0"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/oauth/decision": {
+			"post": {
+				"operationId": "PostDecision",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authorization - OAuth 2.0"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/oauth/token": {
+			"post": {
+				"operationId": "PostToken",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"Oauth API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authorization - OAuth 2.0"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/scopegroup/{scope_group_id}": {
+			"get": {
+				"operationId": "GetScopeGroup",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scope Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "scope_group_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "detailed",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteUserGroup",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scope Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "scope_group_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "softDelete",
+						"required": false,
+						"schema": {
+							"default": true,
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/scopegroup": {
+			"get": {
+				"operationId": "GetScopeGroups",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scope Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "detailed",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "PostScopeGroups",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scope Groups"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ScopeGroupRequest"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "PutScopeGroups",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scope Groups"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ScopeGroupRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/scope/{scope_id}": {
+			"get": {
+				"operationId": "GetScope",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "scope_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "detailed",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteScope",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "scope_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "softDelete",
+						"required": false,
+						"schema": {
+							"default": true,
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/scope": {
+			"get": {
+				"operationId": "GetScopes",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "detailed",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "PostScope",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ScopeRequest"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "PutScope",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ScopeRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/scope/default_scopes": {
+			"post": {
+				"operationId": "AddDefaultScope",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Scopes"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/usergroup/{user_group_id}": {
+			"get": {
+				"operationId": "GetUserGroup",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "user_group_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "detailed",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteUserGroup",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "user_group_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "softDelete",
+						"required": false,
+						"schema": {
+							"default": true,
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/usergroup": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "detailed",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "PostUserGroups",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Groups"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserGroupRequest"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "PutUserGroups",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Groups"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserGroupRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/{user_id}": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "detailed",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "path",
+						"name": "user_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteUsers",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "user_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "softDelete",
+						"required": false,
+						"schema": {
+							"default": true,
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/user": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "detailed",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "PostUsers",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserRequest"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "PutUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/scopes/{user_id}": {
+			"get": {
+				"operationId": "GetUserScopes",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"User API Internal Server Error": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "user_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
