@@ -76,6 +76,16 @@ const models: TsoaRoute.Models = {
     "additionalProperties": false,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  "ClientPost": {
+    "dataType": "refObject",
+    "properties": {
+      "client_name": { "dataType": "string", "required": true },
+      "client_secret": { "dataType": "string", "required": true },
+      "redirect_uri": { "dataType": "string", "required": true },
+    },
+    "additionalProperties": false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   "ScopeGroup_Scope_Request": {
     "dataType": "refObject",
     "properties": {
@@ -515,7 +525,7 @@ export function RegisterRoutes(app: express.Express) {
   app.post('/client',
     function(request: any, response: any, next: any) {
       const args = {
-        body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "clientSecret": { "dataType": "string", "required": true }, "clientName": { "dataType": "string", "required": true } } },
+        body: { "in": "body", "name": "body", "required": true, "ref": "ClientPost" },
       };
 
       // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -537,7 +547,7 @@ export function RegisterRoutes(app: express.Express) {
   app.put('/client',
     function(request: any, response: any, next: any) {
       const args = {
-        body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "clientSecret": { "dataType": "string", "required": true }, "clientName": { "dataType": "string", "required": true } } },
+        body: { "in": "body", "name": "body", "required": true, "ref": "ClientPost" },
       };
 
       // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

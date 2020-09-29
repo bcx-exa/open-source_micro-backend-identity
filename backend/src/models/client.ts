@@ -16,6 +16,9 @@ export class Client {
   @Column()
   client_secret_salt?: string;
 
+  @Column()
+  redirect_uri: string;
+
   @Column("datetime")
   created_at: Date;
 

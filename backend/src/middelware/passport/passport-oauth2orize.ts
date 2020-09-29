@@ -316,20 +316,14 @@ export const authorization = [
     
   }),
   (request, response) => {
-      console.log(request.oauth2);
       response.render('dialog', { transactionId: request.oauth2.transactionID, user: request.user, client: request.oauth2.client });
   }
 ]
 
-    
-  
-
 export const decision = [
   login.ensureLoggedIn('/login'),
   // says if user cancelled request
-  server.decision(function(req, done) {
-    return done(null, { cancel: false, scope: req.scope })
-  })
+  server.decision()
 ]
 
 export const token = [

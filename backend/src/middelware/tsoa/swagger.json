@@ -91,6 +91,26 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ClientPost": {
+				"properties": {
+					"client_name": {
+						"type": "string"
+					},
+					"client_secret": {
+						"type": "string"
+					},
+					"redirect_uri": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"client_name",
+					"client_secret",
+					"redirect_uri"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ScopeGroup_Scope_Request": {
 				"properties": {
 					"scope_id": {
@@ -940,19 +960,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"clientSecret": {
-										"type": "string"
-									},
-									"clientName": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"clientSecret",
-									"clientName"
-								],
-								"type": "object"
+								"$ref": "#/components/schemas/ClientPost"
 							}
 						}
 					}
@@ -990,19 +998,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"clientSecret": {
-										"type": "string"
-									},
-									"clientName": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"clientSecret",
-									"clientName"
-								],
-								"type": "object"
+								"$ref": "#/components/schemas/ClientPost"
 							}
 						}
 					}
