@@ -1,5 +1,5 @@
-<p>Hi <%= user.name %>!</p>
-<p><b><%= client.name %></b> is requesting access to your account.</p>
+<p>Hi <%= user.preferred_username %>!</p>
+<p><b><%= client.client_name %></b> is requesting access to your account.</p>
 <p>Do you approve?</p>
 
 <form action="/dialog/authorize/decision" method="post">
