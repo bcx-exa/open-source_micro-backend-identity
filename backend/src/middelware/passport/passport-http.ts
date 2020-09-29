@@ -3,7 +3,7 @@ import passport from "passport";
 import { BasicStrategy } from "passport-http";
 import { auroraConnectApi } from "../../components/database/aurora";
 import { validatePasswordHash } from "../../components/security/crypto";
-
+import { Strategy } from "passport-oauth2-client-password";
 /**
  * BasicStrategy & ClientPasswordStrategy
  *
@@ -44,4 +44,5 @@ async function verifyClient(clientId, clientSecret, done) {
 
 export async function passportHTTP() {
   passport.use("basic", new BasicStrategy(verifyClient));
+  passport.use("oauth2-client-password", new Strategy(verifyClient));
 }

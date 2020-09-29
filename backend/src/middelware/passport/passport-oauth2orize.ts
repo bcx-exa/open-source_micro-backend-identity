@@ -2,6 +2,7 @@
 import passport from "passport";
 import AWS from "aws-sdk";
 import oauth2orize from "oauth2orize";
+import oauth2orize_ext from "oauth2orize-openid";
 import { Client } from "../../models/client";
 import "reflect-metadata";
 import { auroraConnectApi } from "../../components/database/aurora";
@@ -178,6 +179,96 @@ server.grant(
   })
 );
 
+server.grant(
+  oauth2orize_ext.grant.codeIdTokenToken(
+    async function (client, user, done) {
+      try {
+        // Check if token is still valid
+        // passport.authenticate('jwt-query', {
+        //   session: false,
+        // });
+
+        const connection = await auroraConnectApi();
+        const repository = await connection.getRepository(Oauth);
+        const dbOauth = await repository.findOne({ token: code, relations: ["client", "user"] });
+
+        if (!dbOauth) {
+          const error = new NotFound("No auth code found");
+          return done(error);
+        }
+
+        if (client.client_id !== dbOauth.client.client_id) {
+          return done(null, false);
+        }
+
+        //  if (redirectUri !== dbOauth.redirect_uri) {
+        //     return done(null, false);
+        //  }
+
+        // delete code from db, it's now been used
+        await repository.delete(dbOauth);
+
+        await issueTokens(dbOauth.user.user_id, client.client_id, done);
+      } catch (e) {
+        throw new InternalServerError("Oauth2orize Code Exchange Error");
+      }
+    },
+    async function (client, redirect_uri, user, done) {
+      try {
+        // openid claims
+        const openidClaims: openid = {
+          sub: user.user_id,
+          iss: process.env.API_DOMAIN,
+          aud: process.env.DOMAIN,
+          iat: Math.floor(Date.now() / 1000),
+          auth_time: Math.floor(Date.now() / 1000),
+        };
+        // id token structure
+        const codeToken = {
+          token_use: "code",
+          code: uuidv4(),
+          exp: calculateExp("2m", openidClaims.iat),
+          ...openidClaims,
+        };
+
+        const signedCodeToken = await signJWT(codeToken);
+        const date = new Date();
+        const connection = await auroraConnectApi();
+        const repository = await connection.getRepository(Oauth);
+
+        const oath_code: Oauth = {
+          oauth_id: uuidv4(),
+          user: user,
+          client: client,
+          redirect_uri: redirectUri,
+          token_type: "code",
+          token: signedCodeToken,
+          created_at: date,
+          updated_at: date,
+          disabled: false,
+        };
+
+        const saveCode = await repository.save(oath_code);
+
+        if (!saveCode) {
+          const error = new DbConnectionError("Not able to save auth code");
+          return done(error);
+        }
+
+        return done(null, signedCodeToken);
+      } catch (e) {
+        return done(e);
+      }
+    },
+    function (client, user, done) {
+      var id_token;
+      // Do your lookup/token generation.
+      // ... id_token =
+      done(null, id_token);
+    }
+  )
+);
+
 // Register code exchange method
 server.exchange(
   oauth2orize.exchange.code(async (client, code, _redirectUri, done) => {
@@ -229,7 +320,9 @@ server.exchange(
       let tokenDecoded;
       const pubKey = await ssm.getParameter(params).promise();
       try {
-        tokenDecoded = jsonwebtoken.verify(refreshToken, pubKey);
+        tokenDecoded = jsonwebtoken.verify(refreshToken, pubKey.Parameter.Value, {
+          algorithms: ["RS256"],
+        });
       } catch (e) {
         return done(e);
       }
@@ -257,7 +350,7 @@ server.exchange(
       }
 
       // Check if you can find matching id token
-      const dbIdToken = await oRepository.find({
+      const dbIdToken = await oRepository.findOne({
         token_link: tokenDecoded.token_link,
         token_type: "id_token",
       });
@@ -268,7 +361,7 @@ server.exchange(
       }
 
       // Check if you can find matching access token
-      const dbAccessToken = await oRepository.find({
+      const dbAccessToken = await oRepository.findOne({
         token_link: tokenDecoded.token_link,
         token_type: "access_token",
       });
@@ -279,7 +372,7 @@ server.exchange(
       }
 
       // Check refresh token valid
-      const dbRefreshToken = await oRepository.find({
+      const dbRefreshToken = await oRepository.findOne({
         token: refreshToken,
         token_type: "refresh_token",
       });
@@ -355,7 +448,7 @@ export const decision = [
 ];
 
 export const token = [
-  passport.authenticate("basic", { session: false }),
+  passport.authenticate(["basic", "oauth2-client-password"], { session: false }),
   server.token(),
   server.errorHandler(),
 ];
