@@ -1,7 +1,8 @@
-import { Client } from '../../models/client';
-import passport from 'passport';
-import { BasicStrategy } from 'passport-http';
+import { Client } from "../../models/client";
+import passport from "passport";
+import { BasicStrategy } from "passport-http";
 import { auroraConnectApi } from "../../components/database/aurora";
+import { validatePasswordHash } from "../../components/security/crypto";
 
 /**
  * BasicStrategy & ClientPasswordStrategy
@@ -24,18 +25,23 @@ async function verifyClient(clientId, clientSecret, done) {
       return done(null, false);
     }
 
-    if (client.client_secret !== clientSecret) {
-      return done(null, false)
+    // Validate password
+    const validPassword = validatePasswordHash(
+      clientSecret,
+      client.client_secret,
+      client.client_secret_salt
+    );
+
+    if (!validPassword) {
+      return done(null, false);
     }
 
     return done(null, client);
-  }
-  catch (err) {
+  } catch (err) {
     return done(err);
   }
 }
 
 export async function passportHTTP() {
-  passport.use('basic', new BasicStrategy(verifyClient));
+  passport.use("basic", new BasicStrategy(verifyClient));
 }
-
