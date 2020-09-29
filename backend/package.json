@@ -41,6 +41,7 @@
     "nanoid": "^3.1.12",
     "nodemon": "^2.0.4",
     "oauth2orize": "^1.11.0",
+    "oauth2orize-openid": "^0.4.0",
     "passport": "^0.4.1",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
