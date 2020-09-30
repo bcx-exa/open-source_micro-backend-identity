@@ -363,10 +363,6 @@
 					}
 				}
 			},
-			"openid": {
-				"type": "openIdConnect",
-				"openIdConnectUrl": "http://localhost:3000/oidc/.well-known/openid-configuration"
-			},
 			"google": {
 				"type": "oauth2",
 				"flows": {

@@ -14,8 +14,8 @@ import ejs from 'ejs';
 import { registerStrategies } from "./middelware/passport/passport";
 import { globalErrorHandler } from "./components/handlers/error-handling";
 import session from 'express-session';
-import { index, loginForm, login, logout } from './routes/views';
-import { authorization, decision, token } from './middelware/passport/passport-oauth2orize';
+import { router as authRouter } from './routes-override/authentication';
+import { router as authzRouter } from './routes-override/authorization';
 
 export class Server {
   public app: any;
@@ -56,22 +56,15 @@ export class Server {
       this.app.use(xrayExpress.openSegment(appName + "-startup"));
 
       //Add Passport Middelware to all routes
+      console.log("Register & Initialize Passport Strategies");
       registerStrategies();
       this.app.use(passport.initialize());
       this.app.use(passport.session());
 
-      // API's for oauth test
-      this.app.get('/', index);
-
-      // Authentication
-      this.app.get('/auth/login', loginForm);
-      this.app.post('/auth/login', login);
-      this.app.get('/auth/logout', logout);
-
-      // Authorization
-      this.app.get('/oauth/authorize', authorization);
-      this.app.post('/oauth/decision', decision);
-      this.app.post('/oauth/token', token); 
+      // Router Overrides
+      console.log("Route Overrides");
+      this.app.use('/auth', authRouter);
+      this.app.use('/oauth', authzRouter);
       
       //Generate tsoa routes & spec
       if (env === "local") {
@@ -83,11 +76,9 @@ export class Server {
       routesTSOA.RegisterRoutes(this.app);
 
       //Swagger-UI
-      this.app.use('/api-docs', swaggerUi.serve, async (_req: Request, res: Response) => {
+      this.app.use('/', swaggerUi.serve, async (_req: Request, res: Response) => {
         return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
       });
-
-      
 
       //X-Ray Segment End
       console.log("Ending X-Ray Segment");

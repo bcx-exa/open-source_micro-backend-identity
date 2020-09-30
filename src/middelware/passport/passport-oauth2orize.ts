@@ -2,7 +2,6 @@
 import passport from "passport";
 import AWS from "aws-sdk";
 import oauth2orize from "oauth2orize";
-import oauth2orize_ext from "oauth2orize-openid";
 import { Client } from "../../models/client";
 import "reflect-metadata";
 import { auroraConnectApi } from "../../components/database/aurora";
@@ -14,11 +13,9 @@ import {
   DbConnectionError,
   InternalServerError,
   NotFound,
-  Unauthorized,
 } from "../../components/handlers/error-handling";
 import jsonwebtoken from "jsonwebtoken";
 import login from "connect-ensure-login";
-import { openid } from "../../types/openid-scopes";
 import { signJWT, calculateExp } from "../../components/security/crypto";
 
 // Create OAuth 2.0 server
@@ -45,7 +42,7 @@ server.deserializeClient(async (client, done) => {
 });
 
 // Issue Tokens
-async function issueTokens(user_id, client_id, done) {
+async function issueTokens(user_id: string, client_id: string, done: any, decodedToken: any) {
   try {
     const connection = await auroraConnectApi();
     const uRepository = await connection.getRepository(User);
@@ -69,21 +66,8 @@ async function issueTokens(user_id, client_id, done) {
     }
 
     // Generate tokens
-    const tokens = await generateTokens(user);
+    const tokens = await generateTokens(user, decodedToken);
     const date = new Date();
-
-    // Create id token
-    const idToken: Oauth = {
-      oauth_id: uuidv4(),
-      token: tokens.id_token,
-      token_link: tokens.token_link,
-      token_type: "id_token",
-      user: user,
-      client: client,
-      disabled: false,
-      created_at: date,
-      updated_at: date,
-    };
 
     // Create access token
     const accessToken: Oauth = {
@@ -112,7 +96,7 @@ async function issueTokens(user_id, client_id, done) {
     };
 
     const oauth = [];
-    oauth.push(idToken, accessToken, refreshToken);
+    oauth.push(accessToken, refreshToken);
 
     // Save tokens
     const saveOauth = await oRepository.save(oauth);
@@ -130,13 +114,15 @@ async function issueTokens(user_id, client_id, done) {
 
 // Register code grant method
 server.grant(
-  oauth2orize.grant.code(async (client, redirectUri, user, _ares, done) => {
+  oauth2orize.grant.code(async (client, redirectUri, user, ares, done) => {
     try {
       // openid claims
-      const openidClaims: openid = {
+      const codeClaims: any = {
         sub: user.user_id,
         iss: process.env.API_DOMAIN,
         aud: process.env.DOMAIN,
+        scope: ares.scope,
+        state: ares.state,
         iat: Math.floor(Date.now() / 1000),
         auth_time: Math.floor(Date.now() / 1000),
       };
@@ -144,8 +130,8 @@ server.grant(
       const codeToken = {
         token_use: "code",
         code: uuidv4(),
-        exp: calculateExp("2m", openidClaims.iat),
-        ...openidClaims,
+        exp: calculateExp("2m", codeClaims.iat),
+        ...codeClaims,
       };
 
       const signedCodeToken = await signJWT(codeToken);
@@ -179,104 +165,27 @@ server.grant(
   })
 );
 
-// server.grant(
-//   oauth2orize_ext.grant.codeIdTokenToken(
-//     async function (client, code, done) {
-//       try {
-//         // Check if token is still valid
-//         // passport.authenticate('jwt-query', {
-//         //   session: false,
-//         // });
-
-//         const connection = await auroraConnectApi();
-//         const repository = await connection.getRepository(Oauth);
-//         const dbOauth = await repository.findOne({ token: code, relations: ["client", "user"] });
-
-//         if (!dbOauth) {
-//           const error = new NotFound("No auth code found");
-//           return done(error);
-//         }
-
-//         if (client.client_id !== dbOauth.client.client_id) {
-//           return done(null, false);
-//         }
-
-//         //  if (redirectUri !== dbOauth.redirect_uri) {
-//         //     return done(null, false);
-//         //  }
-
-//         // delete code from db, it's now been used
-//         await repository.delete(dbOauth);
-
-//         await issueTokens(dbOauth.user.user_id, client.client_id, done);
-//       } catch (e) {
-//         throw new InternalServerError("Oauth2orize Code Exchange Error");
-//       }
-//     },
-//     async function (client, redirectUri, user, done) {
-//       try {
-//         // openid claims
-//         const openidClaims: openid = {
-//           sub: user.user_id,
-//           iss: process.env.API_DOMAIN,
-//           aud: process.env.DOMAIN,
-//           iat: Math.floor(Date.now() / 1000),
-//           auth_time: Math.floor(Date.now() / 1000),
-//         };
-//         // id token structure
-//         const codeToken = {
-//           token_use: "code",
-//           code: uuidv4(),
-//           exp: calculateExp("2m", openidClaims.iat),
-//           ...openidClaims,
-//         };
-
-//         const signedCodeToken = await signJWT(codeToken);
-//         const date = new Date();
-//         const connection = await auroraConnectApi();
-//         const repository = await connection.getRepository(Oauth);
-
-//         const oath_code: Oauth = {
-//           oauth_id: uuidv4(),
-//           user: user,
-//           client: client,
-//           redirect_uri: redirectUri,
-//           token_type: "code",
-//           token: signedCodeToken,
-//           created_at: date,
-//           updated_at: date,
-//           disabled: false,
-//         };
-
-//         const saveCode = await repository.save(oath_code);
-
-//         if (!saveCode) {
-//           const error = new DbConnectionError("Not able to save auth code");
-//           return done(error);
-//         }
-
-//         return done(null, signedCodeToken);
-//       } catch (e) {
-//         return done(e);
-//       }
-//     },
-//     function (client, user, done) {
-//       var id_token;
-//       // Do your lookup/token generation.
-//       // ... id_token =
-//       done(null, id_token);
-//     }
-//   )
-// );
-
 // Register code exchange method
 server.exchange(
   oauth2orize.exchange.code(async (client, code, _redirectUri, done) => {
     try {
-      // Check if token is still valid
-      // passport.authenticate('jwt-query', {
-      //   session: false,
-      // });
+      // Get public key
+      const ssm = new AWS.SSM({ region: process.env.REGION });
+      const params = {
+        Name: process.env.PUBLIC_KEY_NAME,
+        WithDecryption: true,
+      };
+
+      // Decode code token
+      let codeDecoded;
+      const pubKey = await ssm.getParameter(params).promise();
+      try {
+        codeDecoded = jsonwebtoken.verify(code, pubKey.Parameter.Value, {
+          algorithms: ["RS256"],
+        });
+      } catch (e) {
+        return done(e);
+      }
 
       const connection = await auroraConnectApi();
       const repository = await connection.getRepository(Oauth);
@@ -291,14 +200,10 @@ server.exchange(
         return done(null, false);
       }
 
-      //  if (redirectUri !== dbOauth.redirect_uri) {
-      //     return done(null, false);
-      //  }
-
       // delete code from db, it's now been used
       await repository.delete(dbOauth);
 
-      await issueTokens(dbOauth.user.user_id, client.client_id, done);
+      await issueTokens(dbOauth.user.user_id, client.client_id, done, codeDecoded);
     } catch (e) {
       throw new InternalServerError("Oauth2orize Code Exchange Error");
     }
@@ -386,7 +291,7 @@ server.exchange(
       await oRepository.delete([dbIdToken, dbAccessToken, dbRefreshToken]);
 
       // Create new tokens ones
-      await issueTokens(dbUser.user_id, dbClient.client_id, done);
+      await issueTokens(dbUser.user_id, dbClient.client_id, done, tokenDecoded);
     } catch (e) {
       throw new InternalServerError("Refresh Token Error");
     }
@@ -436,7 +341,7 @@ export const authorization = [
     response.render("dialog", {
       transactionId: request.oauth2.transactionID,
       user: request.user,
-      client: request.oauth2.client,
+      client: request.oauth2.client
     });
   },
 ];
@@ -444,7 +349,9 @@ export const authorization = [
 export const decision = [
   login.ensureLoggedIn("/auth/login"),
   // says if user cancelled request
-  server.decision(),
+  server.decision(function (req, done) {
+    return done(null, { scope: req.oauth2.req.scope, state: req.oauth2.req.state })
+  }),
 ];
 
 export const token = [

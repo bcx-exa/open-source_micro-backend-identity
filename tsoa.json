@@ -19,10 +19,6 @@
 					"email": "Get user info"
 				}
 			},
-			"openid": {
-				"type": "openIdConnect",
-				"openIdConnectUrl": "http://localhost:3000/oidc/.well-known/openid-configuration"
-			},
 			"google": {
 				"type": "oauth2",
 				"authorizationUrl": "http://localhost:7000/auth/google",
