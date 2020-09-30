@@ -10,7 +10,7 @@ import path from "path";
 import cors from "cors";
 import passport from "passport";
 import cookieParser from "cookie-parser";
-import ejs from 'ejs';
+import ejs from "ejs";
 import { registerStrategies } from "./middelware/passport/passport";
 import { globalErrorHandler } from "./components/handlers/error-handling";
 import session from 'express-session';
@@ -35,16 +35,16 @@ export class Server {
       const env = process.env.NODE_ENV || "local";
 
       //Configure AWS Creds
-      if (env == 'local') {
+      if (env == "local") {
         credsConfigLocal();
       }
 
       // Initiate view engine
-      this.app.engine('ejs', ejs.__express);
-      this.app.set('view engine', 'ejs');
-      this.app.set('views', path.join(__dirname, './views'));
+      this.app.engine("ejs", ejs.__express);
+      this.app.set("view engine", "ejs");
+      this.app.set("views", path.join(__dirname, "./views"));
       this.app.use(cookieParser());
-      this.app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+      this.app.use(session({ secret: "keyboard cat", resave: false, saveUninitialized: false }));
 
       //Allow Cors
       console.log("Enabling CORS");
@@ -70,7 +70,7 @@ export class Server {
       if (env === "local") {
         await execShellCommand("npm run tsoa");
       }
-      
+
       //Register tsoa routes
       const routesTSOA = await import("./middelware/tsoa/routes");
       routesTSOA.RegisterRoutes(this.app);
