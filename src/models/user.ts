@@ -38,7 +38,7 @@ export class User {
   @Column({ nullable: true, length: 100 })
   gender?: string;
 
-  @Column({ nullable: true, length: 100 })
+  @Column({ nullable: true, length: 3000 })
   picture?: string;
 
   @Column({ nullable: true, length: 100 })

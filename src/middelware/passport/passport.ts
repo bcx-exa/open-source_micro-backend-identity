@@ -6,6 +6,8 @@ import { passportLocal } from "./passport-local";
 import { User } from "../../models/user";
 import { auroraConnectApi } from "../../components/database/aurora";
 import { passportHTTP } from "./passport-http";
+import { PassportGoogle } from "./passport-google";
+import { PassportFacebook } from "./passport-facebook";
 
 let initialized = false;
 
@@ -18,6 +20,8 @@ export async function registerStrategies(): Promise<any> {
     await passportHTTP();
     await passportJWT('jwt', ExtractJwt.fromAuthHeaderAsBearerToken());
     await passportJWT('jwt-query', ExtractJwt.fromUrlQueryParameter('token'));
+    await PassportGoogle();
+    await PassportFacebook();
 
     passport.serializeUser(function (user: any, done) {
       done(null, user);
@@ -64,6 +68,22 @@ export async function expressAuthentication(request: any, securityName: string, 
     });
   }
 
+  if (securityName === 'google') {
+    strategy = passport.authenticate(securityName, { scope: scopes });
+  }
+
+  if (securityName == "google_callback") {
+    strategy = passport.authenticate("google", { successRedirect: '/', failureRedirect: '/auth/login' });
+  }
+
+  if (securityName === 'facebook') {
+    strategy = passport.authenticate(securityName, { scope: scopes });
+  }
+
+  if (securityName == "facebook_callback") {
+    strategy = passport.authenticate("google", { successRedirect: '/', failureRedirect: '/auth/login' });
+  }
+
 
   if (scopes) {
     //console.log(scopes);
@@ -76,9 +96,6 @@ export async function expressAuthentication(request: any, securityName: string, 
         reject(err);
         throw new Error("Passport Auth Result Error" + err);
       } else {
-        if (securityName == "google_callback") {
-          request.redirect("/");
-        }
         resolve(request.user);
       }
     })
