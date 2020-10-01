@@ -1,16 +1,20 @@
 import passport from 'passport';
 import express from 'express';
-import { loginForm, login, logout } from './views';
+import { loginForm, login, logout, createForm, forgotForm, validateForm, resetForm } from './views';
 export const router = express.Router();
 
 // Authentication overrides
 router.get('/login', loginForm);
+router.get('/create', createForm);
+router.get('/forgot', forgotForm);
+router.get('/reset', resetForm);
+router.get('/validate', validateForm);
 router.post('/login', login);
 router.get('/logout', logout);
-router.get("/google", 
+router.get("/google",
   //passport.authenticate(["basic", "oauth2-client-password"], { session: false }),
   passport.authenticate("google", {
-  scope: [
+    scope: [
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/user.phonenumbers.read'
