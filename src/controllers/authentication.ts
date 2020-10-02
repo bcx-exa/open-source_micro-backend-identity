@@ -1,7 +1,7 @@
 import { Controller, Response, SuccessResponse, Get, Body, Route, Post, Tags } from "tsoa";
 import { AuthenticationService } from "../services/authentication";
 import { SignUp, SignIn } from "../types/authentication";
-import { InternalServerError } from "../components/handlers/error-handling";
+import { InternalServerError } from '../types/response_types';
 
 @Route("auth") // route name => localhost:xxx/SignUp
 @Tags("Authentication") // => Under SignUpController tag

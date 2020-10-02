@@ -61,7 +61,7 @@ export class Server {
       this.app.use(passport.initialize());
       this.app.use(passport.session());
 
-      // Router Overrides
+      // Route Overrides
       console.log("Route Overrides");
       this.app.use('/auth', authRouter);
       this.app.use('/oauth', authzRouter);

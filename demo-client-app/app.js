@@ -6,7 +6,7 @@ const { AuthorizationCode } = require('simple-oauth2');
 
   const config = {
     client: {
-      id: '10b865b7-2ba5-45e0-95c1-2d961082b9df',
+      id: '1a4c6aef-7cb0-4884-8312-46ca2c1d0de4',
       secret: '123'
     },
     auth: {

@@ -1,5 +1,3 @@
-import { User } from '../models/user';
-
 // Account types
 export interface VerifyResend
 {

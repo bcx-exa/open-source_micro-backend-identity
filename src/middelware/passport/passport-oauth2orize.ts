@@ -1,22 +1,19 @@
 /* eslint-disable */
 import passport from "passport";
-import AWS from "aws-sdk";
 import oauth2orize from "oauth2orize";
 import { Client } from "../../models/client";
 import "reflect-metadata";
-import { auroraConnectApi } from "../../components/database/aurora";
 import { v4 as uuidv4 } from "uuid";
 import { Oauth } from "../../models/oauth";
 import { User } from "../../models/user";
-import { generateTokens } from "../../components/security/tokens";
+import { generateTokens, generateCode, verifyAndDecodeToken } from "../../components/security/tokens";
 import {
-  DbConnectionError,
+  Unauthorized,
   InternalServerError,
   NotFound,
-} from "../../components/handlers/error-handling";
-import jsonwebtoken from "jsonwebtoken";
+} from "../../types/response_types";
 import login from "connect-ensure-login";
-import { signJWT, calculateExp } from "../../components/security/crypto";
+import { dbFindOneBy, dbSaveOrUpdate, dbDelete } from "../../components/database/db-helpers";
 
 // Create OAuth 2.0 server
 const server = oauth2orize.createServer();
@@ -26,43 +23,29 @@ server.serializeClient((client, done) => done(null, client));
 // This will use the id from the cookie to get the client object from the DB
 server.deserializeClient(async (client, done) => {
   try {
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(Client);
-    const findClient = await repository.findOne({ client_id: client.client_id });
+    // Find Client
+    const dbClient = await dbFindOneBy(Client, { client_id: client.client_id });
 
-    if (!findClient) {
-      const err = new DbConnectionError("No client found");
-      return done(err);
+    // If client not found or internal server error, give error to passport
+    if (dbClient instanceof NotFound || dbClient instanceof InternalServerError) {
+      return done(dbClient);
     }
-
-    return done(null, findClient);
+    // Return client to passport
+    return done(null, dbClient);
   } catch (err) {
+
+    // If unexected error return to passport
     return done(err);
   }
 });
-
 // Issue Tokens
-async function issueTokens(user_id: string, client_id: string, done: any, decodedToken: any) {
+async function issueTokens(user_id: string, client: Client, done: any, decodedToken: any) {
   try {
-    const connection = await auroraConnectApi();
-    const uRepository = await connection.getRepository(User);
-    const cRepository = await connection.getRepository(Client);
-    const oRepository = await connection.getRepository(Oauth);
-
-    // Get Client
-    const client = await cRepository.findOne({ client_id: client_id });
-
-    if (!client) {
-      const error = new NotFound("Client Not Found");
-      return done(error);
-    }
-
     // Get User
-    const user = await uRepository.findOne({ user_id: user_id });
+    const user = await dbFindOneBy(User, { user_id: user_id });
 
-    if (!user) {
-      const error = new NotFound("User Not Found");
-      return done(error);
+    if (user instanceof NotFound) {
+      return done(user);
     }
 
     // Generate tokens
@@ -99,241 +82,176 @@ async function issueTokens(user_id: string, client_id: string, done: any, decode
     oauth.push(accessToken, refreshToken);
 
     // Save tokens
-    const saveOauth = await oRepository.save(oauth);
+    const saveTokens = await dbSaveOrUpdate(Oauth, oauth);
 
-    if (!saveOauth) {
-      const error = new DbConnectionError("Couldnt save oath objects");
-      return done(error);
+    if (saveTokens instanceof InternalServerError) {
+      return done(saveTokens);
     }
-    // Just check if you can pass id token like this
+    // Pass tokens to passport
     return done(null, tokens.access_token, tokens.refresh_token);
   } catch (e) {
     return done(e);
   }
 }
-
 // Register code grant method
 server.grant(
-  oauth2orize.grant.code(async (client, redirectUri, user, ares, done) => {
+  oauth2orize.grant.code(async (client, _redirect_uri, user, ares, done) => {
     try {
-      // openid claims
-      const codeClaims: any = {
-        sub: user.user_id,
-        iss: process.env.API_DOMAIN,
-        aud: process.env.DOMAIN,
-        scope: ares.scope,
-        state: ares.state,
-        iat: Math.floor(Date.now() / 1000),
-        auth_time: Math.floor(Date.now() / 1000),
-      };
-      // id token structure
-      const codeToken = {
-        token_use: "code",
-        code: uuidv4(),
-        exp: calculateExp("2m", codeClaims.iat),
-        ...codeClaims,
-      };
+      // Generate code
+      const code = await generateCode(user, client, ares);
 
-      const signedCodeToken = await signJWT(codeToken);
-      const date = new Date();
-      const connection = await auroraConnectApi();
-      const repository = await connection.getRepository(Oauth);
-
-      const oath_code: Oauth = {
-        oauth_id: uuidv4(),
-        user: user,
-        client: client,
-        redirect_uri: redirectUri,
-        token_type: "code",
-        token: signedCodeToken,
-        created_at: date,
-        updated_at: date,
-        disabled: false,
-      };
-
-      const saveCode = await repository.save(oath_code);
-
-      if (!saveCode) {
-        const error = new DbConnectionError("Not able to save auth code");
-        return done(error);
+      // If error when generating code send error to passport
+      if (code instanceof InternalServerError) {
+        return done(code);
       }
 
-      return done(null, signedCodeToken);
-    } catch (e) {
+      // Return code to passport
+      return done(null, code);
+    } catch (e) {     
       return done(e);
     }
   })
 );
-
 // Register code exchange method
 server.exchange(
-  oauth2orize.exchange.code(async (client, code, _redirectUri, done) => {
+  oauth2orize.exchange.code(async (client, code, _redirect_uri, done) => {
     try {
-      // Get public key
-      const ssm = new AWS.SSM({ region: process.env.REGION });
-      const params = {
-        Name: process.env.PUBLIC_KEY_NAME,
-        WithDecryption: true,
-      };
+      // Check if token exists in DB
+      const dbCodeTokenRecord = await dbFindOneBy(Oauth, { token: code, relations: ["client", "user"] });
 
-      // Decode code token
-      let codeDecoded;
-      const pubKey = await ssm.getParameter(params).promise();
-      try {
-        codeDecoded = jsonwebtoken.verify(code, pubKey.Parameter.Value, {
-          algorithms: ["RS256"],
-        });
-      } catch (e) {
-        return done(e);
+      // If not return error to passport
+      if (dbCodeTokenRecord instanceof NotFound || dbCodeTokenRecord instanceof InternalServerError) {
+        return done(dbCodeTokenRecord);
       }
 
-      const connection = await auroraConnectApi();
-      const repository = await connection.getRepository(Oauth);
-      const dbOauth = await repository.findOne({ token: code, relations: ["client", "user"] });
+      // Decode token
+      const codeToken = await verifyAndDecodeToken(code);
 
-      if (!dbOauth) {
-        const error = new NotFound("No auth code found");
-        return done(error);
-      }
-
-      if (client.client_id !== dbOauth.client.client_id) {
-        return done(null, false);
+      // Return error to passport if verify & decoding failed
+      if (codeToken instanceof Unauthorized || codeToken instanceof InternalServerError) {
+        return done(codeToken);
       }
 
       // delete code from db, it's now been used
-      await repository.delete(dbOauth);
+      const deleteCode = await dbDelete(Oauth, dbCodeTokenRecord);
 
-      await issueTokens(dbOauth.user.user_id, client.client_id, done, codeDecoded);
+      // If we couldn't delete code
+      if (deleteCode instanceof InternalServerError) {
+        return done(deleteCode);
+      }
+      // Issue tokens
+      await issueTokens(dbCodeTokenRecord.user.user_id, client, done, codeToken);
+
     } catch (e) {
-      throw new InternalServerError("Oauth2orize Code Exchange Error");
+      const err = new InternalServerError("Something went wrong in code exchange", 500, e);
+      return done(err); 
     }
   })
 );
-
 // issue new tokens and remove the old ones
 server.exchange(
-  oauth2orize.exchange.refreshToken(async (client, refreshToken, _scope, done) => {
+  oauth2orize.exchange.refreshToken(async (client, refreshToken, _redirect_uri, done) => {
     try {
-      // Get public key
-      const ssm = new AWS.SSM({ region: process.env.REGION });
-      const params = {
-        Name: process.env.PUBLIC_KEY_NAME,
-        WithDecryption: true,
-      };
+      // Decode token
+      const decodeRefreshToken = await verifyAndDecodeToken(refreshToken);
 
-      // Decode refresht token
-      let tokenDecoded;
-      const pubKey = await ssm.getParameter(params).promise();
-      try {
-        tokenDecoded = jsonwebtoken.verify(refreshToken, pubKey.Parameter.Value, {
-          algorithms: ["RS256"],
-        });
-      } catch (e) {
-        return done(e);
+      // Return error to passport if verify & decoding failed
+      if (decodeRefreshToken instanceof Unauthorized || decodeRefreshToken instanceof InternalServerError) {
+        return done(decodeRefreshToken);
       }
 
-      // Make DB Connection
-      const connection = await auroraConnectApi();
-      const uRepository = await connection.getRepository(User);
-      const oRepository = await connection.getRepository(Oauth);
-      const cRepository = await connection.getRepository(Client);
+      // Check if user exists
+      const dbUser = await dbFindOneBy(User, { user_id: decodeRefreshToken.sub, disabled: false });
 
-      // Check user valid
-      const dbUser = await uRepository.findOne({ user_id: tokenDecoded.sub, disabled: false });
-
-      if (!dbUser) {
-        const error = new NotFound("Cant find user in db");
-        return done(error);
-      }
-
-      // Check client valid
-      const dbClient = await cRepository.findOne({ client_id: client.client_id });
-
-      if (!dbClient) {
-        const error = new NotFound("Cant find client in db");
-        return done(error);
-      }
-
-      // Check if you can find matching id token
-      const dbIdToken = await oRepository.findOne({
-        token_link: tokenDecoded.token_link,
-        token_type: "id_token",
-      });
-
-      if (!dbIdToken) {
-        const error = new NotFound("Cant find matching id token");
-        return done(error);
+      if (dbUser instanceof NotFound || dbUser instanceof InternalServerError) {
+        return done(dbUser);
       }
 
       // Check if you can find matching access token
-      const dbAccessToken = await oRepository.findOne({
-        token_link: tokenDecoded.token_link,
-        token_type: "access_token",
-      });
-
-      if (!dbAccessToken) {
-        const error = new NotFound("Cant find matching access token");
-        return done(error);
+      const dbAccessToken = await dbFindOneBy(Oauth,
+        { token_link: decodeRefreshToken.token_link, token_type: "access_token" });
+      
+      // Pass error to passport
+      if (dbAccessToken instanceof NotFound || dbAccessToken instanceof InternalServerError) {
+        return done(dbAccessToken);
       }
 
       // Check refresh token valid
-      const dbRefreshToken = await oRepository.findOne({
-        token: refreshToken,
-        token_type: "refresh_token",
-      });
+      const dbRefreshToken = await dbFindOneBy(Oauth,
+        { token_link: decodeRefreshToken.token_link, token_type: "refresh_token" });
 
-      if (!dbRefreshToken) {
-        const error = new NotFound("Cant find matching refresh token");
-        return done(error);
+      // Pass error to passport
+      if (dbRefreshToken instanceof NotFound || dbRefreshToken instanceof InternalServerError) {
+        return done(dbAccessToken);
       }
 
       // Delete old tokens
-      await oRepository.delete([dbIdToken, dbAccessToken, dbRefreshToken]);
+      const deleteTokens = await dbDelete(Oauth, [dbAccessToken, dbRefreshToken]);
+
+      // Pass error to passport
+      if (deleteTokens instanceof InternalServerError) {
+        return done(deleteTokens);
+      }
 
       // Create new tokens ones
-      await issueTokens(dbUser.user_id, dbClient.client_id, done, tokenDecoded);
+      await issueTokens(dbUser.user_id, client.client_id, done, decodeRefreshToken);
+
     } catch (e) {
       throw new InternalServerError("Refresh Token Error");
     }
   })
 );
-
+// The entry point for authorization api
 export const authorization = [
+  // Ensure user is logged in, if not redirect to login page
   login.ensureLoggedIn("/auth/login"),
+  // Authorization logic
   server.authorization(
-    async (clientId, redirectUri, done) => {
-      const connection = await auroraConnectApi();
-      const cRepository = await connection.getRepository(Client);
-      const client = await cRepository.findOne({ client_id: clientId });
+    async (client_id, redirect_uri, _scopes, done) => {
+      // Verify Client Exist
+      const client = await dbFindOneBy(Client, { client_id: client_id, relations: ['redirect_uris'] });
 
-      if (!client) {
-        const err = new NotFound("No matching client_id/client_secret found");
+      // If no client
+      if (client instanceof NotFound || client instanceof InternalServerError) {
+        return done(client);
+      }
+
+      // Check redirect uri is valid
+      const uriMatch = client.redirect_uris
+        .some(ruri => { return ruri.redirect_uri === redirect_uri });
+      
+      if (!uriMatch) {
+        const err = new Unauthorized('Redirect URI Mismatch');
         return done(err);
       }
-      // if (client.redirect_uri !== redirectUri) {
-      //   const err = new Unauthorized('Redirect URI mismatch');
-      //   return done(err);
-      // }
 
-      return done(null, client, redirectUri);
+      // return client and redirect_uri 
+      return done(null, client, redirect_uri);
     },
     async (client, user, done) => {
       try {
-        const connection = await auroraConnectApi();
-        const oRepository = await connection.getRepository(Oauth);
-        const oauthRecord = await oRepository.findOne({
-          client_id: client.client_id,
-          user_id: user.user_id,
+        // Check for an access token
+        const findAccessToken = await dbFindOneBy(Oauth,{
+          client: client,
+          user: user,
           token_type: "access_token",
         });
 
-        if (oauthRecord) {
-          return done(null, true);
+        // If error, pass it to passport
+        if (findAccessToken instanceof InternalServerError) {
+          return done(findAccessToken);
         }
 
-        return done(null, false);
+        // If no access token, user haven't provided concent
+        if (findAccessToken instanceof NotFound) {
+          return done(null, false);
+        } 
+
+        // Auto approve, ie skip concent page because previously access token was issued
+        return done(null, true);
+
       } catch (e) {
-        return done(null, false);
+        return done(e);
       }
     }
   ),
@@ -355,7 +273,7 @@ export const decision = [
 ];
 
 export const token = [
-  passport.authenticate(["basic", "oauth2-client-password"], { session: false }),
+  passport.authenticate(["oauth2-client-password-uri"], { session: false }),
   server.token(),
   server.errorHandler(),
 ];

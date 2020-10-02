@@ -83,7 +83,7 @@ const models: TsoaRoute.Models = {
     "properties": {
       "client_name": { "dataType": "string", "required": true },
       "client_secret": { "dataType": "string", "required": true },
-      "redirect_uri": { "dataType": "string", "required": true },
+      "redirect_uris": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
     },
     "additionalProperties": false,
   },

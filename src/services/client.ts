@@ -1,9 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { generatePasswordHash } from '../components/security/crypto';
-import { auroraConnectApi } from '../components/database/aurora';
+import { auroraConnectApi } from '../components/database/connection';
 import { Client } from "../models/client";
-import { Conflict, InvalidFormat, NotFound } from '../components/handlers/error-handling';
+import { Conflict, InvalidFormat, NotFound } from '../types/response_types';
 import { ClientPost } from '../types/client';
+import { SuccessResponse } from '../types/response_types';
+import { ClientRedirectURI } from '../models/redirect-uris';
 
 export class ClientService { 
     public async getClient(client_name: string): Promise<any> {
@@ -20,7 +22,7 @@ export class ClientService {
     public async getClients(): Promise<any> {
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(Client);
-        const findClients = await repository.find();
+        const findClients = await repository.find({relations: ['redirect_uris']});
 
         if (!findClients) {
             throw new InvalidFormat("No clients found, table is empty");
@@ -44,24 +46,40 @@ export class ClientService {
         const clientSecretHash = genPassHash.genHash;
         const date = new Date();
 
-        const client: Client = {
-            client_id: client_id,
-            client_name: body.client_name,
-            client_secret: clientSecretHash,
-            client_secret_salt: salt,
-            redirect_uri: body.redirect_uri,
-            created_at: date,
-            updated_at: date,
-            disabled: false,
-        };
+        const redirect_uris = [];
+
+        body.redirect_uris.forEach(r => {
+            const redirect_uri = new ClientRedirectURI();
+            
+            redirect_uri.redirect_uri_id = uuidv4();
+            redirect_uri.redirect_uri = r;
+            redirect_uri.updated_at = date;
+            redirect_uri.created_at = date,
+            redirect_uri.disabled = false,
+
+            redirect_uris.push(redirect_uri);
+        });
+
+        await connection.manager.save(redirect_uris);
+
+        const client = new Client();
+    
+        client.client_id = client_id,
+        client.client_name = body.client_name,
+        client.client_secret = clientSecretHash,
+        client.client_secret_salt = salt,
+        client.redirect_uris = redirect_uris,
+        client.created_at = date,
+        client.updated_at = date,
+        client.disabled = false,
         
-        await repository.save(client);
+       await connection.manager.save(client);
 
         return {
             client_name: body.client_name,
             client_id: client_id,
             client_secret: body.client_secret,
-            redirect_uri: body.redirect_uri
+            redirect_uris: redirect_uris
         }
     }
     public async updateClient(body: ClientPost ): Promise<any> {
@@ -80,23 +98,48 @@ export class ClientService {
         const date = new Date();
 
         const client: Client = {
+            client_id: findClient.client_id,
             client_name: body.client_name,
             client_secret: clientSecretHash,
             client_secret_salt: salt,
-            redirect_uri: body.redirect_uri,
             created_at: date,
             updated_at: date,
             disabled: false,
         };
+
+        const redirect_uris = [];
+
+        body.redirect_uris.forEach(r => {
+            const redirect_uri: ClientRedirectURI = {
+                redirect_uri_id: uuidv4(),
+                redirect_uri: r,
+                client: client,
+                updated_at: date,
+                created_at: date,
+                disabled: false,
+            };
+
+            redirect_uris.push(redirect_uri);
+        });
+
+
+        client.redirect_uris = redirect_uris;
         
         await repository.save(client);
 
-        return {
-            client_name: body.client_name,
-            client_id: findClient.client_id,
-            client_secret: body.client_secret,
-            redirect_uri: body.redirect_uri
+        const response: SuccessResponse = {
+            statusCode: 200,
+            name: "Update Client API",
+            message: "Succesfully updated the client",
+            data: {
+                client_name: body.client_name,
+                client_id: findClient.client_id,
+                client_secret: body.client_secret,
+                redirect_uri: redirect_uris
+            }
         }
+
+        return response;
     }
     public async deleteClient(client_name: string, softDelete: boolean): Promise<any> {
         const connection = await auroraConnectApi();

@@ -3,7 +3,7 @@ import passport from "passport";
 import AWS from "aws-sdk";
 import { User } from "../../models/user";
 import "reflect-metadata";
-import { auroraConnectApi } from "../../components/database/aurora";
+import { auroraConnectApi } from "../../components/database/connection";
 
 export async function passportJWT(strategyName: string, jwtFromRequest: any):Promise<any> {
   // JWT Strategies

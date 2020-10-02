@@ -5,9 +5,11 @@ import { Scopes } from "../../models/scope";
 import { ScopeGroup } from "../../models/scope-group";
 import { Client } from "../../models/client"; 
 import { Oauth } from "../../models/oauth";
+import { ClientRedirectURI } from "../../models/redirect-uris";
 import "reflect-metadata";
 import AWS from "aws-sdk";
-import { DbConnectionError } from "../handlers/error-handling";
+import { DbConnectionError } from "../../types/response_types";
+
 
 export async function auroraConnectApi(): Promise<any> {
     try {
@@ -30,17 +32,15 @@ export async function auroraConnectApi(): Promise<any> {
                 secretArn:dbSecretARN[0].Value,
                 resourceArn: resourceSecretARN[0].Value,
                 region: process.env.REGION,
-                entities: [User, Scopes, ScopeGroup, UserGroup, Client, Oauth],
+                entities: [User, Scopes, ScopeGroup, Client, ClientRedirectURI, UserGroup, Oauth],
                 synchronize: true,
                 logging: false
             });
-            
             return connection;
         }
     } 
     catch (e) {
-        console.log(e);
-        throw new DbConnectionError('Aurroa API Connect Error: Generally this is cause by Aoura Auto Pause');
+        throw new DbConnectionError('Aurroa API Connect Error: Generally this is cause by Aoura Auto Pause', 500, e);
     }
 }
 

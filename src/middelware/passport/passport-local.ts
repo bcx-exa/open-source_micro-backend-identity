@@ -3,7 +3,7 @@ import { Strategy } from "passport-local";
 import { validatePasswordHash } from "../../components/security/crypto";
 import { validateUsername } from "../../components/handlers/validation";
 import { findUserByUsername } from "../../components/database/db-helpers";
-import { Unauthorized, NotVerified } from "../../components/handlers/error-handling";
+import { Unauthorized, NotVerified } from "../../types/response_types";
 
 export async function passportLocal() {
   passport.use(
