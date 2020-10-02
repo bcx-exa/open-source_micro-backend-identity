@@ -37,21 +37,21 @@ export function validatePasswordStrength(password: string): void {
     .is()
     .max(100) // Maximum length 100
     .has()
-    .uppercase(2) // Must have 2 uppercase letters
+    .uppercase(1) // Must have 2 uppercase letters
     .has()
-    .lowercase(2) // Must have 2 lowercase letters
+    .lowercase(1) // Must have 2 lowercase letters
     .has()
-    .digits(2) // Must have 2 digits
+    .digits(1) // Must have 2 digits
     .has()
-    .symbols(2) // Must have 2 symbols
+    .symbols(1) // Must have 2 symbols
     .has()
     .not()
     .spaces(); // Should not have spaces
-  
-    const checkPwdStrength = pwdValidator.validate(password);
 
-    // If pwd not strong enough throw
-    if (!checkPwdStrength) {
-      throw new PasswordPolicyException("Password does not conform to the password policy. The policy enforces the following rules " + pwdValidator.validate("joke", { list: true }));
-    }
+  const checkPwdStrength = pwdValidator.validate(password);
+
+  // If pwd not strong enough throw
+  if (!checkPwdStrength) {
+    throw new PasswordPolicyException("Password does not conform to the password policy. The policy enforces the following rules " + pwdValidator.validate("joke", { list: true }));
+  }
 }

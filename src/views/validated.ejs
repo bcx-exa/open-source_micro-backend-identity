@@ -1,0 +1,81 @@
+<div class="container">
+  <div class="card">
+    <div style="text-align: center; padding: 15px" class="header">
+      <img style="height: 30px" src="https://apps.telkom.co.za/branding/telkom/__M4W/img/site_assets/logo.png" />
+    </div>
+
+    <div style="text-align: center">
+      <h4><b>Account Verification</b></h4>
+      <div id="<%= type %>" class="w3-panel w3-<%= type %>">
+        <p class="message"><%= message %></p>
+      </div>
+    </div>
+
+    <div style="padding-left: 15px; padding-right: 15px">
+      <form id="login_form" action="/auth/login" method="post" onsubmit="ShowLoading()">
+        <p>
+          <a href="/auth/login" class="block w3-button w3-section w3-ripple" type="submit" value="Submit">
+            Back to Login
+          </a>
+        </p>
+        <!-- <p>Back to <a>login</a></p> -->
+      </form>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+<style>
+  a {
+    color: #0083c2;
+    text-decoration: none;
+  }
+
+  .block {
+    display: block;
+    width: 100%;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 10px;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  .w3-button {
+    background-color: #0083c2;
+    color: #fff;
+  }
+
+  .w3-button:hover {
+    background-color: #035074 !important;
+    color: #fff !important;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 2px 16px;
+  }
+
+  .header {
+    border-radius: 20px;
+    min-height: 62px;
+    background-color: #0083c2;
+    padding: 0;
+  }
+
+  .card {
+    box-shadow: 0 4px 8px 0 rgba(75, 75, 75, 0.5);
+    transition: 0.3s;
+    width: 500px;
+    border-radius: 20px;
+  }
+</style>

@@ -8,7 +8,7 @@ router.get('/login', loginForm);
 router.get('/create', createForm);
 router.get('/forgot', forgotForm);
 router.get('/reset', resetForm);
-router.get('/validate', validateForm);
+router.get('/validated', validateForm);
 router.post('/login', login);
 router.get('/logout', logout);
 router.get("/google",

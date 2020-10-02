@@ -6,7 +6,7 @@ import { InternalServerError } from "../components/handlers/error-handling";
 @Route("account") // route name => localhost:xxx/SignUp
 @Tags("Account") // => Under SignUpController tag
 export class AccountController extends Controller {
-  
+
   @Response<InternalServerError>("Verification Message API Internal Server Error")
   @SuccessResponse("200", "Verification Message Resent!") // Custom success response
   @Post("verify_resend")
@@ -25,8 +25,8 @@ export class AccountController extends Controller {
   @Response<InternalServerError>("Verify API Internal Server Error")
   @SuccessResponse("200", "Account Verified!") // Custom success response
   @Post("password_reset_request")
-  async PasswordRequestPost(@Body() body: PasswordResetRequest): Promise<any> {
-    return new AccountService().PasswordResetRequest(body);
+  async PasswordRequestPost(@Body() body: PasswordResetRequest, @Request() req: any): Promise<any> {
+    return new AccountService().PasswordResetRequest(body, req);
   }
   @Response<InternalServerError>("Verify API Internal Server Error")
   @SuccessResponse("200", "Account Verified!") // Custom success response

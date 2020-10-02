@@ -54,6 +54,7 @@
     </svg>
     <div style="padding-left: 15px; padding-right: 15px">
       <form id="login_form" action="/account/password_reset_request" method="post" onsubmit="ShowLoading()">
+        <input class="w3-input" name="token" type="text" required />
         <p>
           <label>New Password:</label>
           <input class="w3-input" name="preferred_username" type="text" required />

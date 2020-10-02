@@ -58,6 +58,16 @@
           <label>Username:</label>
           <input class="w3-input" name="preferred_username" type="text" required />
         </p>
+
+        <% if (locals.message) { %>
+
+        <div id="<%= type %>" class="w3-panel w3-<%= type %>">
+          <p class="message"><%= message %></p>
+        </div>
+        <% } %>
+
+
+
         <p>
           <button class="block w3-button w3-section w3-ripple" type="submit" value="Submit">
             Forgot Password
