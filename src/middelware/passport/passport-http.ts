@@ -54,7 +54,6 @@ async function verifyClient(client_id, client_secret, redirect_uri, done) {
   }
 }
 
-export async function passportHTTP() {
-  passport.use("basic", new BasicStrategy(verifyClient));
+export async function passportOauthClient() {
   passport.use("oauth2-client-password-uri", new Strategy(verifyClient));
 }

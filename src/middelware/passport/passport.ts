@@ -5,7 +5,7 @@ import { passportJWT } from './passport-jwt';
 import { passportLocal } from "./passport-local";
 import { User } from "../../models/user";
 import { auroraConnectApi } from "../../components/database/connection";
-import { passportHTTP } from "./passport-http";
+import { passportOauthClient } from "./passport-http";
 import { PassportGoogle } from "./passport-google";
 import { PassportFacebook } from "./passport-facebook";
 
@@ -17,9 +17,10 @@ export async function registerStrategies(): Promise<any> {
     if (initialized) return;
 
     await passportLocal();
-    await passportHTTP();
+    await passportOauthClient();
     await passportJWT('jwt', ExtractJwt.fromAuthHeaderAsBearerToken());
     await passportJWT('jwt-query', ExtractJwt.fromUrlQueryParameter('token'));
+    await passportJWT('jwt-body', ExtractJwt.fromBodyField('token'));
     await PassportGoogle();
     await PassportFacebook();
 

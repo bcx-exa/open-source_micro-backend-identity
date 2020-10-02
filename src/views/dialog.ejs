@@ -136,6 +136,8 @@
     <div style="padding-left: 10px; padding-right: 10px">
       <form id="decision_form" action="/oauth/decision" method="post">
         <input  name="transaction_id" type="hidden" value="<%= transactionId %>" />
+        <input  name="scope" type="hidden" value="<%= scope %>" />
+        <input  name="state" type="hidden" value="<%= state %>" />
         <p>
          
           <button class="btn"value="Deny" name="cancel" id="deny">Cancel</button>

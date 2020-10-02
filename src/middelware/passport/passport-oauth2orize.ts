@@ -95,10 +95,10 @@ async function issueTokens(user_id: string, client: Client, done: any, decodedTo
 }
 // Register code grant method
 server.grant(
-  oauth2orize.grant.code(async (client, _redirect_uri, user, ares, done) => {
+  oauth2orize.grant.code(async (client, _redirect_uri, user, _ares, done) => {
     try {
       // Generate code
-      const code = await generateCode(user, client, ares);
+      const code = await generateCode(user, client, client.scopes);
 
       // If error when generating code send error to passport
       if (code instanceof InternalServerError) {
@@ -194,7 +194,7 @@ server.exchange(
       }
 
       // Create new tokens ones
-      await issueTokens(dbUser.user_id, client.client_id, done, decodeRefreshToken);
+      await issueTokens(dbUser.user_id, client, done, decodeRefreshToken);
 
     } catch (e) {
       throw new InternalServerError("Refresh Token Error");
@@ -207,7 +207,7 @@ export const authorization = [
   login.ensureLoggedIn("/auth/login"),
   // Authorization logic
   server.authorization(
-    async (client_id, redirect_uri, _scopes, done) => {
+    async (client_id, redirect_uri, scopes, done) => {
       // Verify Client Exist
       const client = await dbFindOneBy(Client, { client_id: client_id, relations: ['redirect_uris'] });
 
@@ -224,6 +224,9 @@ export const authorization = [
         const err = new Unauthorized('Redirect URI Mismatch');
         return done(err);
       }
+
+      // attach scopes to client object
+      client.scopes = scopes;
 
       // return client and redirect_uri 
       return done(null, client, redirect_uri);
@@ -259,7 +262,7 @@ export const authorization = [
     response.render("dialog", {
       transactionId: request.oauth2.transactionID,
       user: request.user,
-      client: request.oauth2.client
+      client: request.oauth2.client,
     });
   },
 ];

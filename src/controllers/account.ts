@@ -31,8 +31,8 @@ export class AccountController extends Controller {
   @Response<InternalServerError>("Verify API Internal Server Error")
   @SuccessResponse("200", "Account Verified!") // Custom success response
   @Post("password_reset")
-  @Security('jwt-query')
-  async PasswordResetPost(@Query() token: string, @Body() body: PasswordReset, @Request() req): Promise<any> {
+  @Security('jwt-body')
+  async PasswordResetPost(@Body() token: string, @Body() body: PasswordReset, @Request() req): Promise<any> {
     return new AccountService().PasswordReset(token, body, req);
   }
 }

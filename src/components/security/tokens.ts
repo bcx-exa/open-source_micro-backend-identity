@@ -10,15 +10,14 @@ import { dbSaveOrUpdate } from "../database/db-helpers";
 import jsonwebtoken from "jsonwebtoken";
 import AWS from 'aws-sdk';
 
-export async function generateCode(user: User, client: Client, ares: any): Promise<any> {
+export async function generateCode(user: User, client: Client, scopes: any): Promise<any> {
   try {
     // openid claims
     const codeClaims: any = {
       sub: user.user_id,
       iss: process.env.API_DOMAIN,
       aud: process.env.DOMAIN,
-      scope: ares.scope,
-      state: ares.state,
+      scope: scopes,
       iat: Math.floor(Date.now() / 1000),
       auth_time: Math.floor(Date.now() / 1000),
     };
