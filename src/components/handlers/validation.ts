@@ -1,7 +1,7 @@
 import emailValidator from "email-validator";
 import { PhoneNumberUtil } from "google-libphonenumber";
 import passwordValidator from "password-validator";
-import { InvalidFormat, PasswordPolicyException } from "../handlers/error-handling";
+import { InvalidFormat, PasswordPolicyException } from "../../types/response_types";
 
 
 export function validateUsername(preferred_username: string | number): any {

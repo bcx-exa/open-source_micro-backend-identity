@@ -1,8 +1,8 @@
 import {  SignUp } from "../types/authentication";
 import { User } from "../models/user";
 import {  generatePasswordHash } from "../components/security/crypto";
-import { Conflict } from "../components/handlers/error-handling";
-import { auroraConnectApi } from "../components/database/aurora";
+import { Conflict } from '../types/response_types';
+import { auroraConnectApi } from "../components/database/connection";
 import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
 import { findUserByUsername } from "../components/database/db-helpers";

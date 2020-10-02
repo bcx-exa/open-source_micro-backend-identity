@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy } from "passport-facebook";
-import { auroraConnectApi } from "../../components/database/aurora";
+import { auroraConnectApi } from "../../components/database/connection";
 import { User } from "../../models/user";
 import { v4 as uuidv4 } from "uuid";
 

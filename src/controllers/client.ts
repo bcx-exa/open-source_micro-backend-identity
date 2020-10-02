@@ -1,5 +1,5 @@
 import { Controller, Put, Path, Response, SuccessResponse, Delete, Get, Body, Post, Route, Tags, Query } from "tsoa";
-import { InternalServerError } from "../components/handlers/error-handling";
+import { InternalServerError } from '../types/response_types';
 import { ClientService } from "../services/client";
 import { ClientPost } from "../types/client";
 

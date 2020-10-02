@@ -1,5 +1,5 @@
 import { Controller, Response, SuccessResponse, Put, Path, Get, Delete, Body, Route, Post, Tags, Security, Query } from "tsoa";
-import { InternalServerError } from "../components/handlers/error-handling";
+import { InternalServerError } from '../types/response_types';
 import { ScopesService } from "../services/scopes";
 import { ScopeRequest } from "../types/scopes";
 

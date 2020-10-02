@@ -1,9 +1,10 @@
 import { Client } from "../../models/client";
 import passport from "passport";
 import { BasicStrategy } from "passport-http";
-import { auroraConnectApi } from "../../components/database/aurora";
 import { validatePasswordHash } from "../../components/security/crypto";
-import { Strategy } from "passport-oauth2-client-password";
+import { Strategy } from "passport-oauth2-client-password-uri";
+import { dbFindOneBy } from "../../components/database/db-helpers";
+import { Unauthorized, NotFound, InternalServerError } from "../../types/response_types";
 /**
  * BasicStrategy & ClientPasswordStrategy
  *
@@ -15,25 +16,36 @@ import { Strategy } from "passport-oauth2-client-password";
  * to the `Authorization` header). While this approach is not recommended by
  * the specification, in practice it is quite common.
  */
-async function verifyClient(clientId, clientSecret, done) {
+async function verifyClient(client_id, client_secret, redirect_uri, done) {
   try {
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(Client);
-    const client: Client = await repository.findOne({ client_id: clientId });
+    // Check client exist
+    const client = await dbFindOneBy(Client, { client_id: client_id, relations: ['redirect_uris'] });
 
-    if (!client) {
-      return done(null, false);
+    // If not found or error, pass error to passport
+    if (client instanceof NotFound || client instanceof InternalServerError) {
+      const err = new Unauthorized('No matching client id/client secret combo');
+      return done(err);
+    }
+
+    // Check redirect uri is valid
+    const uriMatch = client.redirect_uris
+      .some(ruri => { return ruri.redirect_uri === redirect_uri });
+    
+    if (!uriMatch) {
+      const err = new Unauthorized('Redirect URI Mismatch');
+      return done(err);
     }
 
     // Validate password
     const validPassword = validatePasswordHash(
-      clientSecret,
+      client_secret,
       client.client_secret,
       client.client_secret_salt
     );
 
     if (!validPassword) {
-      return done(null, false);
+      const err = new Unauthorized('No matching client id/client secret combo');
+      return done(err);
     }
 
     return done(null, client);
@@ -44,5 +56,5 @@ async function verifyClient(clientId, clientSecret, done) {
 
 export async function passportHTTP() {
   passport.use("basic", new BasicStrategy(verifyClient));
-  passport.use("oauth2-client-password", new Strategy(verifyClient));
+  passport.use("oauth2-client-password-uri", new Strategy(verifyClient));
 }

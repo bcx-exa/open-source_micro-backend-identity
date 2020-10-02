@@ -99,14 +99,17 @@
 					"client_secret": {
 						"type": "string"
 					},
-					"redirect_uri": {
-						"type": "string"
+					"redirect_uris": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
 					"client_name",
 					"client_secret",
-					"redirect_uri"
+					"redirect_uris"
 				],
 				"type": "object",
 				"additionalProperties": false

@@ -22,9 +22,6 @@ export class Oauth {
   @ManyToOne(() => User, user => user.tokens)
   user: User;
 
-  @Column({ length: 300, nullable: true })
-  redirect_uri?: string;
-
   @Column("datetime")
   created_at: Date;
 

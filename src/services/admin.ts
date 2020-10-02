@@ -1,10 +1,8 @@
-import { User } from "../models/user";
 import { Scopes } from "../models/scope";
 import { ScopeGroup } from "../models/scope-group";
 import { UserGroup } from "../models/user-group";
-import { auroraConnectApi } from "../components/database/aurora";
+import { auroraConnectApi } from "../components/database/connection";
 import { UserService } from "./user";
-import { Client } from "../models/client";
 
 export class AdminService {
   public async defaultSchema(): Promise<any> {

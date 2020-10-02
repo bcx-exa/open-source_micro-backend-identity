@@ -1,145 +1,94 @@
 import { Request, Response, NextFunction } from "express";
 import { ValidateError } from "tsoa";
-export class Unauthorized extends Error {
-  private statusCode: number;
-  constructor(message?: string, statusCode?: number) {
-    super(message);
-    this.name = "Unauthorized:";
-    this.statusCode = statusCode;
-  }
-}
+import { NotFound, InternalServerError, PasswordPolicyException, Conflict, Unauthorized, InvalidFormat, NotVerified, DbConnectionError } from "../../types/response_types";
 
-export class NotFound extends Error {
-  private statusCode: number;
-  constructor(message?: string, statusCode?: number) {
-    super(message);
-    this.name = "Not Found";
-    this.statusCode = statusCode;
-  }
-}
-
-export class NotVerified extends Error {
-  private statusCode: number;
-  constructor(message?: string, statusCode?: number) {
-    super(message);
-    this.name = "Not Verified:";
-    this.statusCode = statusCode;
-  }
-}
-
-export class InvalidFormat extends Error {
-  private statusCode: number;
-  constructor(message?: string, statusCode?: number) {
-    super(message);
-    this.name = "Invalid Format:";
-    this.statusCode = statusCode;
-  }
-}
-
-export class PasswordPolicyException extends Error {
-  private statusCode: number;
-  constructor(message?: string, statusCode?: number) {
-    super(message);
-    this.name = "Password Policy Exception";
-    this.statusCode = statusCode;
-  }
-}
-
-export class Conflict extends Error {
-  private statusCode: number;
-  constructor(message?: string, statusCode?: number) {
-    super(message);
-    this.name = "Conflict or Duplicate:";
-    this.statusCode = statusCode;
-  }
-}
-
-export class InternalServerError extends Error {
-  private statusCode: number;
-  constructor(message?: string, statusCode?: number) {
-    super(message);
-    this.name = "DB Connection Error:";
-    this.statusCode = statusCode;
-  }
-}
-export class DbConnectionError extends Error {
-  private statusCode: number;
-  constructor(message?: string, statusCode?: number) {
-    super(message);
-    this.name = "DB Connection Error:";
-    this.statusCode = statusCode;
-  }
-}
 
 export function globalErrorHandler(
   err: unknown,
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ): Response | void {
   if (err instanceof ValidateError) {
-    console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
     return res.status(422).json({
+      statusCode: 422, 
+      name: "TSOA Validation Failed",
       message: "Validation Failed",
-      details: err?.fields,
+      data: err?.fields,
     });
   }
   if (err instanceof NotFound) {
     return res.status(404).json({
+      statusCode: 404,
       name: err.name,
       message: err.message,
+      data: err.stack
     });
   }
   if (err instanceof PasswordPolicyException) {
     return res.status(406).json({
+      statusCode: 406,
       name: err.name,
       message: err.message,
+      data: err.stack
     });
   }
   if (err instanceof Conflict) {
     return res.status(409).json({
+      statusCode: 409,
       name: err.name,
       message: err.message,
+      data: err.stack
     });
   }
   if (err instanceof Unauthorized) {
     return res.status(401).json({
+      statusCode: 401,
       name: err.name,
       message: err.message,
+      data: err.stack
     });
   }
   if (err instanceof InvalidFormat) {
     return res.status(403).json({
+      statusCode: 403,
       name: err.name,
       message: err.message,
+      data: err.stack
     });
   }
   if (err instanceof NotVerified) {
     return res.status(418).json({
+      statusCode: 418,
       name: err.name,
       message: err.message,
+      data: err.stack
     });
   }
   if (err instanceof DbConnectionError) {
     return res.status(503).json({
+      statusCode: 503,
       name: err.name,
       message: err.message,
+      data: err.stack
     });
   }
   if (err instanceof InternalServerError) {
     console.log(err);
     return res.status(500).json({
-      name: err,
-      message: "Internal Server Error",
-      details: err.stack,
+      statusCode: 500,
+      name: err.name,
+      message: err.message,
+      data: err.stack
     });
   }
   if (err instanceof Error) {
     console.log(err);
     return res.status(500).json({
-      name: err,
-      message: "Internal Server Error",
-      details: err.stack,
+      statusCode: 500,
+      name: err.name,
+      message: err.message,
+      data: err.stack
     });
   }
   next();

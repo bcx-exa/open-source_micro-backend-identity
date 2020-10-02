@@ -1,8 +1,8 @@
 import { VerifyResend, PasswordResetRequest, PasswordReset } from "../types/account";
 import { User } from "../models/user";
 import { generatePasswordHash } from "../components/security/crypto";
-import { Conflict, Unauthorized } from "../components/handlers/error-handling";
-import { auroraConnectApi } from "../components/database/aurora";
+import { Conflict, Unauthorized } from '../types/response_types';
+import { auroraConnectApi } from "../components/database/connection";
 import { validateUsername,  validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
 import { sendPasswordResetRequest } from "../components/messaging/password-reset";

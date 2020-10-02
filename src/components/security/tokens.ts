@@ -1,9 +1,61 @@
 import { User } from "../../models/user";
+import { Client } from "../../models/client";
+import { Oauth } from "../../models/oauth";
 import { signJWT, calculateExp } from "./crypto";
 import { openid, profile, email, phone } from "../../types/openid-scopes";
 import { UserService } from "../../services/user";
 import { v4 as uuidv4 } from "uuid";
-import { Unauthorized } from "../handlers/error-handling";
+import { InternalServerError, Unauthorized } from "../../types/response_types";
+import { dbSaveOrUpdate } from "../database/db-helpers";
+import jsonwebtoken from "jsonwebtoken";
+import AWS from 'aws-sdk';
+
+export async function generateCode(user: User, client: Client, ares: any): Promise<any> {
+  try {
+    // openid claims
+    const codeClaims: any = {
+      sub: user.user_id,
+      iss: process.env.API_DOMAIN,
+      aud: process.env.DOMAIN,
+      scope: ares.scope,
+      state: ares.state,
+      iat: Math.floor(Date.now() / 1000),
+      auth_time: Math.floor(Date.now() / 1000),
+    };
+    // id token structure
+    const codeToken = {
+      token_use: "code",
+      code: uuidv4(),
+      exp: calculateExp("2m", codeClaims.iat),
+      ...codeClaims,
+    };
+
+    const signedCodeToken = await signJWT(codeToken);
+    const date = new Date();
+
+    const oauth_code: Oauth = {
+      oauth_id: uuidv4(),
+      user: user,
+      client: client,
+      token_type: "code",
+      token: signedCodeToken,
+      created_at: date,
+      updated_at: date,
+      disabled: false,
+    };
+
+    const saveCode = await dbSaveOrUpdate(Oauth, oauth_code);
+
+    if (saveCode instanceof InternalServerError) {
+      return saveCode;
+    }
+
+    return signedCodeToken;
+
+  } catch (e) {
+    return new InternalServerError('Unexpected error occured when trying to genarete oauth code', 500);
+  }
+}
 
 export async function generateTokens(dbUser: User, decodedToken: any): Promise<any> {
   const scopes = decodedToken.scope;
@@ -94,4 +146,34 @@ export async function generateTokens(dbUser: User, decodedToken: any): Promise<a
     refresh_token: signedRefreshToken,
     token_link: tokenLink,
   };
+}
+
+export async function verifyAndDecodeToken(token: string): Promise<any> {
+  try {
+  
+    // Get public key
+    const ssm = new AWS.SSM({ region: process.env.REGION });
+    const params = {
+      Name: process.env.PUBLIC_KEY_NAME,
+      WithDecryption: true,
+    };
+
+    // Decode code token
+    let decodeToken;
+    const pubKey = await ssm.getParameter(params).promise();
+
+    try {
+      decodeToken = jsonwebtoken.verify(token, pubKey.Parameter.Value, {
+        algorithms: ["RS256"],
+      });
+
+      return decodeToken;
+      
+    } catch (e) {
+      return new Unauthorized("Token not valid", 401, e);
+    }
+  } catch (e) {
+    return new InternalServerError("Something went wrong with decoding or verifying token", 500, e);
+  }
+ 
 }

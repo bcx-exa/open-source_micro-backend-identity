@@ -1,5 +1,5 @@
 import { Controller, Request, Response, SuccessResponse, Put, Path, Get, Delete, Body, Route, Post, Tags, Security, Query, Res } from "tsoa";
-import { InternalServerError } from "../components/handlers/error-handling";
+import { InternalServerError } from '../types/response_types';
 import { AdminService } from "../services/admin";
 
 @Route("admin") // route name => localhost:xxx/SignUp

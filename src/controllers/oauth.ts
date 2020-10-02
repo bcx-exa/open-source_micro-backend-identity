@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { NextFunction } from "express";
 import { Controller, Put, Path, Request, Response, SuccessResponse, Delete, Get, Body, Post, Route, Tags, Query } from "tsoa";
-import { InternalServerError } from "../components/handlers/error-handling";
+import { InternalServerError } from '../types/response_types';
 import { authorization, decision, token } from '../middelware/passport/passport-oauth2orize';
 
 @Route("oauth") // route name => localhost:xxx/SignUp

@@ -1,8 +1,8 @@
 import { Scopes } from "../models/scope";
 import { ScopeGroup } from "../models/scope-group";
 import { UserGroup } from "../models/user-group";
-import { Conflict, NotFound } from "../components/handlers/error-handling";
-import { auroraConnectApi } from "../components/database/aurora";
+import { Conflict, NotFound } from '../types/response_types';
+import { auroraConnectApi } from "../components/database/connection";
 import { ScopeRequest, Scope_ScopeGroup_Request } from "../types/scopes";
 import { v4 as uuidv4 } from 'uuid';
 import { UserService } from "./user";
