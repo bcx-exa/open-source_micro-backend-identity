@@ -5,8 +5,7 @@
     </div>
 
     <div style="text-align: center">
-      <h4><b>Sign In</b></h4>
-      <p id="telkomtext">Use your Telkom Account</p>
+      <h4><b>Validate</b></h4>
     </div>
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
       style="margin: auto; display: none" width="98px" id="gif" height="98px" viewBox="0 0 100 100"
@@ -53,24 +52,15 @@
     <div style="padding-left: 15px; padding-right: 15px">
       <form id="login_form" action="/auth/login" method="post" onsubmit="ShowLoading()">
         <p>
-          <label>Username:</label>
-          <input class="w3-input" name="username" type="text" required />
-        </p>
-        <p>
-          <label>Password:</label>
+          <label>Code:</label>
           <input class="w3-input" name="password" type="password" required />
         </p>
-        <!-- <p>
-          <input id="milk" class="w3-check" type="checkbox" checked="checked" />
-          <label>Stay logged in</label>
-        </p> -->
         <p>
           <button class="block w3-button w3-section w3-ripple" type="submit" value="Submit">
-            Log in
+            Validate Account
           </button>
         </p>
-        <a href="/auth/forgot">Forgot Password?</a>
-        <p>Don't have an account? <a href="/auth/create">Create account</a></p>
+        <p>Back to <a href="/auth/login">login</a></p>
       </form>
     </div>
   </div>
