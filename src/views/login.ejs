@@ -69,8 +69,9 @@
             Log in
           </button>
         </p>
-        <div class="col s12 center-align">
-          <a class="oauth-container btn darken-4 white black-text" href="/auth/google/" style="text-transform:none">
+        <div class="col center-align">
+          <a class="oauth-container btn darken-4 white black-text" href="/auth/google/"
+            style="text-transform:none;width: 100%;">
             <div class="left">
               <img width="20px" style="margin-top:7px; margin-right:8px" alt="Google sign-in"
                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
@@ -78,13 +79,18 @@
             Login with Google
           </a>
         </div>
+        <p></p>
+        <div class="col center-align">
+          <a class="oauth-container btn darken-4 white black-text" href="/auth/facebook/"
+            style="text-transform:none;width: 100%;">
+            <div class="left">
+              <img width="20px" style="margin-top:7px; margin-right:8px" alt="Google sign-in"
+                src="https://image.flaticon.com/icons/png/512/124/124010.png" />
+            </div>
+            Login with Facebook
+          </a>
+        </div>
 
-
-        <p>
-          <button class="block w3-button w3-section w3-ripple" type="submit" value="Submit">
-            Log in with Facebook
-          </button>
-        </p>
         <a href="/auth/forgot">Forgot Password?</a>
         <p>Don't have an account? <a href="/auth/create">Create account</a></p>
       </form>

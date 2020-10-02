@@ -7,8 +7,9 @@ export const router = express.Router();
 router.get('/login', loginForm);
 router.get('/create', createForm);
 router.get('/forgot', forgotForm);
-router.get('/reset', resetForm);
 router.get('/validated', validateForm);
+router.get('/resettoken', (_request, response) => response.render('reset', { token: _request.query.token }));
+
 router.post('/login', login);
 router.get('/logout', logout);
 router.get("/google",
