@@ -232,12 +232,12 @@ export class UserService {
     
     // Save user to DB
     const repository = await connection.getRepository(User);
-    await repository.save(newUser);
+    const savedUser = await repository.save(newUser);
 
     // Send verification message
     sendVerificationMessage(newUser, isValidPhoneNumber, isValidEmail);
     
-    return newUser;
+    return savedUser;
   }
   public async updateUser(body: UserRequest): Promise<any> {    
     try {
@@ -308,12 +308,9 @@ export class UserService {
       findUser.user_groups = addUserGroups;
 
       // Update user
-      repository.save(findUser);
+      const updatedUser = await repository.save(findUser);
       
-      return {
-        statusCode: 200,
-        body: "User has been updated!" 
-      };
+      return updatedUser;
     } 
     catch (e) {
       console.log(e);
@@ -338,6 +335,6 @@ export class UserService {
     findUser.disabled = true;
     await repository.save(findUser);
     // return user
-    return "User disabled sucessfully!";
+    return "User disabled successfully!";
   }
 }

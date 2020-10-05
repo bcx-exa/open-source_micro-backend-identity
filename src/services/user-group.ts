@@ -210,7 +210,6 @@ export class UserGroupService {
     findUserGroupById.users = addUsers;
     findUserGroupById.scope_groups = addScopeGroups;
 
-    console.log(findUserGroupById);
     // Save to DB
     await repository.save(findUserGroupById);
 

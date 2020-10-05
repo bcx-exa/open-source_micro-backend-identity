@@ -251,7 +251,7 @@ export const authorization = [
         } 
 
         // Auto approve, ie skip concent page because previously access token was issued
-        return done(null, true);
+        return done(null, true); // this should be set to true to bypass concent page
 
       } catch (e) {
         return done(e);

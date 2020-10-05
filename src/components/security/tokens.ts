@@ -57,6 +57,11 @@ export async function generateCode(user: User, client: Client, scopes: any): Pro
 }
 
 export async function generateTokens(dbUser: User, decodedToken: any): Promise<any> {
+  
+  if (!decodedToken.scope) {
+    throw new Unauthorized('No scopes specified in the grant type');
+  }
+  
   const scopes = decodedToken.scope;
   const findProfie = scopes.includes('profile');
   const findEmail = scopes.includes('email');

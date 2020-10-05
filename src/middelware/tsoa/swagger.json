@@ -6,15 +6,6 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"InternalServerError": {
-				"properties": {
-					"stack": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"additionalProperties": false
-			},
 			"VerifyResend": {
 				"properties": {
 					"preferred_username": {
@@ -93,6 +84,9 @@
 			},
 			"ClientPost": {
 				"properties": {
+					"client_id": {
+						"type": "string"
+					},
 					"client_name": {
 						"type": "string"
 					},
@@ -404,20 +398,10 @@
 				"operationId": "VerifyResend",
 				"responses": {
 					"200": {
-						"description": "Verification Message Resent!",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Verification Message API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -444,20 +428,10 @@
 				"operationId": "VerifyGet",
 				"responses": {
 					"200": {
-						"description": "Account Verified!",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Verify API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -487,20 +461,10 @@
 				"operationId": "PasswordRequestPost",
 				"responses": {
 					"200": {
-						"description": "Account Verified!",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Verify API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -527,20 +491,10 @@
 				"operationId": "PasswordResetPost",
 				"responses": {
 					"200": {
-						"description": "Account Verified!",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Verify API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -579,21 +533,11 @@
 			"post": {
 				"operationId": "AddDefaultSchema",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -609,21 +553,11 @@
 			"post": {
 				"operationId": "SignUpPost",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Signup API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -650,20 +584,10 @@
 				"operationId": "LoginGet",
 				"responses": {
 					"200": {
-						"description": "User Logged In!",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Signin API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -678,20 +602,10 @@
 				"operationId": "LoginPost",
 				"responses": {
 					"200": {
-						"description": "User Logged In!",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Signin API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -718,20 +632,10 @@
 				"operationId": "LogoutGet",
 				"responses": {
 					"200": {
-						"description": "User Logged In!",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Signin API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -746,20 +650,10 @@
 				"operationId": "LogoutPost",
 				"responses": {
 					"200": {
-						"description": "User Logged In!",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Signin API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -821,25 +715,15 @@
 				"parameters": []
 			}
 		},
-		"/client/{clientName}": {
+		"/client/{client_id}": {
 			"get": {
 				"operationId": "GetClient",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Oauth Client API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -851,7 +735,7 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "clientName",
+						"name": "client_id",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -862,21 +746,11 @@
 			"delete": {
 				"operationId": "DeleteClient",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Oauth Client API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -888,7 +762,7 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "clientName",
+						"name": "client_id",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -910,21 +784,11 @@
 			"get": {
 				"operationId": "GetClients",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Oauth Client API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -938,21 +802,11 @@
 			"post": {
 				"operationId": "CreateClient",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Oauth Client API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -976,21 +830,11 @@
 			"put": {
 				"operationId": "UpdateClient",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Oauth Client API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1016,21 +860,11 @@
 			"get": {
 				"operationId": "GetAuthorize",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Oauth API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1046,21 +880,11 @@
 			"post": {
 				"operationId": "PostDecision",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Oauth API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1076,21 +900,11 @@
 			"post": {
 				"operationId": "PostToken",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"Oauth API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1106,21 +920,11 @@
 			"get": {
 				"operationId": "GetScopeGroup",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1152,21 +956,11 @@
 			"delete": {
 				"operationId": "DeleteUserGroup",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1200,21 +994,11 @@
 			"get": {
 				"operationId": "GetScopeGroups",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1236,23 +1020,13 @@
 				]
 			},
 			"post": {
-				"operationId": "PostScopeGroups",
+				"operationId": "PostScopeGroup",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1274,23 +1048,13 @@
 				}
 			},
 			"put": {
-				"operationId": "PutScopeGroups",
+				"operationId": "PutScopeGroup",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1316,21 +1080,11 @@
 			"get": {
 				"operationId": "GetScope",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1362,21 +1116,11 @@
 			"delete": {
 				"operationId": "DeleteScope",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1410,21 +1154,11 @@
 			"get": {
 				"operationId": "GetScopes",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1448,21 +1182,11 @@
 			"post": {
 				"operationId": "PostScope",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1486,21 +1210,11 @@
 			"put": {
 				"operationId": "PutScope",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1526,21 +1240,11 @@
 			"post": {
 				"operationId": "AddDefaultScope",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1556,21 +1260,11 @@
 			"get": {
 				"operationId": "GetUserGroup",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1602,21 +1296,11 @@
 			"delete": {
 				"operationId": "DeleteUserGroup",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1648,23 +1332,13 @@
 		},
 		"/usergroup": {
 			"get": {
-				"operationId": "GetUsers",
+				"operationId": "GetUserGroups",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1688,21 +1362,11 @@
 			"post": {
 				"operationId": "PostUserGroups",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1726,21 +1390,11 @@
 			"put": {
 				"operationId": "PutUserGroups",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1770,19 +1424,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"statusCode": 200,
-											"name": "Controller Name - API Name",
-											"message": "Success or Error Message",
-											"data": [
-												"Requested Info or Stack Trace"
-											]
-										}
-									}
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -1790,13 +1432,7 @@
 				"tags": [
 					"User"
 				],
-				"security": [
-					{
-						"jwt": [
-							"identity:user:get:admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",
@@ -1820,21 +1456,11 @@
 			"delete": {
 				"operationId": "DeleteUsers",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1868,21 +1494,11 @@
 			"get": {
 				"operationId": "GetUsers",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1906,21 +1522,11 @@
 			"post": {
 				"operationId": "PostUsers",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}
@@ -1949,16 +1555,6 @@
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}

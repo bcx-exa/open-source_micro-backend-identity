@@ -26,14 +26,6 @@ import * as express from 'express';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-  "InternalServerError": {
-    "dataType": "refObject",
-    "properties": {
-      "stack": { "dataType": "string" },
-    },
-    "additionalProperties": false,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   "VerifyResend": {
     "dataType": "refObject",
     "properties": {
@@ -81,6 +73,7 @@ const models: TsoaRoute.Models = {
   "ClientPost": {
     "dataType": "refObject",
     "properties": {
+      "client_id": { "dataType": "string" },
       "client_name": { "dataType": "string", "required": true },
       "client_secret": { "dataType": "string", "required": true },
       "redirect_uris": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
@@ -479,10 +472,10 @@ export function RegisterRoutes(app: express.Express) {
       promiseHandler(controller, promise, response, next);
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  app.get('/client/:clientName',
+  app.get('/client/:client_id',
     function(request: any, response: any, next: any) {
       const args = {
-        clientName: { "in": "path", "name": "clientName", "required": true, "dataType": "string" },
+        client_id: { "in": "path", "name": "client_id", "required": true, "dataType": "string" },
       };
 
       // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -566,10 +559,10 @@ export function RegisterRoutes(app: express.Express) {
       promiseHandler(controller, promise, response, next);
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  app.delete('/client/:clientName',
+  app.delete('/client/:client_id',
     function(request: any, response: any, next: any) {
       const args = {
-        clientName: { "in": "path", "name": "clientName", "required": true, "dataType": "string" },
+        client_id: { "in": "path", "name": "client_id", "required": true, "dataType": "string" },
         softDelete: { "default": true, "in": "query", "name": "softDelete", "dataType": "boolean" },
       };
 
@@ -715,7 +708,7 @@ export function RegisterRoutes(app: express.Express) {
       const controller = new ScopeGroupController();
 
 
-      const promise = controller.PostScopeGroups.apply(controller, validatedArgs as any);
+      const promise = controller.PostScopeGroup.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -737,7 +730,7 @@ export function RegisterRoutes(app: express.Express) {
       const controller = new ScopeGroupController();
 
 
-      const promise = controller.PutScopeGroups.apply(controller, validatedArgs as any);
+      const promise = controller.PutScopeGroup.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -938,7 +931,7 @@ export function RegisterRoutes(app: express.Express) {
       const controller = new UserGroupController();
 
 
-      const promise = controller.GetUsers.apply(controller, validatedArgs as any);
+      const promise = controller.GetUserGroups.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1010,7 +1003,6 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/user/:user_id',
-    authenticateMiddleware([{ "jwt": ["identity:user:get:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         detailed: { "default": false, "in": "query", "name": "detailed", "dataType": "boolean" },

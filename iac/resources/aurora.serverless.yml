@@ -53,7 +53,7 @@ Resources:
         AutoPause: ${env:AURORA_AUTO_PAUSE}
         MinCapacity: 1
         MaxCapacity: 16
-        SecondsUntilAutoPause: 1000
+        SecondsUntilAutoPause: 3000
       VpcSecurityGroupIds:
         - Ref: DbSg
       DatabaseName: ${env:DB_NAME}

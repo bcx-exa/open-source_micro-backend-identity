@@ -1,48 +1,83 @@
-import { Controller, Put, Path, Response, SuccessResponse, Delete, Get, Body, Post, Route, Tags, Query } from "tsoa";
-import { InternalServerError } from '../types/response_types';
+import { Controller, Put, Path, Delete, Get, Body, Post, Route, Tags, Query } from "tsoa";
+import { SuccessResponse } from '../types/response_types';
 import { ClientService } from "../services/client";
 import { ClientPost } from "../types/client";
 
 @Route("client") // route name => localhost:xxx/SignUp
 @Tags("Clients") // => Under SignUpController tag
 export class ClientController extends Controller {   
-    @Response<InternalServerError>("Oauth Client API Internal Server Error")
-    @SuccessResponse("201", "Created") // Custom success response
-    @Get("{clientName}") //specify the request type
+    @Get("{client_id}") //specify the request type
     //@Security('jwt')
-    async GetClient(@Path() clientName: string): Promise<any> {
-        return new ClientService().getClient(clientName); 
+    async GetClient(@Path() client_id: string): Promise<any> {
+        const data = await new ClientService().getClient(client_id); 
+    
+        const result: SuccessResponse = {
+          statusCode: 200,
+          name: "Client Controller - Get Client",
+          message: "Success",
+          data: data
+        };
+    
+        return result;
     }
     
-    @Response<InternalServerError>("Oauth Client API Internal Server Error")
-    @SuccessResponse("201", "Created") // Custom success response
     @Get() //specify the request type
     //@Security('jwt')
     async GetClients(): Promise<any> {
-        return new ClientService().getClients(); 
+        const data = await new ClientService().getClients(); 
+    
+        const result: SuccessResponse = {
+          statusCode: 200,
+          name: "Client Controller - Get Clients",
+          message: "Success",
+          data: data
+        };
+    
+        return result;
     }
     
-    @Response<InternalServerError>("Oauth Client API Internal Server Error")
-    @SuccessResponse("201", "Created") // Custom success response
     @Post() //specify the request type
     //@Security('jwt')
-    async CreateClient(@Body() body: ClientPost ): Promise<any> {
-        return new ClientService().createClient(body); 
+    async CreateClient(@Body() body: ClientPost): Promise<any> {
+        const data = await new ClientService().createClient(body); 
+    
+        const result: SuccessResponse = {
+          statusCode: 201,
+          name: "Client Controller - Post Client",
+          message: "Success",
+          data: data
+        };
+    
+        return result;
     }
 
-    @Response<InternalServerError>("Oauth Client API Internal Server Error")
-    @SuccessResponse("201", "Created") // Custom success response
     @Put() //specify the request type
     //@Security('jwt')
     async UpdateClient(@Body() body: ClientPost ): Promise<any> {
-        return new ClientService().updateClient(body); 
+        const data = await new ClientService().updateClient(body); 
+    
+        const result: SuccessResponse = {
+          statusCode: 200,
+          name: "Client Controller - Put Client",
+          message: "Success",
+          data: data
+        };
+    
+        return result;
     }
 
-    @Response<InternalServerError>("Oauth Client API Internal Server Error")
-    @SuccessResponse("201", "Created") // Custom success response
-    @Delete("{clientName}") //specify the request type
+    @Delete("{client_id}") //specify the request type
     //@Security('jwt')
-    async DeleteClient(@Path() clientName: string, @Query() softDelete = true): Promise<any> {
-        return new ClientService().deleteClient(clientName, softDelete); 
+    async DeleteClient(@Path() client_id: string, @Query() softDelete = true): Promise<any> {
+        const data = await new ClientService().deleteClient(client_id, softDelete); 
+    
+        const result: SuccessResponse = {
+          statusCode: 200,
+          name: "Client Controller - Delete Client",
+          message: "Success",
+          data: data
+        };
+    
+        return result;
     }
 }

@@ -4,14 +4,13 @@ import { auroraConnectApi } from '../components/database/connection';
 import { Client } from "../models/client";
 import { Conflict, InvalidFormat, NotFound } from '../types/response_types';
 import { ClientPost } from '../types/client';
-import { SuccessResponse } from '../types/response_types';
 import { ClientRedirectURI } from '../models/redirect-uris';
 
 export class ClientService { 
-    public async getClient(client_name: string): Promise<any> {
+    public async getClient(client_id: string): Promise<any> {
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(Client);
-        const findClient = await repository.findOne({ client_name: client_name });
+        const findClient = await repository.findOne({ client_id: client_id });
 
         if (!findClient) {
             throw new InvalidFormat("No client found by this name");
@@ -86,7 +85,7 @@ export class ClientService {
         
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(Client);
-        const findClient = await repository.findOne({ client_name: body.client_name });
+        const findClient = await repository.findOne({ client_id: body.client_id, client_name: body.client_name });
 
         if (!findClient) {
             throw new NotFound("Client does not exists, can't update");
@@ -126,36 +125,29 @@ export class ClientService {
         client.redirect_uris = redirect_uris;
         
         await repository.save(client);
-
-        const response: SuccessResponse = {
-            statusCode: 200,
-            name: "Update Client API",
-            message: "Succesfully updated the client",
-            data: {
-                client_name: body.client_name,
-                client_id: findClient.client_id,
-                client_secret: body.client_secret,
-                redirect_uri: redirect_uris
-            }
+        
+        return {
+            client_name: body.client_name,
+            client_id: findClient.client_id,
+            client_secret: body.client_secret,
+            redirect_uri: redirect_uris
         }
-
-        return response;
     }
-    public async deleteClient(client_name: string, softDelete: boolean): Promise<any> {
+    public async deleteClient(client_id: string, softDelete: boolean): Promise<any> {
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(Client);
-        const findClient = await repository.findOne({ client_name: client_name });
+        const findClient = await repository.findOne({ client_id: client_id });
 
         if (!findClient) {
             throw new InvalidFormat("No client found by this name");
         }
 
         if (!softDelete) {
-            await repository.delete({ client_name: client_name });
+            await repository.delete({ client_id: client_id });
             return "Client has been successfully deleted";
         }
 
-        await repository.save({ client_name: client_name, disabled: true });
+        await repository.save({ client_id: client_id, disabled: true });
         return "Client has been successfully disabled";
     } 
   }
