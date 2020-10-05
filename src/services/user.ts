@@ -5,7 +5,7 @@ import { ScopeGroup } from "../models/scope-group";
 import { generatePasswordHash } from "../components/security/crypto";
 import { NotFound, Conflict } from "../types/response_types";
 import { auroraConnectApi } from "../components/database/connection";
-import { findUserByUsername } from "../components/database/db-helpers";
+import { dbFindOneBy, findUserByUsername } from "../components/database/db-helpers";
 import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
 import { v4 as uuidv4 } from 'uuid';
@@ -14,10 +14,8 @@ export class UserService {
   // Users
   public async getUser(user_id: string, detailed: boolean): Promise<any> {
     // Connect to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    const findUser = await repository.findOne({ user_id: user_id, disabled: false, relations: ['user_groups'] });
-
+    const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false } , relations: ['user_groups'] })
+   
     // If user doesnt exist, then throw error
     if (!findUser) {
       throw new NotFound("User not found");

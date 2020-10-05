@@ -1766,20 +1766,22 @@
 			"get": {
 				"operationId": "GetUser",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
+								"schema": {},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"statusCode": 200,
+											"name": "Controller Name - API Name",
+											"message": "Success or Error Message",
+											"data": [
+												"Requested Info or Stack Trace"
+											]
+										}
+									}
 								}
 							}
 						}
@@ -1788,7 +1790,13 @@
 				"tags": [
 					"User"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:user:get:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -1976,21 +1984,11 @@
 			"get": {
 				"operationId": "GetUserScopes",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
-							}
-						}
-					},
-					"User API Internal Server Error": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalServerError"
-								}
 							}
 						}
 					}

@@ -64,9 +64,14 @@ export async function expressAuthentication(request: any, securityName: string, 
   
   // used in password reset, verify account & protecting of api's
   if (securityName === 'jwt' || securityName === 'jwt-query') {
+    // Authentication
     strategy = passport.authenticate(securityName, {
       session: false,
     });
+    // Authorization
+    if (scopes) {
+      //console.log(scopes);
+    }
   }
 
   if (securityName === 'google') {
@@ -86,9 +91,7 @@ export async function expressAuthentication(request: any, securityName: string, 
   }
 
 
-  if (scopes) {
-    //console.log(scopes);
-  }
+
 
   const authResult = await new Promise((resolve, reject) =>
     // using the strategy

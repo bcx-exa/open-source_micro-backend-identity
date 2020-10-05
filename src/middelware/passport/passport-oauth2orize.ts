@@ -24,7 +24,7 @@ server.serializeClient((client, done) => done(null, client));
 server.deserializeClient(async (client, done) => {
   try {
     // Find Client
-    const dbClient = await dbFindOneBy(Client, { client_id: client.client_id });
+    const dbClient = await dbFindOneBy(Client, { where: { client_id: client.client_id } , relations: ['redirect_uris'] });
 
     // If client not found or internal server error, give error to passport
     if (dbClient instanceof NotFound || dbClient instanceof InternalServerError) {
@@ -150,7 +150,7 @@ server.exchange(
 );
 // issue new tokens and remove the old ones
 server.exchange(
-  oauth2orize.exchange.refreshToken(async (client, refreshToken, _redirect_uri, done) => {
+  oauth2orize.exchange.refreshToken(async (client, refreshToken, _scope, done) => {
     try {
       // Decode token
       const decodeRefreshToken = await verifyAndDecodeToken(refreshToken);
@@ -209,7 +209,7 @@ export const authorization = [
   server.authorization(
     async (client_id, redirect_uri, scopes, done) => {
       // Verify Client Exist
-      const client = await dbFindOneBy(Client, { client_id: client_id, relations: ['redirect_uris'] });
+      const client = await dbFindOneBy(Client, { where: { client_id: client_id } , relations: ['redirect_uris'] });
 
       // If no client
       if (client instanceof NotFound || client instanceof InternalServerError) {

@@ -1,3 +1,12 @@
+export class SuccessResponse {
+  constructor(statusCode: number, name: string, message: string, data?: any) {
+    this.statusCode = statusCode;
+    this.name = name;
+    this.message = message;
+    this.data = data
+  }
+}
+
 export interface SuccessResponse
 {
   statusCode: number,

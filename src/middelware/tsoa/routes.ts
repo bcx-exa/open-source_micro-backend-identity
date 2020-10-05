@@ -1009,6 +1009,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/user/:user_id',
+    authenticateMiddleware([{ "jwt": ["identity:user:get:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         detailed: { "default": false, "in": "query", "name": "detailed", "dataType": "boolean" },
