@@ -3,39 +3,51 @@ import { User } from "../models/user";
 import { generatePasswordHash } from "../components/security/crypto";
 import { Conflict, Unauthorized } from '../types/response_types';
 import { auroraConnectApi } from "../components/database/connection";
-import { validateUsername,  validatePasswordStrength } from "../components/handlers/validation";
+import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
 import { sendPasswordResetRequest } from "../components/messaging/password-reset";
 import { findUserByUsername } from "../components/database/db-helpers";
+import express from 'express';
 
 export class AccountService {
-  public async VerifyAccount(token:string, req: any): Promise<any> {
+  public async VerifyAccount(token: string, req: any): Promise<any> {
     // Double check passport-jwt
-    if(!token) {
+    if (!token) {
       throw new Error('Passport JWT missed a trick, Token was empty');
     }
+
+    const response = (req).res as express.Response;
+
     // Extract infor from req object
-    const dbUser: User = req.user.dbUser;   
+    const dbUser: User = req.user.dbUser;
     const jwtEmailVerified: boolean = req.user.jwt.email_verified;
     const jwtPhoneVerified: boolean = req.user.jwt.phone_number_verified;
-    
+
     //If both db and jwt is set to true throw conflict
-    if(dbUser.email_verified && jwtEmailVerified) {
-      throw new Conflict('The user email address has already been verified, please login!');
+    if (dbUser.email_verified && jwtEmailVerified) {
+      return response.render("validated", {
+        type: "orange",
+        message: 'The user email address has already been verified, please login!'
+      });
+      // throw new Conflict('The user email address has already been verified, please login!');
     }
-    
+
     //If both db and jwt is set to true throw conflict
-    if(dbUser.phone_number_verified && jwtPhoneVerified) {
-      throw new Conflict('The user phone number has already been verified, please login!');
+    if (dbUser.phone_number_verified && jwtPhoneVerified) {
+      return response.render("validated", {
+        type: "orange",
+        message: "The user phone number has already been verified, please login!"
+      });
+      // throw new Conflict('The user phone number has already been verified, please login!');
     }
-    
+
     // Verify email address
-    if(!dbUser.email_verified && jwtEmailVerified) {
+    if (!dbUser.email_verified && jwtEmailVerified) {
       dbUser.email_verified = jwtEmailVerified
     }
 
     // Verify phone number
-    if(!dbUser.phone_number_verified && jwtPhoneVerified) {
+    if (!dbUser.phone_number_verified && jwtPhoneVerified) {
       dbUser.phone_number_verified = jwtPhoneVerified;
     }
 
@@ -44,11 +56,10 @@ export class AccountService {
     const repository = await connection.getRepository(User);
     await repository.save(dbUser);
 
-    // Return success
-    return {
-      statusCode: 200,
-      body: "Account Verified, please login!" 
-    };
+    return response.render("validated", {
+      type: "green",
+      message: "Account Verified"
+    });
   }
   public async VerifyResend(body: VerifyResend): Promise<any> {
     // Check if username is of type email or of type phone_number
@@ -57,12 +68,12 @@ export class AccountService {
     const isValidPhoneNumber = validatePreferredUsername.isValidPhoneNumber;
 
     // Check if user exist
-    const findUser = await findUserByUsername(body.preferred_username, validateUsername);
+    const findUser = await findUserByUsername(body.preferred_username, validateUsername(body.preferred_username));
 
     // Can't find user throw unauthorized
-    if(!findUser) {
+    if (!findUser) {
       throw new Unauthorized("Invalid account, please sign up");
-    } 
+    }
 
     // Check if user is already verified
     const alreadyVerified = isValidEmail ? findUser.email_verified : findUser.phone_number_verified;
@@ -96,9 +107,10 @@ export class AccountService {
       statusCode: 200,
       body: 'Verification message resent!'
     }
-   
-  } 
-  public async PasswordResetRequest(body: PasswordResetRequest): Promise<any> {
+
+  }
+  public async PasswordResetRequest(body: PasswordResetRequest, req: any): Promise<any> {
+    const response = (req).res as express.Response;
     // Check if username is of type email or of type phone_number
     const validPreferredUsername = validateUsername(body.preferred_username);
     const isValidEmail = validPreferredUsername.isValidEmail;
@@ -121,19 +133,24 @@ export class AccountService {
     await sendPasswordResetRequest(findUser, isValidPhoneNumber, isValidEmail);
 
     // Return link has been sent
+    return response.render("forgot", {
+      type: "green",
+      message: "Password reset link has been sent"
+    });
+
     return {
       statusCode: 200,
       body: "Password reset link has been sent"
     }
-  }  
-  public async PasswordReset(token: string, body: PasswordReset, req: any): Promise<any> {    
+  }
+  public async PasswordReset(token: string, body: PasswordReset, req: any): Promise<any> {
     // Double check passport-jwt
-    if(!token) {
+    if (!token) {
       throw new Error('Passport JWT missed a trick, Token was empty');
     }
-    
+
     // Extract variables
-    const dbUser: User = req.user.dbUser;   
+    const dbUser: User = req.user.dbUser;
     const passwordReset: boolean = req.user.jwt.password_reset;
 
     //Throw error if password_reset isn't true in the token
@@ -147,8 +164,8 @@ export class AccountService {
     // Hash user password
     const genPassHash = generatePasswordHash(body.password);
     const salt = genPassHash.salt;
-    const hash = genPassHash.genHash;  
-     
+    const hash = genPassHash.genHash;
+
     // Change user password
     dbUser.salt = salt;
     dbUser.password = hash;
@@ -164,5 +181,5 @@ export class AccountService {
       statusCode: 200,
       body: "Password has been reset, please try login!"
     }
-  }  
+  }
 }
