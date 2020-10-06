@@ -2,42 +2,38 @@ import { v4 as uuidv4 } from 'uuid';
 import { generatePasswordHash } from '../components/security/crypto';
 import { auroraConnectApi } from '../components/database/connection';
 import { Client } from "../models/client";
-import { Conflict, InvalidFormat, NotFound } from '../types/response_types';
+import { Conflict, NotFound } from '../types/response_types';
 import { ClientPost } from '../types/client';
 import { ClientRedirectURI } from '../models/redirect-uris';
+import { dbDelete, dbFindManyBy, dbFindOneBy, dbSaveOrUpdate } from '../components/database/db-helpers';
 
 export class ClientService { 
     public async getClient(client_id: string): Promise<any> {
-        const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(Client);
-        const findClient = await repository.findOne({ client_id: client_id });
+        const findClient = await dbFindOneBy(Client, { client_id: client_id });
 
-        if (!findClient) {
-            throw new InvalidFormat("No client found by this name");
+        if (findClient instanceof NotFound) {
+            throw findClient;
         }
 
         return findClient;
     }   
     public async getClients(): Promise<any> {
-        const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(Client);
-        const findClients = await repository.find({relations: ['redirect_uris']});
+        const findClients = await dbFindManyBy(Client, {relations: ['redirect_uris']});
 
-        if (!findClients) {
-            throw new InvalidFormat("No clients found, table is empty");
+        if (findClients instanceof NotFound) {
+            throw findClients;
         }
 
         return findClients;
     }
     public async createClient(body: ClientPost ): Promise<any> {
-        
-        const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(Client);
-        const findClient = await repository.findOne({ client_name: body.client_name });
+        const findClient = await dbFindOneBy(Client, { client_name: body.client_name });
 
-        if (findClient) {
+        if (!(findClient instanceof NotFound)) {
             throw new Conflict("Client already exists");
         }
+
+        const connection = await auroraConnectApi();
 
         const client_id = uuidv4();
         const genPassHash = generatePasswordHash(body.client_secret);
@@ -82,13 +78,10 @@ export class ClientService {
         }
     }
     public async updateClient(body: ClientPost ): Promise<any> {
-        
-        const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(Client);
-        const findClient = await repository.findOne({ client_id: body.client_id, client_name: body.client_name });
+        const findClient = await dbFindOneBy(Client, { client_id: body.client_id, client_name: body.client_name });
 
-        if (!findClient) {
-            throw new NotFound("Client does not exists, can't update");
+        if (findClient instanceof NotFound) {
+            throw findClient;
         }
 
         const genPassHash = generatePasswordHash(body.client_secret);
@@ -123,8 +116,9 @@ export class ClientService {
 
 
         client.redirect_uris = redirect_uris;
-        
-        await repository.save(client);
+
+        const connection = await auroraConnectApi();
+        await connection.manager.save(client);
         
         return {
             client_name: body.client_name,
@@ -134,20 +128,18 @@ export class ClientService {
         }
     }
     public async deleteClient(client_id: string, softDelete: boolean): Promise<any> {
-        const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(Client);
-        const findClient = await repository.findOne({ client_id: client_id });
+        const findClient = await dbFindOneBy(Client, { client_id: client_id });
 
-        if (!findClient) {
-            throw new InvalidFormat("No client found by this name");
+        if (findClient instanceof NotFound) {
+            throw findClient;
         }
 
         if (!softDelete) {
-            await repository.delete({ client_id: client_id });
+            await dbDelete(Client, { client_id: client_id });
             return "Client has been successfully deleted";
         }
 
-        await repository.save({ client_id: client_id, disabled: true });
+        await dbSaveOrUpdate(Client, { client_id: client_id, disabled: true });
         return "Client has been successfully disabled";
     } 
   }

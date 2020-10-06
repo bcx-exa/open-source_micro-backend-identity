@@ -16,6 +16,7 @@ import { globalErrorHandler } from "./components/handlers/error-handling";
 import session from 'express-session';
 import { router as authRouter } from './routes-override/authentication';
 import { router as authzRouter } from './routes-override/authorization';
+import request from 'supertest';
 
 export class Server {
   public app: any;
@@ -87,6 +88,19 @@ export class Server {
       // Global Error handling
       console.log("Adding Global Error Handling");
       this.app.use(globalErrorHandler);
+
+      describe('Get Users', () => {
+        it('should get all users', async () => {
+          const res = await request(this.app)
+            .get('/user');
+          
+          console.log(res);
+          
+            expect(res.statusCode).toEqual(200)
+            expect(res.body).toHaveProperty('data')
+        })
+      })
+      
 
       //Start Express Server
       if (env === "local") {

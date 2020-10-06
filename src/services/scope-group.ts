@@ -5,18 +5,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { ScopeGroupRequest, ScopeGroup_UserGroup_Request, ScopeGroup_Scope_Request } from "../types/scope-group";
 import { UserGroup } from "../models/user-group";
 import { Scopes } from "../models/scope";
+import { dbDelete, dbFindManyBy, dbFindOneBy, dbSaveOrUpdate } from "../components/database/db-helpers";
 export class ScopeGroupService {
   // Scope Groups
   public async getScopeGroup(scope_group_id: string, detailed: boolean): Promise<any> {
     // Connect to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(ScopeGroup);
-    const findScopeGroup = await repository
-      .findOne({ scope_group_id: scope_group_id, disabled: false, relations: ['scopes', 'user_groups'] });
+    const findScopeGroup = await dbFindOneBy(ScopeGroup, { scope_group_id: scope_group_id, disabled: false, relations: ['scopes', 'user_groups'] });
 
     // If user doesnt exist, then throw error
-    if (!findScopeGroup) {
-      throw new NotFound("ScopeGroup not found");
+    if (findScopeGroup instanceof NotFound) {
+      throw findScopeGroup
     }
     // If detailed, then return db object
     if (detailed) {
@@ -65,14 +63,11 @@ export class ScopeGroupService {
   }
   public async getScopeGroups(detailed: boolean): Promise<any> {
     // Connect to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(ScopeGroup);
-    const findScopeGroups = await repository
-      .find({ disabled: false, relations: ['scopes', 'user_groups'] });
+    const findScopeGroups = await dbFindManyBy(ScopeGroup, { disabled: false, relations: ['scopes', 'user_groups'] });
 
     // If user doesnt exist, then throw error
-    if (!findScopeGroups) {
-      throw new NotFound("No scope groups found, table empty");
+    if (findScopeGroups instanceof NotFound) {
+      throw findScopeGroups;
     }
 
     // If detailed 
@@ -133,34 +128,32 @@ export class ScopeGroupService {
     const date = new Date();
 
     // Check if scope exists
-    const findScopeGroup = await repository.findOne({ name: body.name, disabled: false });
+    const findScopeGroup = await dbFindOneBy(ScopeGroup, { name: body.name, disabled: false });
 
     // if name already exists, throw error
-    if (findScopeGroup) {
+    if (!(findScopeGroup instanceof NotFound)) {
       throw new Conflict("Scopegroup already exists");
     } 
 
     // Check if users exist
-    const ugRepository = await connection.getRepository(UserGroup);
     const addUserGroup = [];
     if (body.user_groups) {
       for (let i = 0; i < body.user_groups.length; i++) {
-        const findUG = await ugRepository.findOne({ user_group_id: body.user_groups[i].user_group_id });
-        if (!findUG) {
-          throw new NotFound('User with id:' + body.user_groups[i].user_group_id + ' does not exist!');
+        const findUG = await dbFindOneBy(UserGroup, { user_group_id: body.user_groups[i].user_group_id });
+        if (findUG instanceof NotFound) {
+          throw findUG;
         }
         addUserGroup.push(findUG);
       }
     }
  
     // Check if scope groups exist
-    const sRepository = await connection.getRepository(Scopes);
     const addScopes = [];
     if (body.scopes) {
       for (let i = 0; i < body.scopes.length; i++) {
-        const findS = await sRepository.findOne({ scope_id: body.scopes[i].scope_id });
-        if (!findS) {
-          throw new NotFound('Scope Group with id:' + body.scopes[i].scope_id + ' does not exist!');
+        const findS = await dbFindOneBy(Scopes, { scope_id: body.scopes[i].scope_id });
+        if (findS instanceof NotFound) {
+          throw NotFound;
         }
         addScopes.push(findS);
       }
@@ -178,46 +171,40 @@ export class ScopeGroupService {
     };
 
     // Save new user group
-    const newScopeGroup = await repository.save(scopeGroup);
+    const newScopeGroup = await dbSaveOrUpdate(ScopeGroup, scopeGroup);
     
     // Return user group
     return newScopeGroup;
   }
   public async updateScopeGroup(body: ScopeGroupRequest): Promise<any> {
-    // Connect to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(ScopeGroup);
-    const date = new Date();
-
     // Check if scope exists
-    const findScopeGroup = await repository.findOne({ scope_group_id: body.scope_group_id, disabled: false });
+    const date = new Date();
+    const findScopeGroup = await dbFindOneBy(ScopeGroup, { scope_group_id: body.scope_group_id, disabled: false });
 
     // if name already exists, throw error
-    if (!findScopeGroup) {
-      throw new NotFound("Scopegroup not found, can't update!");
+    if (findScopeGroup instanceof NotFound) {
+      throw findScopeGroup;
     } 
     
     // Check if users exist
-    const ugRepository = await connection.getRepository(UserGroup);
     const addUserGroup = [];
     if (body.user_groups) {
       for (let i = 0; i < body.user_groups.length; i++) {
-        const findUG = await ugRepository.findOne({ user_group_id: body.user_groups[i].user_group_id });
-        if (!findUG) {
-          throw new NotFound('User with id:' + body.user_groups[i].user_group_id + ' does not exist!');
+        const findUG = await dbFindOneBy(UserGroup, { user_group_id: body.user_groups[i].user_group_id });
+        if (findUG instanceof NotFound) {
+          throw findUG;
         }
         addUserGroup.push(findUG);
       }
     }
 
     // Check if scope groups exist
-    const sRepository = await connection.getRepository(Scopes);
     const addScopes = [];
     if (body.scopes) {
       for (let i = 0; i < body.scopes.length; i++) {
-        const findS = await sRepository.findOne({ scope_id: body.scopes[i].scope_id });
-        if (!findS) {
-          throw new NotFound('Scope Group with id:' + body.scopes[i].scope_id + ' does not exist!');
+        const findS = await dbFindOneBy(Scopes, { scope_id: body.scopes[i].scope_id });
+        if (findS instanceof NotFound) {
+          throw findS;
         }
         addScopes.push(findS);
       }
@@ -230,32 +217,29 @@ export class ScopeGroupService {
     findScopeGroup.scopes = addScopes;
 
     // Save to DB
-    await repository.save(findScopeGroup);
+    const savedFindScopeGroup = await dbSaveOrUpdate(ScopeGroup, findScopeGroup);
 
     // Return updated user
-    return findScopeGroup;
+    return savedFindScopeGroup;
   }
   public async deleteScopeGroup(scope_group_id: string, softDelete: boolean): Promise<any> {
     // Connect to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(ScopeGroup);
-    const findScopeGroup = await repository
-      .findOne({ scope_group_id: scope_group_id, relations: ['scopes', 'user_groups'] });
+    const findScopeGroup = await dbFindOneBy(ScopeGroup, { scope_group_id: scope_group_id, relations: ['scopes', 'user_groups'] });
 
 
     // If user doesnt exist, then throw error
-    if (!findScopeGroup) {
-      throw new NotFound("ScopeGroup not found");
+    if (findScopeGroup instanceof NotFound) {
+      throw NotFound;
     }
 
     // hard delete
     if (!softDelete) {
-      await repository.delete(findScopeGroup);
+      await dbDelete(ScopeGroup, findScopeGroup);
       return "Scope group has been deleted";
     }
 
     findScopeGroup.disabled = true;
-    await repository.save(findScopeGroup);
+    await dbSaveOrUpdate(ScopeGroup, findScopeGroup);
 
     return "Scope group has been disabled";
   }

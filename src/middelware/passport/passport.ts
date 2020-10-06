@@ -8,6 +8,7 @@ import { auroraConnectApi } from "../../components/database/connection";
 import { passportOauthClient } from "./passport-http";
 import { PassportGoogle } from "./passport-google";
 import { PassportFacebook } from "./passport-facebook";
+import { Unauthorized } from "../../types/response_types";
 
 let initialized = false;
 
@@ -55,7 +56,12 @@ export async function registerStrategies(): Promise<any> {
 export async function expressAuthentication(request: any, securityName: string, scopes?: string[]): Promise<any> {
   registerStrategies();
 
-  let strategy; 
+  let strategy;
+
+  // Attach scopes to request
+  if (scopes) {
+    request.apiScopes = scopes;
+  }
 
   // used in sign in
   if (securityName === 'local') {
@@ -68,10 +74,6 @@ export async function expressAuthentication(request: any, securityName: string, 
     strategy = passport.authenticate(securityName, {
       session: false,
     });
-    // Authorization
-    if (scopes) {
-      //console.log(scopes);
-    }
   }
 
   if (securityName === 'google') {
@@ -90,20 +92,29 @@ export async function expressAuthentication(request: any, securityName: string, 
     strategy = passport.authenticate("google", { successRedirect: '/', failureRedirect: '/auth/login' });
   }
 
-
-
-
-  const authResult = await new Promise((resolve, reject) =>
-    // using the strategy
+  const authResult = await new Promise((resolve, reject) => 
     strategy(request, request.res, (err) => {
-      if (err) {
-        reject(err);
-        throw new Error("Passport Auth Result Error" + err);
-      } else {
-        resolve(request.user);
+      // If stategy has error reject
+      if (err) reject(err);
+
+      // Authorization Check
+      const scopes = request.apiScopes;
+      const jwtScopes = request.user.jwt.scope;
+
+      // If scopes are required by API
+      if (Array.isArray(scopes) && scopes.length) {
+        const match = scopes.filter(s => jwtScopes.includes(s));
+
+        if (match.length == 0) {
+          const err = new Unauthorized('User does not have the appropriate permissions');
+          reject(err);
+        }
       }
+      // return user
+      resolve(request.user);
     })
-  );
+  )
+  
   return authResult;
 }
 

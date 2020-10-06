@@ -50,6 +50,9 @@
 					"password": {
 						"type": "string"
 					},
+					"accepted_legal_version": {
+						"type": "string"
+					},
 					"given_name": {
 						"type": "string"
 					},
@@ -60,6 +63,7 @@
 				"required": [
 					"preferred_username",
 					"password",
+					"accepted_legal_version",
 					"given_name",
 					"family_name"
 				],
@@ -319,6 +323,9 @@
 						"type": "string"
 					},
 					"family_name": {
+						"type": "string"
+					},
+					"accepted_legal_version": {
 						"type": "string"
 					},
 					"nickname": {
@@ -731,7 +738,13 @@
 				"tags": [
 					"Clients"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:client:get:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -758,7 +771,13 @@
 				"tags": [
 					"Clients"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:client:delete:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -796,7 +815,13 @@
 				"tags": [
 					"Clients"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:client:get_all:admin"
+						]
+					}
+				],
 				"parameters": []
 			},
 			"post": {
@@ -814,7 +839,13 @@
 				"tags": [
 					"Clients"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:client:post:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -842,7 +873,13 @@
 				"tags": [
 					"Clients"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:client:put:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -932,7 +969,13 @@
 				"tags": [
 					"Scope Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopegroups:get:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -968,7 +1011,13 @@
 				"tags": [
 					"Scope Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopegroups:delete:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -1006,7 +1055,13 @@
 				"tags": [
 					"Scope Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopegroups:get_all:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -1034,7 +1089,13 @@
 				"tags": [
 					"Scope Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopegroups:post:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1062,7 +1123,13 @@
 				"tags": [
 					"Scope Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopegroups:put:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1092,7 +1159,13 @@
 				"tags": [
 					"Scopes"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:get:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -1128,7 +1201,13 @@
 				"tags": [
 					"Scopes"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:delete:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -1166,7 +1245,13 @@
 				"tags": [
 					"Scopes"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:get_all:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -1194,7 +1279,13 @@
 				"tags": [
 					"Scopes"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:post:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1222,7 +1313,13 @@
 				"tags": [
 					"Scopes"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:put:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1252,7 +1349,13 @@
 				"tags": [
 					"Scopes"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:post:admin"
+						]
+					}
+				],
 				"parameters": []
 			}
 		},
@@ -1272,7 +1375,13 @@
 				"tags": [
 					"User Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:usergroups:get:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -1308,7 +1417,13 @@
 				"tags": [
 					"User Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:usergroups:delete:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -1346,7 +1461,13 @@
 				"tags": [
 					"User Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:usergroups:get_all:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -1374,7 +1495,13 @@
 				"tags": [
 					"User Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:usergroups:post:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1402,7 +1529,13 @@
 				"tags": [
 					"User Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:usergroups:put:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1432,7 +1565,13 @@
 				"tags": [
 					"User"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:user:get:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -1468,7 +1607,13 @@
 				"tags": [
 					"User"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:delete:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -1506,7 +1651,13 @@
 				"tags": [
 					"User"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:user:get_all:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -1534,7 +1685,13 @@
 				"tags": [
 					"User"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:post:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1562,7 +1719,13 @@
 				"tags": [
 					"User"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:put:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1592,7 +1755,13 @@
 				"tags": [
 					"User"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:scopes:get:admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",

@@ -63,6 +63,9 @@ export class User {
   updated_at: Date;
 
   @Column()
+  accepted_legal_version: string;
+
+  @Column()
   email_verified: boolean;
 
   @Column()

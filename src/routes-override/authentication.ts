@@ -13,7 +13,6 @@ router.get('/resettoken', (_request, response) => response.render('reset', { tok
 router.post('/login', login);
 router.get('/logout', logout);
 router.get("/google",
-  //passport.authenticate(["basic", "oauth2-client-password"], { session: false }),
   passport.authenticate("google", {
     scope: [
       'https://www.googleapis.com/auth/userinfo.profile',
@@ -22,14 +21,15 @@ router.get("/google",
     ]
   }));
 
-router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), function (_req, res) {
-  res.redirect("/");
+router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), function (_req, res) { 
+  // Need to go to logged in page of UI, then ui should initiate request to oauth/authorize
+  res.redirect(process.env.UI_DOMAIN + '/home');
 });
 
 router.get("/facebook",
-  //passport.authenticate(["basic", "oauth2-client-password"], { session: false }),
   passport.authenticate("facebook"));
 
 router.get("/facebook/callback", passport.authenticate("facebook", { failureRedirect: '/auth/login' }), function (_req, res) {
-  res.redirect("/");
+  // Need to go to logged in page of UI, then ui should initiate request to oauth/authorize
+  res.redirect(process.env.UI_DOMAIN + '/home');
 });

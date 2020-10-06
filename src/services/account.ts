@@ -1,13 +1,12 @@
 import { VerifyResend, PasswordResetRequest, PasswordReset } from "../types/account";
 import { User } from "../models/user";
 import { generatePasswordHash } from "../components/security/crypto";
-import { Conflict, Unauthorized } from '../types/response_types';
-import { auroraConnectApi } from "../components/database/connection";
+import { NotFound, Unauthorized } from '../types/response_types';
 import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
 import { sendPasswordResetRequest } from "../components/messaging/password-reset";
-import { findUserByUsername } from "../components/database/db-helpers";
 import express from 'express';
+import { dbFindOneBy, dbSaveOrUpdate } from "../components/database/db-helpers";
 
 export class AccountService {
   public async VerifyAccount(token: string, req: any): Promise<any> {
@@ -52,9 +51,7 @@ export class AccountService {
     }
 
     // Update user object
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    await repository.save(dbUser);
+    await dbSaveOrUpdate(User, dbUser);
 
     return response.render("validated", {
       type: "green",
@@ -67,12 +64,17 @@ export class AccountService {
     const isValidEmail = validatePreferredUsername.isValidEmail;
     const isValidPhoneNumber = validatePreferredUsername.isValidPhoneNumber;
 
-    // Check if user exist
-    const findUser = await findUserByUsername(body.preferred_username, validateUsername(body.preferred_username));
+    // Find Conditions
+    const findCondition = isValidEmail
+    ? { email: body.preferred_username, disabled: false }
+    : { phone_number: body.preferred_username, disabled: false };
 
-    // Can't find user throw unauthorized
-    if (!findUser) {
-      throw new Unauthorized("Invalid account, please sign up");
+    // Check if user exists
+    const findUser = await dbFindOneBy(User, findCondition);
+
+    // If user doesn't exist throw error
+    if (findUser instanceof NotFound) {
+      throw findUser;
     }
 
     // Check if user is already verified
@@ -90,9 +92,7 @@ export class AccountService {
     }
 
     // Save users
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    repository.save(findUser);
+    await dbSaveOrUpdate(User, findUser);
 
     // If account locked, throw account locked
     if (findUser.account_locked) {
@@ -117,7 +117,13 @@ export class AccountService {
     const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
 
     // Check if user exist
-    const findUser = await findUserByUsername(body.preferred_username, validPreferredUsername);
+    // Find Conditions
+    const findCondition = isValidEmail
+    ? { email: body.preferred_username, disabled: false }
+    : { phone_number: body.preferred_username, disabled: false };
+
+    // Check if user exists
+    const findUser = await dbFindOneBy(User, findCondition);
 
     //If user doesn't exist throw error
     if (!findUser) {
@@ -137,11 +143,6 @@ export class AccountService {
       type: "green",
       message: "Password reset link has been sent"
     });
-
-    return {
-      statusCode: 200,
-      body: "Password reset link has been sent"
-    }
   }
   public async PasswordReset(token: string, body: PasswordReset, req: any): Promise<any> {
     // Double check passport-jwt
@@ -172,14 +173,9 @@ export class AccountService {
     dbUser.updated_at = new Date();
 
     // Save user
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    repository.save(dbUser);
+    dbSaveOrUpdate(User, dbUser);
 
     // Return success
-    return {
-      statusCode: 200,
-      body: "Password has been reset, please try login!"
-    }
+    return "Password has been reset, please try login!"
   }
 }

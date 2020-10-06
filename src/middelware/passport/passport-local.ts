@@ -1,9 +1,10 @@
 import passport from "passport";
 import { Strategy } from "passport-local";
+import { User } from "../../models/user";
 import { validatePasswordHash } from "../../components/security/crypto";
 import { validateUsername } from "../../components/handlers/validation";
-import { findUserByUsername } from "../../components/database/db-helpers";
-import { Unauthorized, NotVerified } from "../../types/response_types";
+import { dbFindOneBy } from "../../components/database/db-helpers";
+import { Unauthorized, NotVerified, NotFound } from "../../types/response_types";
 
 export async function passportLocal() {
   passport.use(
@@ -15,11 +16,16 @@ export async function passportLocal() {
       const isValidEmail = validPreferredUsername.isValidEmail;
       const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
 
-      // Connect to db to find user
-      const findUser = await findUserByUsername(username, validPreferredUsername);
+      // Find Conditions
+      const findCondition = isValidEmail
+      ? { email: username, disabled: false }
+      : { phone_number: username, disabled: false };
+
+      // Check if user exists
+      const findUser = await dbFindOneBy(User, findCondition);
 
       // Can't find user throw unauthorized
-      if (!findUser) {
+      if (findUser instanceof NotFound) {
         const err = new Unauthorized("Invalid username or password");
         return done(err);
       }

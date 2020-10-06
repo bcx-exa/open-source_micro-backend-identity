@@ -18,6 +18,7 @@ export interface UserRequest
     name?: string,
     given_name?: string,
     family_name?: string,
+    accepted_legal_version?: string,
     nickname?: string,
     gender?: string,
     picture?: string,

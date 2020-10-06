@@ -7,7 +7,7 @@ import { ScopeGroupRequest } from "../types/scope-group";
 @Tags("Scope Groups") // => Under SignUpController tag
 export class ScopeGroupController extends Controller {
   @Get("{scope_group_id}") //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopegroups:get:admin'])
   async GetScopeGroup(@Path() scope_group_id: string, @Query() detailed = false ): Promise<any> {
     const data = await new ScopeGroupService().getScopeGroup(scope_group_id, detailed);
     
@@ -22,7 +22,7 @@ export class ScopeGroupController extends Controller {
   }
 
   @Get() //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopegroups:get_all:admin'])
   async GetScopeGroups(@Query() detailed = false): Promise<any> {
     const data = await new ScopeGroupService().getScopeGroups(detailed);
     
@@ -37,7 +37,7 @@ export class ScopeGroupController extends Controller {
   }
 
   @Post() //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopegroups:post:admin'])
   async PostScopeGroup(@Body() body: ScopeGroupRequest): Promise<any> {
     const data = await new ScopeGroupService().createScopeGroup(body);
     
@@ -52,7 +52,7 @@ export class ScopeGroupController extends Controller {
   }
 
   @Put() //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopegroups:put:admin'])
   async PutScopeGroup(@Body() body: ScopeGroupRequest): Promise<any> {
     const data = await new ScopeGroupService().updateScopeGroup(body);
     
@@ -67,7 +67,7 @@ export class ScopeGroupController extends Controller {
   }
 
   @Delete("{scope_group_id}") //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopegroups:delete:admin'])
   async DeleteUserGroup(@Path() scope_group_id: string, @Query() softDelete = true): Promise<any> {
     const data = await  new ScopeGroupService().deleteScopeGroup(scope_group_id, softDelete);
     

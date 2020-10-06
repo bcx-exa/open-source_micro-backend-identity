@@ -7,7 +7,7 @@ import { UserGroupRequest } from "../types/user-groups";
 @Tags("User Groups") // => Under SignUpController tag
 export class UserGroupController extends Controller {
   @Get("{user_group_id}") //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:usergroups:get:admin'])
   async GetUserGroup(@Path() user_group_id: string, @Query() detailed = false): Promise<any> {
     const data = await new UserGroupService().getUserGroup(user_group_id, detailed);
     
@@ -22,7 +22,7 @@ export class UserGroupController extends Controller {
   }
 
   @Get() //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:usergroups:get_all:admin'])
   async GetUserGroups(@Query() detailed = false): Promise<any> {
     const data = await new UserGroupService().getUserGroups(detailed);
     
@@ -37,7 +37,7 @@ export class UserGroupController extends Controller {
   }
 
   @Post() //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:usergroups:post:admin'])
   async PostUserGroups(@Body() body: UserGroupRequest): Promise<any> {
     const data = await new UserGroupService().createUserGroup(body);
     
@@ -52,7 +52,7 @@ export class UserGroupController extends Controller {
   }
 
   @Put() //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:usergroups:put:admin'])
   async PutUserGroups(@Body() body: UserGroupRequest): Promise<any> {
     const data = await new UserGroupService().updateUserGroup(body);
     
@@ -67,7 +67,7 @@ export class UserGroupController extends Controller {
   }
 
   @Delete("{user_group_id}") //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:usergroups:delete:admin'])
   async DeleteUserGroup(@Path() user_group_id: string, @Query() softDelete = true): Promise<any> {
     const data = await new UserGroupService().deleteUserGroup(user_group_id, softDelete);
     

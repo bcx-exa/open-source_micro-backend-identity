@@ -19,7 +19,7 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["./**/*.ts", "cicd/resources/advanced/ses.js", "src/routes-override/*.js", "src/routes-ovveride/*.ts"],
+  "include": ["./**/*.ts", "cicd/resources/advanced/ses.js", "src/routes-override/*.js", "src/routes-ovveride/*.ts", "tests/authentication.test.js"],
   "exclude": [
     "node_modules/**/*",
     ".serverless/**/*",

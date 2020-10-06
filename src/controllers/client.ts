@@ -1,4 +1,4 @@
-import { Controller, Put, Path, Delete, Get, Body, Post, Route, Tags, Query } from "tsoa";
+import { Controller, Put, Path, Delete, Get, Body, Post, Route, Tags, Query, Security } from "tsoa";
 import { SuccessResponse } from '../types/response_types';
 import { ClientService } from "../services/client";
 import { ClientPost } from "../types/client";
@@ -7,7 +7,7 @@ import { ClientPost } from "../types/client";
 @Tags("Clients") // => Under SignUpController tag
 export class ClientController extends Controller {   
     @Get("{client_id}") //specify the request type
-    //@Security('jwt')
+    @Security('jwt', ['identity:client:get:admin'])
     async GetClient(@Path() client_id: string): Promise<any> {
         const data = await new ClientService().getClient(client_id); 
     
@@ -22,7 +22,7 @@ export class ClientController extends Controller {
     }
     
     @Get() //specify the request type
-    //@Security('jwt')
+    @Security('jwt', ['identity:client:get_all:admin'])
     async GetClients(): Promise<any> {
         const data = await new ClientService().getClients(); 
     
@@ -37,7 +37,7 @@ export class ClientController extends Controller {
     }
     
     @Post() //specify the request type
-    //@Security('jwt')
+    @Security('jwt', ['identity:client:post:admin'])
     async CreateClient(@Body() body: ClientPost): Promise<any> {
         const data = await new ClientService().createClient(body); 
     
@@ -52,7 +52,7 @@ export class ClientController extends Controller {
     }
 
     @Put() //specify the request type
-    //@Security('jwt')
+    @Security('jwt', ['identity:client:put:admin'])
     async UpdateClient(@Body() body: ClientPost ): Promise<any> {
         const data = await new ClientService().updateClient(body); 
     
@@ -67,7 +67,7 @@ export class ClientController extends Controller {
     }
 
     @Delete("{client_id}") //specify the request type
-    //@Security('jwt')
+    @Security('jwt', ['identity:client:delete:admin'])
     async DeleteClient(@Path() client_id: string, @Query() softDelete = true): Promise<any> {
         const data = await new ClientService().deleteClient(client_id, softDelete); 
     

@@ -3,9 +3,9 @@ import { User } from "../models/user";
 import { UserGroup } from "../models/user-group";
 import { ScopeGroup } from "../models/scope-group";
 import { generatePasswordHash } from "../components/security/crypto";
-import { NotFound, Conflict } from "../types/response_types";
+import { NotFound, Conflict, InternalServerError } from "../types/response_types";
 import { auroraConnectApi } from "../components/database/connection";
-import { dbFindOneBy, findUserByUsername } from "../components/database/db-helpers";
+import { dbFindOneBy, dbFindManyBy, dbSaveOrUpdate, dbDelete} from "../components/database/db-helpers";
 import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
 import { v4 as uuidv4 } from 'uuid';
@@ -17,8 +17,8 @@ export class UserService {
     const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false } , relations: ['user_groups'] })
    
     // If user doesnt exist, then throw error
-    if (!findUser) {
-      throw new NotFound("User not found");
+    if (findUser instanceof NotFound) {
+      throw findUser;
     }
     if (detailed) {
       // return user from db
@@ -56,25 +56,20 @@ export class UserService {
   }
   public async getUserScopes(user_id: string): Promise<any> {
     // Connect to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    const findUser = await repository
-      .findOne({ user_id: user_id, disabled: false, relations: ['user_groups'] });
+    const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false } , relations: ['user_groups'] })
 
     // If user doesnt exist, then throw error
     if (!findUser) {
-      throw new NotFound("User not found");
+      throw findUser;
     }
 
     // No user group attached, throw error
-    if (!findUser.user_groups) {
+    if (!Array.isArray(findUser.user_groups) || findUser.user_groups.length == 0) {
       throw new NotFound("User doesn't belong to any user groups, user has no permissions");
     }
 
-    // get scope groups attached to user groups
-    const ugRepository = await connection.getRepository(UserGroup);
-    const findUserGroups = await ugRepository
-      .find({ where: findUser.user_groups, disabled: false, relations: ['scope_groups'] });
+    // get scope groups attached to user groups    
+    const findUserGroups = await dbFindManyBy(UserGroup, { where: findUser.user_groups, disabled: false, relations: ['scope_groups'] });
 
     const scopeGroupIds = [];
     findUserGroups.forEach(usergroup => {
@@ -84,14 +79,12 @@ export class UserService {
     });
 
     // If no scope groups, throw error
-    if (!scopeGroupIds) {
+    if (!Array.isArray(scopeGroupIds) || scopeGroupIds.length == 0) {
       throw new NotFound("No scope groups attached to the user groups, user has no permissions");
     }
 
     // get scope groups attached to user groups
-    const sgRepository = await connection.getRepository(ScopeGroup);
-    const findScopeGroups = await sgRepository
-      .find({ where: scopeGroupIds, disabled: false, relations: ['scopes'] });
+    const findScopeGroups = await dbFindManyBy(ScopeGroup, { where: scopeGroupIds, disabled: false, relations: ['scopes'] });
 
     // Getting user scoeps
     const UserScopes = [];
@@ -102,7 +95,7 @@ export class UserService {
     });
 
     // Check if users scopes exist
-    if (!UserScopes) {
+    if (!Array.isArray(UserScopes) || UserScopes.length == 0) {
       throw new NotFound("No scopes attached to scope groups!");
     }
     // Remove any duplicate scopes
@@ -112,13 +105,11 @@ export class UserService {
   }
   public async getUsers(detailed: boolean): Promise<any> {
     // Connect to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    const findUsers = await repository.find({ disabled: false, relations: ['user_groups'] });
+    const findUsers = await dbFindManyBy(User, { disabled: false, relations: ['user_groups'] });
  
     // If users doesnt exist, then throw error
-    if (!findUsers) {
-      throw new NotFound("No users found, table empty");
+    if (findUsers instanceof NotFound) {
+      throw findUsers;
     }
     if (detailed) {
           // return user
@@ -166,11 +157,15 @@ export class UserService {
     const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
 
     // Check if user exists
-    const findUser = await findUserByUsername(body.preferred_username, validPreferredUsername);
+    const findCondition = isValidEmail
+      ? { email: body.preferred_username, disabled: false }
+      : { phone_number: body.preferred_username, disabled: false };
+    
+    const findUser = await dbFindOneBy(User, findCondition);
     
     // If user exist throw conflict error
-    if (findUser) {
-      throw new Conflict("User Already Exists");
+    if (!(findUser instanceof NotFound)) {
+      throw new Conflict('User already exists');
     }
     // Check password strength
     validatePasswordStrength(body.password);
@@ -213,6 +208,7 @@ export class UserService {
       phone_number: isValidPhoneNumber ? body.preferred_username : null,
       address: null,
       locale: null,
+      accepted_legal_version: body.accepted_legal_version,
       email: isValidEmail ? body.preferred_username : null,
       birthdate: null,
       email_verified: false,
@@ -231,8 +227,7 @@ export class UserService {
     };
     
     // Save user to DB
-    const repository = await connection.getRepository(User);
-    const savedUser = await repository.save(newUser);
+    const savedUser = await dbSaveOrUpdate(User, newUser);
 
     // Send verification message
     sendVerificationMessage(newUser, isValidPhoneNumber, isValidEmail);
@@ -245,21 +240,18 @@ export class UserService {
       await validateUsername(body.preferred_username);
 
       // Extract info from req object  
-      const connection = await auroraConnectApi();
-      const repository = await connection.getRepository(User);
-      const findUser = await repository.findOne({ user_id: body.user_id, disabled: false });
+      const findUser = await dbFindOneBy(User, { user_id: body.user_id, disabled: false });
       
       // If you can't find user, then throw error
-      if (!findUser) {
-        throw new NotFound("User not found, can't update");
+      if (findUser instanceof NotFound) {
+        throw findUser;
       }
 
       // Check if user groups exist
-      const ugRepository = await connection.getRepository(UserGroup);
       const addUserGroups = [];
       if (body.user_groups) {
         for (let i = 0; i < body.user_groups.length; i++) {
-          const findUserGroup = await ugRepository.findOne({ user_group_id: body.user_groups[i].user_group_id });
+          const findUserGroup = await dbFindManyBy(UserGroup, { user_group_id: body.user_groups[i].user_group_id });
           if (!findUserGroup) {
             throw new NotFound('User group with id:' + body.user_groups[i].user_group_id + ' does not exist!');
           }
@@ -304,37 +296,40 @@ export class UserService {
       findUser.address = body.address;
       findUser.birthdate = body.birthdate;
       findUser.locale = body.locale;
+      findUser.accepted_legal_version = body.accepted_legal_version;
       findUser.picture = body.picture;
       findUser.user_groups = addUserGroups;
 
       // Update user
-      const updatedUser = await repository.save(findUser);
+      const updatedUser = await dbSaveOrUpdate(User, findUser);
       
       return updatedUser;
     } 
     catch (e) {
-      console.log(e);
+      throw new InternalServerError('Something went wrong when saving the user', 500, e);
     } 
   } 
   public async deleteUser(user_id: string, softDelete: boolean): Promise<any> {
-    // Connect to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    const findUser = await repository.findOne({ user_id: user_id });
+    try {
+      // Connect to DB
+      const findUser = await dbFindOneBy(User, { user_id: user_id });
 
-    // If user doesnt exist, then throw error
-    if (!findUser) {
-      throw new NotFound("User not found");
+      // If user doesnt exist, then throw error
+      if (findUser instanceof NotFound) {
+        throw findUser;
+      }
+      // hard delete user
+      if (!softDelete) {
+        await dbDelete(User, findUser);
+        return "User has been deleted!";
+      }
+      // Disable user
+      findUser.disabled = true;
+      await dbSaveOrUpdate(User, findUser);
+      // return user
+      return "User disabled successfully!";
+    } catch (e) {
+      throw new InternalServerError('Something went wrong when deleting/disabling the user', 500, e);
     }
-    // hard delete user
-    if (!softDelete) {
-      await repository.delete(findUser);
-      return "User has been deleted!";
-    }
-    // Disable user
-    findUser.disabled = true;
-    await repository.save(findUser);
-    // return user
-    return "User disabled successfully!";
   }
 }

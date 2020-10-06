@@ -55,6 +55,7 @@ const models: TsoaRoute.Models = {
     "properties": {
       "preferred_username": { "dataType": "string", "required": true },
       "password": { "dataType": "string", "required": true },
+      "accepted_legal_version": { "dataType": "string", "required": true },
       "given_name": { "dataType": "string", "required": true },
       "family_name": { "dataType": "string", "required": true },
     },
@@ -189,6 +190,7 @@ const models: TsoaRoute.Models = {
       "name": { "dataType": "string" },
       "given_name": { "dataType": "string" },
       "family_name": { "dataType": "string" },
+      "accepted_legal_version": { "dataType": "string" },
       "nickname": { "dataType": "string" },
       "gender": { "dataType": "string" },
       "picture": { "dataType": "string" },
@@ -473,6 +475,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/client/:client_id',
+    authenticateMiddleware([{ "jwt": ["identity:client:get:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         client_id: { "in": "path", "name": "client_id", "required": true, "dataType": "string" },
@@ -495,6 +498,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/client',
+    authenticateMiddleware([{ "jwt": ["identity:client:get_all:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
       };
@@ -516,6 +520,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post('/client',
+    authenticateMiddleware([{ "jwt": ["identity:client:post:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "ClientPost" },
@@ -538,6 +543,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.put('/client',
+    authenticateMiddleware([{ "jwt": ["identity:client:put:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "ClientPost" },
@@ -560,6 +566,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.delete('/client/:client_id',
+    authenticateMiddleware([{ "jwt": ["identity:client:delete:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         client_id: { "in": "path", "name": "client_id", "required": true, "dataType": "string" },
@@ -646,6 +653,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/scopegroup/:scope_group_id',
+    authenticateMiddleware([{ "jwt": ["identity:scopegroups:get:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         scope_group_id: { "in": "path", "name": "scope_group_id", "required": true, "dataType": "string" },
@@ -669,6 +677,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/scopegroup',
+    authenticateMiddleware([{ "jwt": ["identity:scopegroups:get_all:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         detailed: { "default": false, "in": "query", "name": "detailed", "dataType": "boolean" },
@@ -691,6 +700,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post('/scopegroup',
+    authenticateMiddleware([{ "jwt": ["identity:scopegroups:post:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "ScopeGroupRequest" },
@@ -713,6 +723,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.put('/scopegroup',
+    authenticateMiddleware([{ "jwt": ["identity:scopegroups:put:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "ScopeGroupRequest" },
@@ -735,6 +746,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.delete('/scopegroup/:scope_group_id',
+    authenticateMiddleware([{ "jwt": ["identity:scopegroups:delete:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         scope_group_id: { "in": "path", "name": "scope_group_id", "required": true, "dataType": "string" },
@@ -758,6 +770,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/scope/:scope_id',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:get:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         scope_id: { "in": "path", "name": "scope_id", "required": true, "dataType": "string" },
@@ -781,6 +794,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/scope',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:get_all:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         detailed: { "default": false, "in": "query", "name": "detailed", "dataType": "boolean" },
@@ -803,6 +817,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post('/scope',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:post:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "ScopeRequest" },
@@ -825,6 +840,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.put('/scope',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:put:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "ScopeRequest" },
@@ -847,6 +863,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.delete('/scope/:scope_id',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:delete:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         scope_id: { "in": "path", "name": "scope_id", "required": true, "dataType": "string" },
@@ -870,6 +887,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post('/scope/default_scopes',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:post:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
       };
@@ -891,6 +909,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/usergroup/:user_group_id',
+    authenticateMiddleware([{ "jwt": ["identity:usergroups:get:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         user_group_id: { "in": "path", "name": "user_group_id", "required": true, "dataType": "string" },
@@ -914,6 +933,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/usergroup',
+    authenticateMiddleware([{ "jwt": ["identity:usergroups:get_all:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         detailed: { "default": false, "in": "query", "name": "detailed", "dataType": "boolean" },
@@ -936,6 +956,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post('/usergroup',
+    authenticateMiddleware([{ "jwt": ["identity:usergroups:post:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "UserGroupRequest" },
@@ -958,6 +979,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.put('/usergroup',
+    authenticateMiddleware([{ "jwt": ["identity:usergroups:put:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "UserGroupRequest" },
@@ -980,6 +1002,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.delete('/usergroup/:user_group_id',
+    authenticateMiddleware([{ "jwt": ["identity:usergroups:delete:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         user_group_id: { "in": "path", "name": "user_group_id", "required": true, "dataType": "string" },
@@ -1003,6 +1026,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/user/:user_id',
+    authenticateMiddleware([{ "jwt": ["identity:user:get:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         detailed: { "default": false, "in": "query", "name": "detailed", "dataType": "boolean" },
@@ -1026,6 +1050,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/user',
+    authenticateMiddleware([{ "jwt": ["identity:user:get_all:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         detailed: { "default": false, "in": "query", "name": "detailed", "dataType": "boolean" },
@@ -1048,6 +1073,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get('/user/scopes/:user_id',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:get:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         user_id: { "in": "path", "name": "user_id", "required": true, "dataType": "string" },
@@ -1070,6 +1096,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post('/user',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:post:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "UserRequest" },
@@ -1092,6 +1119,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.put('/user',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:put:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         body: { "in": "body", "name": "body", "required": true, "ref": "UserRequest" },
@@ -1114,6 +1142,7 @@ export function RegisterRoutes(app: express.Express) {
     });
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.delete('/user/:user_id',
+    authenticateMiddleware([{ "jwt": ["identity:scopes:delete:admin"] }]),
     function(request: any, response: any, next: any) {
       const args = {
         user_id: { "in": "path", "name": "user_id", "required": true, "dataType": "string" },

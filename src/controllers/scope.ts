@@ -7,7 +7,7 @@ import { ScopeRequest } from "../types/scopes";
 @Tags("Scopes") // => Under SignUpController tag
 export class ScopeController extends Controller {
   @Get("{scope_id}") //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopes:get:admin'])
   async GetScope(@Path() scope_id: string, @Query() detailed = false ): Promise<any> {
     const data = await new ScopesService().getScope(scope_id, detailed);
     
@@ -23,7 +23,7 @@ export class ScopeController extends Controller {
 
 
   @Get() //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopes:get_all:admin'])
   async GetScopes(@Query() detailed = false): Promise<any> {
     const data = await new ScopesService().getScopes(detailed);
     
@@ -39,7 +39,7 @@ export class ScopeController extends Controller {
 
 
   @Post() //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopes:post:admin'])
   async PostScope(@Body() body: ScopeRequest): Promise<any> {
     const data = await new ScopesService().createScope(body);
     
@@ -55,7 +55,7 @@ export class ScopeController extends Controller {
 
 
   @Put() //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopes:put:admin'])
   async PutScope(@Body() body: ScopeRequest): Promise<any> {
     const data = await new ScopesService().updateScope(body);
     
@@ -71,7 +71,7 @@ export class ScopeController extends Controller {
 
 
   @Delete("{scope_id}") //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopes:delete:admin'])
   async DeleteScope(@Path() scope_id: string, @Query() softDelete = true): Promise<any> {
     const data = await new ScopesService().deleteScope(scope_id, softDelete);
     
@@ -87,7 +87,7 @@ export class ScopeController extends Controller {
 
 
   @Post("default_scopes") //specify the request type
-  // @Security('jwt')
+  @Security('jwt', ['identity:scopes:post:admin'])
   async addDefaultScope(): Promise<any> {
     return new ScopesService().defaultIdentityScope();
   }

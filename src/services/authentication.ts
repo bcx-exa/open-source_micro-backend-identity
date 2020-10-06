@@ -2,10 +2,9 @@ import {  SignUp } from "../types/authentication";
 import { User } from "../models/user";
 import {  generatePasswordHash } from "../components/security/crypto";
 import { Conflict } from '../types/response_types';
-import { auroraConnectApi } from "../components/database/connection";
 import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
-import { findUserByUsername } from "../components/database/db-helpers";
+import { dbFindOneBy, dbSaveOrUpdate} from "../components/database/db-helpers";
 import { v4 as uuidv4 } from 'uuid';
 
 export class AuthenticationService {
@@ -15,8 +14,13 @@ export class AuthenticationService {
     const isValidEmail = validPreferredUsername.isValidEmail;
     const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
 
+    // Find Conditions
+    const findCondition = isValidEmail
+    ? { email: body.preferred_username, disabled: false }
+    : { phone_number: body.preferred_username, disabled: false };
+
     // Check if user exists
-    const findUser = await findUserByUsername(body.preferred_username, validPreferredUsername);
+    const findUser = await dbFindOneBy(User, findCondition);
     
     // If user exist throw conflict error
     if (findUser) {
@@ -43,6 +47,7 @@ export class AuthenticationService {
       phone_number: isValidPhoneNumber ? body.preferred_username : null,
       address: null,
       locale: null,
+      accepted_legal_version: body.accepted_legal_version,
       email: isValidEmail ? body.preferred_username : null,
       birthdate: null,
       email_verified: false,
@@ -61,9 +66,7 @@ export class AuthenticationService {
     };
 
     // Save user to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(User);
-    await repository.save(newUser);
+    await dbSaveOrUpdate(User, newUser);
 
     // Send verification message async
     sendVerificationMessage(newUser, isValidPhoneNumber, isValidEmail);
