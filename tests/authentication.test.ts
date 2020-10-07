@@ -8,6 +8,19 @@ try {
   console.error(e);
 }
 
+
+// describe('Post Endpoints', () => {
+//   it('should create a new post', async () => {
+//     const res = await request(expressApp.app)
+//       .get('/user');
+
+//     console.log(res);
+
+//     expect(res.statusCode).toEqual(200)
+//     //expect(res.body).toHaveProperty('post')
+//   })
+// })
+
 describe("User Sign up", () => {
   test(`Password Policy Validation`, async () => {
     const res = await request(expressApp.app)
