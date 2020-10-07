@@ -95,5 +95,23 @@
     "webpack-node-externals": "^1.7.2"
   },
   "author": "Martin Greyling",
-  "license": "MIT"
+  "license": "MIT",
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/__tests__/*.+(ts|tsx|js)"
+    ]
+  }
 }
