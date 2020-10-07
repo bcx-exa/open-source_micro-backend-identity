@@ -34,7 +34,7 @@ export async function PassportFacebook(): Promise<any> {
               password: uuidv4(),
               given_name: profile._json.first_name,
               family_name: profile._json.last_name,
-              accepted_legal_version: null,
+              accepted_legal_version: '1.0.1',
               picture: null,
               phone_number: null,
               address: null,

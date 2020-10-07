@@ -37,7 +37,7 @@ export async function PassportGoogle():Promise<any> {
             salt: uuidv4(),
             preferred_username: profile._json.email,
             password: uuidv4(),
-            accepted_legal_version: null,
+            accepted_legal_version: '1.0.1',
             given_name: profile._json.given_name,
             family_name: profile._json.family_name,
             picture: profile._json.picture,

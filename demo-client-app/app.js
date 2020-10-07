@@ -30,7 +30,7 @@ const { AuthorizationCode } = require('simple-oauth2');
   });
   
   // initiates authorization request
-  app.get('/', (req, res) => {
+  app.get('/home', (req, res) => {
     res.redirect(authorizationUri);
   });
 

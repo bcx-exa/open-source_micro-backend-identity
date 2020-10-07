@@ -4,6 +4,7 @@ import AWS from "aws-sdk";
 import { User } from "../../models/user";
 import "reflect-metadata";
 import { auroraConnectApi } from "../../components/database/connection";
+import { InternalServerError } from "../../types/response_types";
 
 export async function passportJWT(strategyName: string, jwtFromRequest: any):Promise<any> {
   // JWT Strategies
@@ -12,8 +13,13 @@ export async function passportJWT(strategyName: string, jwtFromRequest: any):Pro
     Name: process.env.PUBLIC_KEY_NAME,
     WithDecryption: true,
   };
+  let pubKey;
+  try {
+    pubKey = await ssm.getParameter(params).promise();
 
-  const pubKey = await ssm.getParameter(params).promise();
+  } catch(e) {
+    throw new InternalServerError('Couldnt find public key in paramater store', 500, e);
+  }
 
   const optionQuery: StrategyOptions = {
     jwtFromRequest: jwtFromRequest,

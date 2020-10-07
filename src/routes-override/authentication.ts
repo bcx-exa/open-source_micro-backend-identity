@@ -23,7 +23,7 @@ router.get("/google",
 
 router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), function (_req, res) { 
   // Need to go to logged in page of UI, then ui should initiate request to oauth/authorize
-  res.redirect(process.env.UI_DOMAIN + '/home');
+  res.redirect('/oauth/authorize');
 });
 
 router.get("/facebook",
