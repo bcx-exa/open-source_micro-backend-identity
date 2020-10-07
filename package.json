@@ -28,6 +28,7 @@
     "connect-ensure-login": "^0.1.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "data-api-client": "^1.1.0",
     "dotenv-flow": "^3.2.0",
     "ejs": "^3.1.5",
     "ejs-webpack-loader": "^2.2.2",
@@ -54,6 +55,7 @@
     "swagger-ui-express": "^4.1.4",
     "tsoa": "^3.3.0",
     "typeorm": "^0.2.28",
+    "typeorm-aurora-data-api-driver": "^1.4.0",
     "uuid": "^8.3.1"
   },
   "devDependencies": {
