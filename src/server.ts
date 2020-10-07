@@ -80,13 +80,16 @@ export class Server {
         return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
       });
 
+      
       //X-Ray Segment End
       console.log("Ending X-Ray Segment");
       this.app.use(xrayExpress.closeSegment());
 
+
       // Global Error handling
       console.log("Adding Global Error Handling");
       this.app.use(globalErrorHandler);
+      
 
       //Start Express Server
       if (env === "local") {
