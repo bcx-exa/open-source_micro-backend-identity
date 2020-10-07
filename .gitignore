@@ -7,5 +7,6 @@ priv.pem
 # Serverless directories
 .serverless
 .env.local
+.env.test.local
 # Webpack directories
 .webpack
