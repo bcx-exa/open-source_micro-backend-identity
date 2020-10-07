@@ -92,12 +92,13 @@ export class Server {
       
 
       //Start Express Server
-      if (env === "local") {
-        const port = process.env.PORT || 5000;
+      if (env === "local" || env === "test") {
+        const port = env === 'test' ? 5000 : 7000;
         this.app.listen(port, () => {
           console.log(`Server listening on port http://localhost:${port}`);
         });
       }
+      
     } catch (e) {
       console.error(e);
     }

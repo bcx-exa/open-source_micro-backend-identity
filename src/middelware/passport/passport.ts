@@ -17,14 +17,6 @@ export async function registerStrategies(): Promise<any> {
   try {
     if (initialized) return;
 
-    await passportLocal();
-    await passportOauthClient();
-    await passportJWT('jwt', ExtractJwt.fromAuthHeaderAsBearerToken());
-    await passportJWT('jwt-query', ExtractJwt.fromUrlQueryParameter('token'));
-    await passportJWT('jwt-body', ExtractJwt.fromBodyField('token'));
-    await PassportGoogle();
-    await PassportFacebook();
-
     passport.serializeUser(function (user: any, done) {
       done(null, user);
     });
@@ -43,6 +35,16 @@ export async function registerStrategies(): Promise<any> {
         return done(err, false);
       }
     });
+
+
+    await passportLocal();
+    await passportOauthClient();
+    await passportJWT('jwt', ExtractJwt.fromAuthHeaderAsBearerToken());
+    await passportJWT('jwt-query', ExtractJwt.fromUrlQueryParameter('token'));
+    await passportJWT('jwt-body', ExtractJwt.fromBodyField('token'));
+    await PassportGoogle();
+    await PassportFacebook();
+
 
 
     initialized = true;

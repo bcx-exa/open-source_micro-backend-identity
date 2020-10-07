@@ -56,13 +56,13 @@ export async function generateCode(user: User, client: Client, scopes: any): Pro
   }
 }
 
-export async function generateTokens(dbUser: User, decodedToken: any): Promise<any> {
+export async function generateTokens(dbUser: User, _decodedToken: any): Promise<any> {
   
-  if (!decodedToken.scope) {
-    throw new Unauthorized('No scopes specified in the grant type');
-  }
+  // if (!decodedToken.scope) {
+  //   throw new Unauthorized('No scopes specified in the grant type');
+  // }
   
-  const scopes = decodedToken.scope;
+  const scopes = ['profile', 'email', 'phone']; // Need to fix, decoded token doesn't always have scopes in it, something to do with concent step
   const findProfie = scopes.includes('profile');
   const findEmail = scopes.includes('email');
   const findPhone = scopes.includes('phone');
