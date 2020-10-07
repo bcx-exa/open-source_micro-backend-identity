@@ -1,7 +1,7 @@
 import {  SignUp } from "../types/authentication";
 import { User } from "../models/user";
 import {  generatePasswordHash } from "../components/security/crypto";
-import { Conflict } from '../types/response_types';
+import { Conflict, NotFound } from '../types/response_types';
 import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
 import { dbFindOneBy, dbSaveOrUpdate} from "../components/database/db-helpers";
@@ -23,7 +23,7 @@ export class AuthenticationService {
     const findUser = await dbFindOneBy(User, findCondition);
     
     // If user exist throw conflict error
-    if (findUser) {
+    if (!(findUser instanceof NotFound)) {
       throw new Conflict("User Already Exists");
     }
     // Check password strength
