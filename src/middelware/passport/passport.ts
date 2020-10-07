@@ -17,19 +17,11 @@ export async function registerStrategies(): Promise<any> {
   try {
     if (initialized) return;
 
-    await passportLocal();
-    await passportOauthClient();
-    await passportJWT('jwt', ExtractJwt.fromAuthHeaderAsBearerToken());
-    await passportJWT('jwt-query', ExtractJwt.fromUrlQueryParameter('token'));
-    await passportJWT('jwt-body', ExtractJwt.fromBodyField('token'));
-    await PassportGoogle();
-    await PassportFacebook();
-
     passport.serializeUser(function (user: any, done) {
       done(null, user);
     });
-  
-    passport.deserializeUser(async function (user:any , done) {
+
+    passport.deserializeUser(async function (user: any, done) {
       try {
         const connection = await auroraConnectApi();
         const repository = await connection.getRepository(User);
@@ -45,13 +37,21 @@ export async function registerStrategies(): Promise<any> {
     });
 
 
+    await passportLocal();
+    await passportOauthClient();
+    await passportJWT('jwt', ExtractJwt.fromAuthHeaderAsBearerToken());
+    await passportJWT('jwt-query', ExtractJwt.fromUrlQueryParameter('token'));
+    await passportJWT('jwt-body', ExtractJwt.fromBodyField('token'));
+    await PassportGoogle();
+    await PassportFacebook();
+
     initialized = true;
-  
+
   } catch (e) {
     console.error(e);
-  } 
+  }
 }
-  
+
 // This is what TSOA uses for the @Security Decorator
 export async function expressAuthentication(request: any, securityName: string, scopes?: string[]): Promise<any> {
   registerStrategies();
@@ -67,7 +67,7 @@ export async function expressAuthentication(request: any, securityName: string, 
   if (securityName === 'local') {
     strategy = passport.authenticate(securityName, { session: true, successRedirect: '/', failureRedirect: 'auth/signin' });
   }
-  
+
   // used in password reset, verify account & protecting of api's
   if (securityName === 'jwt' || securityName === 'jwt-query') {
     // Authentication
@@ -92,7 +92,7 @@ export async function expressAuthentication(request: any, securityName: string, 
     strategy = passport.authenticate("google", { successRedirect: '/', failureRedirect: '/auth/login' });
   }
 
-  const authResult = await new Promise((resolve, reject) => 
+  const authResult = await new Promise((resolve, reject) =>
     strategy(request, request.res, (err) => {
       // If stategy has error reject
       if (err) reject(err);
@@ -114,7 +114,7 @@ export async function expressAuthentication(request: any, securityName: string, 
       resolve(request.user);
     })
   )
-  
+
   return authResult;
 }
 
