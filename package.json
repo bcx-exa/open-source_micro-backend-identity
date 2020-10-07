@@ -29,6 +29,7 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "data-api-client": "^1.1.0",
+    "dotenv": "^8.2.0",
     "dotenv-flow": "^3.2.0",
     "ejs": "^3.1.5",
     "ejs-webpack-loader": "^2.2.2",
