@@ -97,6 +97,9 @@
 					"client_secret": {
 						"type": "string"
 					},
+					"trusted": {
+						"type": "boolean"
+					},
 					"redirect_uris": {
 						"items": {
 							"type": "string"
@@ -107,6 +110,7 @@
 				"required": [
 					"client_name",
 					"client_secret",
+					"trusted",
 					"redirect_uris"
 				],
 				"type": "object",
@@ -815,13 +819,7 @@
 				"tags": [
 					"Clients"
 				],
-				"security": [
-					{
-						"jwt": [
-							"identity:client:get_all:admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": []
 			},
 			"post": {
@@ -839,13 +837,7 @@
 				"tags": [
 					"Clients"
 				],
-				"security": [
-					{
-						"jwt": [
-							"identity:client:post:admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,

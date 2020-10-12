@@ -13,7 +13,10 @@ export class Client {
   
   @Column()
   client_secret?: string;
-    
+
+  @Column()
+  trusted?: boolean;
+
   @Column()
   client_secret_salt?: string;
 

@@ -6,7 +6,7 @@ import "reflect-metadata";
 import { v4 as uuidv4 } from "uuid";
 import { Oauth } from "../../models/oauth";
 import { User } from "../../models/user";
-import { generateTokens, generateCode, verifyAndDecodeToken } from "../../components/security/tokens";
+import { generateTokens, generateCode, generateTokenClientPassword, verifyAndDecodeToken } from "../../components/security/tokens";
 import {
   Unauthorized,
   InternalServerError,
@@ -97,6 +97,15 @@ async function issueTokens(user_id: string, client: Client, done: any, decodedTo
 server.grant(
   oauth2orize.grant.code(async (client, _redirect_uri, user, _ares, done) => {
     try {
+          // // Check redirect uri is valid
+    // const uriMatch = client.redirect_uris
+    //   .some(ruri => { return ruri.redirect_uri === redirect_uri });
+    
+    // if (!uriMatch) {
+    //   const err = new Unauthorized('Redirect URI Mismatch');
+    //   return done(err);
+    // }
+
       // Generate code
       const code = await generateCode(user, client, client.scopes);
 
@@ -148,6 +157,31 @@ server.exchange(
     }
   })
 );
+
+server.exchange(oauth2orize.exchange.clientCredentials(async (client, scope, done) => {
+  // Validate the client
+  const dbClient = await dbFindOneBy(Client, { client_id: client.client_id });
+
+  // Is client trusted
+  if(!dbClient.trusted) {
+    const err = new Unauthorized("Client not trusted");
+    return done(err);
+  }
+
+  // Throw error if not found or internal server error
+  if(dbClient instanceof NotFound || dbClient instanceof InternalServerError) {
+    done(dbClient);
+  }
+
+  if(dbClient.client_secret !== client.client_secret) {
+    return done(null, false);
+  }
+  const tokens = await generateTokenClientPassword(client, scope);
+  
+  return done(null, tokens.access_token, tokens.refresh_token);
+   
+}));
+
 // issue new tokens and remove the old ones
 server.exchange(
   oauth2orize.exchange.refreshToken(async (client, refreshToken, _scope, done) => {
@@ -276,7 +310,7 @@ export const decision = [
 ];
 
 export const token = [
-  passport.authenticate(["oauth2-client-password-uri"], { session: false }),
+  passport.authenticate(["oauth2-client-password"], { session: false }),
   server.token(),
   server.errorHandler(),
 ];

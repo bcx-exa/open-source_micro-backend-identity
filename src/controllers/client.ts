@@ -22,7 +22,7 @@ export class ClientController extends Controller {
     }
     
     @Get() //specify the request type
-    @Security('jwt', ['identity:client:get_all:admin'])
+    //@Security('jwt', ['identity:client:get_all:admin'])
     async GetClients(): Promise<any> {
         const data = await new ClientService().getClients(); 
     
@@ -37,7 +37,7 @@ export class ClientController extends Controller {
     }
     
     @Post() //specify the request type
-    @Security('jwt', ['identity:client:post:admin'])
+    //@Security('jwt', ['identity:client:post:admin'])
     async CreateClient(@Body() body: ClientPost): Promise<any> {
         const data = await new ClientService().createClient(body); 
     

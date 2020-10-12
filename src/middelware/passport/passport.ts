@@ -5,7 +5,7 @@ import { passportJWT } from './passport-jwt';
 import { passportLocal } from "./passport-local";
 import { User } from "../../models/user";
 import { auroraConnectApi } from "../../components/database/connection";
-import { passportOauthClient } from "./passport-http";
+import { passportOauthClient } from "./passport-oauth2-client-password";
 import { PassportGoogle } from "./passport-google";
 import { PassportFacebook } from "./passport-facebook";
 import { Unauthorized } from "../../types/response_types";

@@ -61,6 +61,7 @@ export class ClientService {
     
         client.client_id = client_id,
         client.client_name = body.client_name,
+        client.trusted = body.trusted,
         client.client_secret = clientSecretHash,
         client.client_secret_salt = salt,
         client.redirect_uris = redirect_uris,
@@ -74,6 +75,7 @@ export class ClientService {
             client_name: body.client_name,
             client_id: client_id,
             client_secret: body.client_secret,
+            trusted: body.trusted,
             redirect_uris: redirect_uris
         }
     }
@@ -94,6 +96,7 @@ export class ClientService {
             client_name: body.client_name,
             client_secret: clientSecretHash,
             client_secret_salt: salt,
+            trusted: body.trusted,
             created_at: date,
             updated_at: date,
             disabled: false,
@@ -123,6 +126,7 @@ export class ClientService {
         return {
             client_name: body.client_name,
             client_id: findClient.client_id,
+            trusted: body.trusted,
             client_secret: body.client_secret,
             redirect_uri: redirect_uris
         }

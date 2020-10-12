@@ -3,6 +3,7 @@ import express from 'express';
 import { loginForm, login, logout, createForm, forgotForm, validateForm, resetForm } from './views';
 export const router = express.Router();
 
+
 // Authentication overrides
 router.get('/login', loginForm);
 router.get('/create', createForm);

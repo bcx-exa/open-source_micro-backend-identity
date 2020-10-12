@@ -126,7 +126,7 @@ export class AccountService {
     const findUser = await dbFindOneBy(User, findCondition);
 
     //If user doesn't exist throw error
-    if (!findUser) {
+    if (findUser instanceof NotFound) {
       throw new Unauthorized("Invalid username or password");
     }
 

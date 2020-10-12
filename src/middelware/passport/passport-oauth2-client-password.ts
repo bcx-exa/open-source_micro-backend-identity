@@ -1,8 +1,7 @@
 import { Client } from "../../models/client";
 import passport from "passport";
-import { BasicStrategy } from "passport-http";
 import { validatePasswordHash } from "../../components/security/crypto";
-import { Strategy } from "passport-oauth2-client-password-uri";
+import { Strategy } from "passport-oauth2-client-password";
 import { dbFindOneBy } from "../../components/database/db-helpers";
 import { Unauthorized, NotFound, InternalServerError } from "../../types/response_types";
 /**
@@ -16,10 +15,10 @@ import { Unauthorized, NotFound, InternalServerError } from "../../types/respons
  * to the `Authorization` header). While this approach is not recommended by
  * the specification, in practice it is quite common.
  */
-async function verifyClient(client_id, client_secret, redirect_uri, done) {
+async function verifyClient(client_id, client_secret, done) {
   try {
     // Check client exist
-    const client = await dbFindOneBy(Client, { client_id: client_id, relations: ['redirect_uris'] });
+    const client = await dbFindOneBy(Client, { client_id: client_id });
 
     // If not found or error, pass error to passport
     if (client instanceof NotFound || client instanceof InternalServerError) {
@@ -27,14 +26,7 @@ async function verifyClient(client_id, client_secret, redirect_uri, done) {
       return done(err);
     }
 
-    // Check redirect uri is valid
-    const uriMatch = client.redirect_uris
-      .some(ruri => { return ruri.redirect_uri === redirect_uri });
-    
-    if (!uriMatch) {
-      const err = new Unauthorized('Redirect URI Mismatch');
-      return done(err);
-    }
+
 
     // Validate password
     const validPassword = validatePasswordHash(
@@ -55,5 +47,5 @@ async function verifyClient(client_id, client_secret, redirect_uri, done) {
 }
 
 export async function passportOauthClient() {
-  passport.use("oauth2-client-password-uri", new Strategy(verifyClient));
+  passport.use("oauth2-client-password", new Strategy(verifyClient));
 }
