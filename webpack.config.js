@@ -2,6 +2,7 @@ const path = require("path");
 const slsw = require("serverless-webpack");
 const nodeExternals = require("webpack-node-externals");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   context: __dirname,
@@ -43,17 +44,23 @@ module.exports = {
       {
         test: /\.ejs$/,
         use: [
-            {
-              loader: "ejs-webpack-loader",
-              options: {
-                htmlmin: true
-              }
+          {
+            loader: "ejs-webpack-loader",
+            options: {
+              htmlmin: true
             }
+          }
         ]
-    }
+      }
     ],
   },
   plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: 'src/views', to: 'src/views' }
+      ],
+    }),
+
     // new ForkTsCheckerWebpackPlugin({
     //   eslint: true,
     //   eslintOptions: {
