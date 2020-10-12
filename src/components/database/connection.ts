@@ -3,7 +3,7 @@ import { User } from "../../models/user";
 import { UserGroup } from "../../models/user-group";
 import { Scopes } from "../../models/scope";
 import { ScopeGroup } from "../../models/scope-group";
-import { Client } from "../../models/client"; 
+import { Client } from "../../models/client";
 import { Oauth } from "../../models/oauth";
 import { ClientRedirectURI } from "../../models/redirect-uris";
 import "reflect-metadata";
@@ -16,20 +16,21 @@ export async function auroraConnectApi(): Promise<any> {
         try {
             const connection = getConnection();
             return connection;
-        } 
-        catch(e) {
+        }
+        catch (e) {
             const cf = new AWS.CloudFormation({ region: process.env.REGION });
             const listExports = await cf.listExports().promise();
             const dbSecretARN = listExports.Exports
                 .filter((item) => { return item.Name === process.env.DB_SECRET_ARN_EXPORT_NAME });
             const resourceSecretARN = listExports.Exports
                 .filter((item) => { return item.Name === process.env.DB_CLUSTER_ARN_EXPORT_NAME });
-          
+
             const connection = await createConnection({
                 type: 'aurora-data-api',
                 name: 'default',
-                database: process.env.DB_NAME,
-                secretArn:dbSecretARN[0].Value,
+                database: process.env.NODE_ENV == 'test' ? process.env.DB_NAME + "_Test" : process.env.DB_NAME,
+                dropSchema: process.env.NODE_ENV == 'test' ? true : false,
+                secretArn: dbSecretARN[0].Value,
                 resourceArn: resourceSecretARN[0].Value,
                 region: process.env.REGION,
                 entities: [User, Scopes, ScopeGroup, Client, ClientRedirectURI, UserGroup, Oauth],
@@ -38,7 +39,7 @@ export async function auroraConnectApi(): Promise<any> {
             });
             return connection;
         }
-    } 
+    }
     catch (e) {
         throw new DbConnectionError('Aurroa API Connect Error: Generally this is cause by Aoura Auto Pause', 500, e);
     }
