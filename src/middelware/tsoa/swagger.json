@@ -1599,13 +1599,7 @@
 				"tags": [
 					"User"
 				],
-				"security": [
-					{
-						"jwt": [
-							"identity:scopes:delete:admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
@@ -1643,13 +1637,7 @@
 				"tags": [
 					"User"
 				],
-				"security": [
-					{
-						"jwt": [
-							"identity:user:get_all:admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",
@@ -1711,13 +1699,7 @@
 				"tags": [
 					"User"
 				],
-				"security": [
-					{
-						"jwt": [
-							"identity:scopes:put:admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1747,13 +1729,7 @@
 				"tags": [
 					"User"
 				],
-				"security": [
-					{
-						"jwt": [
-							"identity:scopes:get:admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",

@@ -23,9 +23,8 @@ router.get("/google",
     ]
   }));
 
-router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), function (req: any, res: any) { 
+router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), function (_req: any, res: any) { 
   // Need to go to logged in page of UI, then ui should initiate request to oauth/authorize
-  console.log(req.user);
   res.redirect('/oauth/authorize');
 });
 

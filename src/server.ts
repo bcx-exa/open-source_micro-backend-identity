@@ -23,8 +23,6 @@ export class Server {
   constructor() {
     //Express and body Parser
     this.app = express();
-    this.app.use(bodyParser.urlencoded({ extended: true }));
-    this.app.use(bodyParser.json());
   }
 
   public async Start(): Promise<void> {
@@ -38,6 +36,10 @@ export class Server {
       if (env == "local") {
         credsConfigLocal();
       }
+
+      // Body parser
+      this.app.use(bodyParser.urlencoded({ extended: true }));
+      this.app.use(bodyParser.json());
 
       // Initiate view engine
       this.app.engine("ejs", ejs.__express);
@@ -53,7 +55,7 @@ export class Server {
       //X-ray Segment Start
       console.log("Open X-Ray Segment");
       const appName = process.env.APP_NAME || "micro-base";
-      this.app.use(xrayExpress.openSegment(appName + "-startup"));
+      //this.app.use(xrayExpress.openSegment(appName + "-startup"));
 
       //Add Passport Middelware to all routes
       console.log("Register & Initialize Passport Strategies");
@@ -79,17 +81,15 @@ export class Server {
       this.app.use('/', swaggerUi.serve, async (_req: Request, res: Response) => {
         return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
       });
-
-      
+           
       //X-Ray Segment End
-      console.log("Ending X-Ray Segment");
-      this.app.use(xrayExpress.closeSegment());
-
+      // console.log("Ending X-Ray Segment");
+      // this.app.use(xrayExpress.closeSegment());
 
       // Global Error handling
       console.log("Adding Global Error Handling");
       this.app.use(globalErrorHandler);
-      
+
 
       //Start Express Server
       if (env === "local" || env === "test") {

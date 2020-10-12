@@ -170,88 +170,66 @@ server.exchange(
   })
 );
 
-// Client Password
-// server.exchange(oauth2orize.exchange.clientCredentials(async (client, scope, done) => {
-//   // Validate the client
-//   const dbClient = await dbFindOneBy(Client, { client_id: client.client_id });
-
-//   // Is client trusted
-//   if(!dbClient.trusted) {
-//     const err = new Unauthorized("Client not trusted");
-//     return done(err);
-//   }
-
-//   // Throw error if not found or internal server error
-//   if(dbClient instanceof NotFound || dbClient instanceof InternalServerError) {
-//     done(dbClient);
-//   }
-
-//   if(dbClient.client_secret !== client.client_secret) {
-//     return done(null, false);
-//   }
-//   const tokens = await generateTokenClientPassword(client, scope);
-  
-//   return done(null, tokens.access_token, tokens.refresh_token);
-   
-// }));
-
+// Password Exchange 
 server.exchange(oauth2orize.exchange.password(async (client, username, password, scope, done) => {
   try {
-  // check client trusted
-  if(!client.trusted) {
-    const err = new Unauthorized('Client not trusted');
-    return done(err);
-  }
+    // check client trusted
+    if(!client.trusted) {
+      const err = new Unauthorized('Client not trusted');
+      return done(err);
+    }
 
-  // Check if username is of type email or of type phone_number
-  const validPreferredUsername = validateUsername(username);
-  const isValidEmail = validPreferredUsername.isValidEmail;
-  const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
+    // Check if username is of type email or of type phone_number
+    const validPreferredUsername = validateUsername(username);
+    const isValidEmail = validPreferredUsername.isValidEmail;
+    const isValidPhoneNumber = validPreferredUsername.isValidPhoneNumber;
 
-  // Find Conditions
-  const findCondition = isValidEmail
-  ? { email: username, disabled: false }
-  : { phone_number: username, disabled: false };
+    // Find Conditions
+    const findCondition = isValidEmail
+    ? { email: username, disabled: false }
+    : { phone_number: username, disabled: false };
 
-  // Check if user exists
-  const findUser = await dbFindOneBy(User, findCondition);
+    // Check if user exists
+    const findUser = await dbFindOneBy(User, findCondition);
 
-  // Can't find user throw unauthorized
-  if (findUser instanceof NotFound) {
-    const err = new Unauthorized("Invalid username or password");
-    return done(err);
-  }
+    // Can't find user throw unauthorized
+    if (findUser instanceof NotFound) {
+      const err = new Unauthorized("Invalid username or password");
+      return done(err);
+    }
 
-  // If account is locked throw
-  if (findUser.account_locked) {
-    let errorMessage = "Your account has been locked ";
-    errorMessage += "as you have requested too many verification requests, please contact support";
-    const err = new Unauthorized(errorMessage);
-    return done(err);
-  }
+    // If account is locked throw
+    if (findUser.account_locked) {
+      let errorMessage = "Your account has been locked ";
+      errorMessage += "as you have requested too many verification requests, please contact support";
+      const err = new Unauthorized(errorMessage);
+      return done(err);
+    }
 
-  // Valid email address but email not verified
-  if (isValidEmail && !findUser.email_verified) {
-    const err = new NotVerified("User email has not been verified");
-    return done(err);
-  }
+    // Valid email address but email not verified
+    if (isValidEmail && !findUser.email_verified) {
+      const err = new NotVerified("User email has not been verified");
+      return done(err);
+    }
 
-  // Valid phone number but phone number not verified
-  if (isValidPhoneNumber && !findUser.phone_number_verified) {
-    const err = new NotVerified("User phone number has not been verified");
-    return done(err);
-  }
+    // Valid phone number but phone number not verified
+    if (isValidPhoneNumber && !findUser.phone_number_verified) {
+      const err = new NotVerified("User phone number has not been verified");
+      return done(err);
+    }
 
-  // Validate password
-  const validPassword = validatePasswordHash(password, findUser.password, findUser.salt);
+    // Validate password
+    const validPassword = validatePasswordHash(password, findUser.password, findUser.salt);
 
-  // if (!validPassword) {
-  //   const err = new Unauthorized('Not a valid username or password');
-  //   return done(err);
-  // }
+    if (!validPassword) {
+      const err = new Unauthorized('Not a valid username or password');
+      return done(err);
+    }
+    // generate tokens
     const tokens = await generateTokenUsingPassword(findUser, client, scope);
   
     return done(null, tokens.access_token, tokens.refresh_token);
+    
   } catch(e) {
     return done(e);
   }
