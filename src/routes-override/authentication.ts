@@ -1,6 +1,7 @@
 import passport from 'passport';
 import express from 'express';
 import { loginForm, login, logout, createForm, forgotForm, validateForm, resetForm } from './views';
+import { AnyCnameRecord } from 'dns';
 export const router = express.Router();
 
 
@@ -22,8 +23,9 @@ router.get("/google",
     ]
   }));
 
-router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), function (_req, res) { 
+router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), function (req: any, res: any) { 
   // Need to go to logged in page of UI, then ui should initiate request to oauth/authorize
+  console.log(req.user);
   res.redirect('/oauth/authorize');
 });
 
