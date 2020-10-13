@@ -18,15 +18,13 @@ import { Unauthorized, NotFound, InternalServerError } from "../../types/respons
 async function verifyClient(client_id, client_secret, done) {
   try {
     // Check client exist
-    const client = await dbFindOneBy(Client, { client_id: client_id });
-
+    const client = await dbFindOneBy(Client, { where: { client_id: client_id, disabled: false } , relations: ['redirect_uris'] })
+    
     // If not found or error, pass error to passport
     if (client instanceof NotFound || client instanceof InternalServerError) {
       const err = new Unauthorized('No matching client id/client secret combo');
       return done(err);
     }
-
-
 
     // Validate password
     const validPassword = validatePasswordHash(

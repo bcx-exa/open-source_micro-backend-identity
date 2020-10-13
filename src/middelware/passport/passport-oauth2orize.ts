@@ -8,7 +8,7 @@ import { Oauth } from "../../models/oauth";
 import { User } from "../../models/user";
 import { validateUsername } from "../../components/handlers/validation";
 import { validatePasswordHash } from "../../components/security/crypto"; 
-import { generateTokens, generateCode, generateTokenUsingPassword, verifyAndDecodeToken } from "../../components/security/tokens";
+import { generateTokens, generateCode, verifyAndDecodeToken } from "../../components/security/tokens";
 import {
   NotVerified,
   Unauthorized,
@@ -41,64 +41,10 @@ server.deserializeClient(async (client, done) => {
     return done(err);
   }
 });
-// Issue Tokens
-async function issueTokens(user_id: string, client: Client, done: any, decodedToken: any) {
-  try {
-    // Get User
-    const user = await dbFindOneBy(User, { user_id: user_id });
 
-    if (user instanceof NotFound) {
-      return done(user);
-    }
-
-    // Generate tokens
-    const tokens = await generateTokens(user, decodedToken);
-    const date = new Date();
-
-    // Create access token
-    const accessToken: Oauth = {
-      oauth_id: uuidv4(),
-      token: tokens.access_token,
-      token_link: tokens.token_link,
-      token_type: "access_token",
-      user: user,
-      client: client,
-      disabled: false,
-      created_at: date,
-      updated_at: date,
-    };
-
-    // Create refresh token
-    const refreshToken: Oauth = {
-      oauth_id: uuidv4(),
-      token: tokens.refresh_token,
-      token_link: tokens.token_link,
-      token_type: "refresh_token",
-      user: user,
-      client: client,
-      disabled: false,
-      created_at: date,
-      updated_at: date,
-    };
-
-    const oauth = [];
-    oauth.push(accessToken, refreshToken);
-
-    // Save tokens
-    const saveTokens = await dbSaveOrUpdate(Oauth, oauth);
-
-    if (saveTokens instanceof InternalServerError) {
-      return done(saveTokens);
-    }
-    // Pass tokens to passport
-    return done(null, tokens.access_token, tokens.refresh_token);
-  } catch (e) {
-    return done(e);
-  }
-}
 // Register code grant method
 server.grant(
-  oauth2orize.grant.code(async (client, redirect_uri, user, _ares, done) => {
+  oauth2orize.grant.code(async (client, redirect_uri, user, ares, done) => {
     try {
       // Check redirect uri is valid
       const uriMatch = client.redirect_uris
@@ -110,7 +56,7 @@ server.grant(
       }
 
       // Generate code
-      const code = await generateCode(user, client, client.scopes);
+      const code = await generateCode(user, client, ares.scope);
 
       // If error when generating code send error to passport
       if (code instanceof InternalServerError) {
@@ -160,8 +106,12 @@ server.exchange(
       if (deleteCode instanceof InternalServerError) {
         return done(deleteCode);
       }
+
+      // generate tokens
+      const tokens = await generateTokens(dbCodeTokenRecord.user, client, codeToken.scope);
+      
       // Issue tokens
-      await issueTokens(dbCodeTokenRecord.user.user_id, client, done, codeToken);
+      return done(null, tokens.access_token, tokens.refresh_token);
 
     } catch (e) {
       const err = new InternalServerError("Something went wrong in code exchange", 500, e);
@@ -190,16 +140,16 @@ server.exchange(oauth2orize.exchange.password(async (client, username, password,
     : { phone_number: username, disabled: false };
 
     // Check if user exists
-    const findUser = await dbFindOneBy(User, findCondition);
+    const dbUser = await dbFindOneBy(User, findCondition);
 
     // Can't find user throw unauthorized
-    if (findUser instanceof NotFound) {
+    if (dbUser instanceof NotFound) {
       const err = new Unauthorized("Invalid username or password");
       return done(err);
     }
 
     // If account is locked throw
-    if (findUser.account_locked) {
+    if (dbUser.account_locked) {
       let errorMessage = "Your account has been locked ";
       errorMessage += "as you have requested too many verification requests, please contact support";
       const err = new Unauthorized(errorMessage);
@@ -207,26 +157,26 @@ server.exchange(oauth2orize.exchange.password(async (client, username, password,
     }
 
     // Valid email address but email not verified
-    if (isValidEmail && !findUser.email_verified) {
+    if (isValidEmail && !dbUser.email_verified) {
       const err = new NotVerified("User email has not been verified");
       return done(err);
     }
 
     // Valid phone number but phone number not verified
-    if (isValidPhoneNumber && !findUser.phone_number_verified) {
+    if (isValidPhoneNumber && !dbUser.phone_number_verified) {
       const err = new NotVerified("User phone number has not been verified");
       return done(err);
     }
 
     // Validate password
-    const validPassword = validatePasswordHash(password, findUser.password, findUser.salt);
+    const validPassword = validatePasswordHash(password, dbUser.password, dbUser.salt);
 
     if (!validPassword) {
       const err = new Unauthorized('Not a valid username or password');
       return done(err);
     }
     // generate tokens
-    const tokens = await generateTokenUsingPassword(findUser, client, scope);
+    const tokens = await generateTokens(dbUser, client, scope);
   
     return done(null, tokens.access_token, tokens.refresh_token);
     
@@ -238,7 +188,7 @@ server.exchange(oauth2orize.exchange.password(async (client, username, password,
 
 // issue new tokens and remove the old ones
 server.exchange(
-  oauth2orize.exchange.refreshToken(async (client, refreshToken, _scope, done) => {
+  oauth2orize.exchange.refreshToken(async (client, refreshToken, scope, done) => {
     try {
       // Decode token
       const decodeRefreshToken = await verifyAndDecodeToken(refreshToken);
@@ -281,8 +231,10 @@ server.exchange(
         return done(deleteTokens);
       }
 
-      // Create new tokens ones
-      await issueTokens(dbUser.user_id, client, done, decodeRefreshToken);
+      // generate tokens
+      const tokens = await generateTokens(dbUser, client, scope);
+    
+      return done(null, tokens.access_token, tokens.refresh_token);
 
     } catch (e) {
       throw new InternalServerError("Refresh Token Error");
@@ -295,7 +247,7 @@ export const authorization = [
   login.ensureLoggedIn("/auth/login"),
   // Authorization logic
   server.authorization(
-    async (client_id, redirect_uri, scopes, done) => {
+    async (client_id, redirect_uri, _scopes, done) => {
       // Verify Client Exist
       const client = await dbFindOneBy(Client, { where: { client_id: client_id } , relations: ['redirect_uris'] });
 
@@ -312,9 +264,6 @@ export const authorization = [
         const err = new Unauthorized('Redirect URI Mismatch');
         return done(err);
       }
-
-      // attach scopes to client object
-      client.scopes = scopes;
 
       // return client and redirect_uri 
       return done(null, client, redirect_uri);
@@ -365,6 +314,8 @@ export const decision = [
 
 export const token = [
   passport.authenticate(["oauth2-client-password"], { session: false }),
-  server.token(),
+  server.token((req, done) => { 
+    return done(null, { scope: req.oauth2.req.scope })
+  }),
   server.errorHandler(),
 ];

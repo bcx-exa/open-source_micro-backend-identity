@@ -55,7 +55,7 @@ export class Server {
       //X-ray Segment Start
       console.log("Open X-Ray Segment");
       const appName = process.env.APP_NAME || "micro-base";
-      //this.app.use(xrayExpress.openSegment(appName + "-startup"));
+      this.app.use(xrayExpress.openSegment(appName + "-startup"));
 
       //Add Passport Middelware to all routes
       console.log("Register & Initialize Passport Strategies");
