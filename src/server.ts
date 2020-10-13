@@ -83,8 +83,8 @@ export class Server {
       });
            
       //X-Ray Segment End
-      // console.log("Ending X-Ray Segment");
-      // this.app.use(xrayExpress.closeSegment());
+      console.log("Ending X-Ray Segment");
+      this.app.use(xrayExpress.closeSegment());
 
       // Global Error handling
       console.log("Adding Global Error Handling");

@@ -1,20 +1,18 @@
 /*eslint-disable*/
 import { Server } from '../src/server';
 import request from "supertest";
+const expressApp = new Server();
+const { ResourceOwnerPassword } = require('simple-oauth2');
 
 beforeAll(() => {
   process.env.NODE_ENV = 'test';
 })
 
 
-const expressApp = new Server();
-const { ResourceOwnerPassword } = require('simple-oauth2');
+
 
 async function getAccessToken() {
   try {
-        // start server
-        expressApp.Start();
-
     const config = {
       client: {
         id: 'b69d3b97-84f8-4503-8b13-c212603827e6',
@@ -54,11 +52,12 @@ async function getAccessToken() {
 
 async function run() {
   try {
-
+    // start server
+    await expressApp.Start();
     // get access token
     await getAccessToken();
     // Test one
-    testOne();
+    await testOne();
   
     
   } catch (e) {
@@ -66,7 +65,7 @@ async function run() {
   } 
 }
 
-function testOne() {
+async function testOne() {
   describe("User Sign up", () => {
     test(`Password Policy Validation`, async () => {
       const res = await request(expressApp.app)
