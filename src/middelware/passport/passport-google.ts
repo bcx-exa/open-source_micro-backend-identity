@@ -1,8 +1,10 @@
 import passport from "passport";
 import { Strategy } from "passport-google-oauth2";
-import { auroraConnectApi } from "../../components/database/connection";
 import { User } from "../../models/user";
 import { v4 as uuidv4 } from "uuid";
+import { dbFindOneBy, dbSaveOrUpdate } from "../../components/database/db-helpers";
+import { Client } from "../../models/client";
+import { NotFound, InternalServerError, Unauthorized } from "../../types/response_types";
  
 // Add phone nubmers once we are an approved app
 export async function PassportGoogle():Promise<any> {
@@ -12,14 +14,52 @@ export async function PassportGoogle():Promise<any> {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:7000/auth/google/callback",
+      passReqToCallback: true
     },
-    async function (_accessToken, _refreshToken, profile, done) {
-      try {
-        const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(User);
-        const user = await repository.findOne({ googleId: profile.id });
+    async function (req, _accessToken, _refreshToken, profile, done) {
+      try {    
 
+        console.log(req.root);
+        // Check client exist
+        const client_id = 'b69d3b97-84f8-4503-8b13-c212603827e6';
+        const client_secret = '123';
+
+        if(!client_id || !client_secret) {
+          const err = new Unauthorized('No client id or secret');
+          return done(err);
+        }
+
+        const client = await dbFindOneBy(Client, { where: { client_id: client_id, disabled: false } , relations: ['redirect_uris'] })
+        
+        if (client instanceof NotFound || client instanceof InternalServerError) {
+          const err = new Unauthorized('No matching client id/client secret combo');
+          return done(err);
+        }
+
+        const redirect_uri = 'http://localhost:7000';
+
+        // Check client redirect uri match
+        const uriMatch = client.redirect_uris
+        .some(ruri => { return ruri.redirect_uri === redirect_uri });
+      
+        if (!uriMatch) {
+          const err = new Unauthorized('Redirect URI Mismatch');
+          return done(err);
+        }
+
+        // Check scope
+        const scope = 'openid profile email phone';
+
+        if(!scope) {
+          const err = new Unauthorized('No scope specified in query string');
+          return done(err);
+        }
+    
+        const user = await dbFindOneBy(User, { email: profile._json.email });
+        // If not found or error, pass error to passport
+  
         if (user) {
+          user.googleId = profile.id;
           user.given_name = profile._json.given_name;
           user.family_name = profile._json.family_name;
           user.picture = profile._json.picture;
@@ -27,12 +67,17 @@ export async function PassportGoogle():Promise<any> {
           user.email_verified = profile._json.email_verified;
           user.updated_at = new Date();
 
-          await repository.save(user);
+          await dbSaveOrUpdate(User, user);
+
+          user.client = client;
+          user.scope = scope;
+          user.redirect_uri = redirect_uri;
+
           return done(null, user);
 
         } else {
           const date = new Date();
-          const user: User = {
+          const user: any = {
             user_id: uuidv4(),
             salt: uuidv4(),
             preferred_username: profile._json.email,
@@ -57,10 +102,15 @@ export async function PassportGoogle():Promise<any> {
             verification_attempts: 1,
             account_locked: false,
             googleId: profile.id,
-            facebookId: null,
+            facebookId: null
           };
 
-          await repository.save(user);
+          await dbSaveOrUpdate(User, user);
+          
+          user.client = client;
+          user.scope = scope;
+          user.redirect_uri = redirect_uri;
+
           return done(null, user);
         }
       } catch (err) {

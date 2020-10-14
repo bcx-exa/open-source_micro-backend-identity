@@ -1,4 +1,5 @@
 
+import { getAccessToken } from "../components/security/oauth_client";
 import { Controller, Get, Post, Route, Tags, Query } from "tsoa";
 
 @Route("oauth") // route name => localhost:xxx/SignUp
@@ -17,5 +18,11 @@ export class OauthController extends Controller {
     @Post("token") //specify the request type
     async PostToken(): Promise<any> {
       return;
+    }
+
+    @Get("token_test") //specify the request type
+    async GetTokenTest(): Promise<any> {
+      const tokens = await getAccessToken();
+      return tokens;
     }
 }

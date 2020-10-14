@@ -15,7 +15,7 @@ import { Unauthorized, NotFound, InternalServerError } from "../../types/respons
  * to the `Authorization` header). While this approach is not recommended by
  * the specification, in practice it is quite common.
  */
-async function verifyClient(client_id, client_secret, done) {
+export async function verifyClient(client_id, client_secret, done) {
   try {
     // Check client exist
     const client = await dbFindOneBy(Client, { where: { client_id: client_id, disabled: false } , relations: ['redirect_uris'] })

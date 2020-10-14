@@ -4,11 +4,12 @@ import "reflect-metadata";
 import { passportJWT } from './passport-jwt';
 import { passportLocal } from "./passport-local";
 import { User } from "../../models/user";
-import { auroraConnectApi } from "../../components/database/connection";
 import { passportOauthClient } from "./passport-oauth2-client-password";
 import { PassportGoogle } from "./passport-google";
 import { PassportFacebook } from "./passport-facebook";
-import { Unauthorized } from "../../types/response_types";
+import { InternalServerError, NotFound, Unauthorized } from "../../types/response_types";
+import { dbFindOneBy } from "../../components/database/db-helpers";
+
 
 let initialized = false;
 
@@ -23,14 +24,13 @@ export async function registerStrategies(): Promise<any> {
 
     passport.deserializeUser(async function (user: any, done) {
       try {
-        const connection = await auroraConnectApi();
-        const repository = await connection.getRepository(User);
-        const findUser = await repository.findOne({ user_id: user.user_id });
-        if (findUser) {
-          return done(null, findUser);
-        } else {
-          return done(null, false);
+        const dbUser = await dbFindOneBy(User, { user_id: user.user_id });
+        if (dbUser instanceof NotFound || dbUser instanceof InternalServerError) {
+          return done(dbUser);
         }
+
+        return done(null, dbUser);
+
       } catch (err) {
         return done(err, false);
       }

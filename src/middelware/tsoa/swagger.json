@@ -945,6 +945,26 @@
 				"parameters": []
 			}
 		},
+		"/oauth/token_test": {
+			"get": {
+				"operationId": "GetTokenTest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authorization - OAuth 2.0"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/scopegroup/{scope_group_id}": {
 			"get": {
 				"operationId": "GetScopeGroup",

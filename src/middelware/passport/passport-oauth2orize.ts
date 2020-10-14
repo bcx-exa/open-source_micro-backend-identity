@@ -3,7 +3,6 @@ import passport from "passport";
 import oauth2orize from "oauth2orize";
 import { Client } from "../../models/client";
 import "reflect-metadata";
-import { v4 as uuidv4 } from "uuid";
 import { Oauth } from "../../models/oauth";
 import { User } from "../../models/user";
 import { validateUsername } from "../../components/handlers/validation";

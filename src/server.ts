@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
 import bodyParser from "body-parser";
 import { execShellCommand } from "./components/cli/shell";
-import xrayExpress from "aws-xray-sdk-express";
+//import xrayExpress from "aws-xray-sdk-express";
 import dotenv from "dotenv-flow";
 import { credsConfigLocal } from "./components/security/aws";
 import path from "path";
@@ -55,7 +55,7 @@ export class Server {
       //X-ray Segment Start
       console.log("Open X-Ray Segment");
       const appName = process.env.APP_NAME || "micro-base";
-      this.app.use(xrayExpress.openSegment(appName + "-startup"));
+      //this.app.use(xrayExpress.openSegment(appName + "-startup"));
 
       //Add Passport Middelware to all routes
       console.log("Register & Initialize Passport Strategies");
@@ -84,7 +84,7 @@ export class Server {
            
       //X-Ray Segment End
       console.log("Ending X-Ray Segment");
-      this.app.use(xrayExpress.closeSegment());
+      //this.app.use(xrayExpress.closeSegment());
 
       // Global Error handling
       console.log("Adding Global Error Handling");
