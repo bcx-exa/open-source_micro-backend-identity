@@ -14,15 +14,22 @@ router.get('/resettoken', (_request, response) => response.render('reset', { tok
 
 router.post('/login', login);
 router.get('/logout', logout);
-router.get("/google",
+router.get("/google", function (req, res, next) {
+  let stateDate = {
+    clientID: req.query.clientID ? req.query.clientID : null,
+    clientSecret: req.query.clientSecret ? req.query.clientSecret : null,
+    redirectUri: req.query.redirectUri ? req.query.redirectUri : "http://localhost:7000",
+    scope: req.query.scope ? req.query.scope : "openid profile email phone",
+  };
   passport.authenticate("google", {
     scope: [
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/user.phonenumbers.read'
     ],
-    state: "Whatever I want"
-  }));
+    state: JSON.stringify(stateDate)
+  })(req, res, next);
+})
 
 router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), async function (req: any, res: any) {
   // Need to go to logged in page of UI, then ui should initiate request to oauth/authorize

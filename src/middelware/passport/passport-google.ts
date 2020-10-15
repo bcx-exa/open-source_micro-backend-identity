@@ -20,9 +20,10 @@ export async function PassportGoogle(): Promise<any> {
         try {
 
           console.log(req.query.state);
+          let myState = JSON.parse(req.query.state);
           // Check client exist
-          const client_id = 'b69d3b97-84f8-4503-8b13-c212603827e6';
-          const client_secret = '123';
+          const client_id = myState.clientID;
+          const client_secret = myState.clientSecret;
 
           if (!client_id || !client_secret) {
             const err = new Unauthorized('No client id or secret');
@@ -36,7 +37,7 @@ export async function PassportGoogle(): Promise<any> {
             return done(err);
           }
 
-          const redirect_uri = 'http://localhost:7000';
+          const redirect_uri = myState.redirect_uri;
 
           // Check client redirect uri match
           const uriMatch = client.redirect_uris
@@ -48,7 +49,7 @@ export async function PassportGoogle(): Promise<any> {
           }
 
           // Check scope
-          const scope = 'openid profile email phone';
+          const scope = myState.scope;
 
           if (!scope) {
             const err = new Unauthorized('No scope specified in query string');
