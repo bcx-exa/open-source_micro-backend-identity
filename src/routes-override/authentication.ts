@@ -15,7 +15,7 @@ router.get('/resettoken', (_request, response) => response.render('reset', { tok
 router.post('/login', login);
 router.get('/logout', logout);
 router.get("/google", function (req, res, next) {
-  let stateDate = {
+  const stateData = {
     clientID: req.query.clientID ? req.query.clientID : null,
     clientSecret: req.query.clientSecret ? req.query.clientSecret : null,
     redirectUri: req.query.redirectUri ? req.query.redirectUri : "http://localhost:7000",
@@ -27,7 +27,7 @@ router.get("/google", function (req, res, next) {
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/user.phonenumbers.read'
     ],
-    state: JSON.stringify(stateDate)
+    state: JSON.stringify(stateData)
   })(req, res, next);
 })
 

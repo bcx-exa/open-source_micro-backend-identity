@@ -20,7 +20,7 @@ export async function PassportGoogle(): Promise<any> {
         try {
 
           console.log(req.query.state);
-          let myState = JSON.parse(req.query.state);
+          const myState = JSON.parse(req.query.state);
           // Check client exist
           const client_id = myState.clientID;
           const client_secret = myState.clientSecret;
