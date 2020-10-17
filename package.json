@@ -90,6 +90,9 @@
   "author": "Martin Greyling",
   "license": "MIT",
   "jest": {
+    "jest": {
+      "setupFilesAfterEnv": "<rootDir>/tests/setupTestEnviroment.js"
+    },
     "moduleFileExtensions": [
       "ts",
       "tsx",

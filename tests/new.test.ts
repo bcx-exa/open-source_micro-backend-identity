@@ -1,33 +1,22 @@
+/* eslint-disable */
 import { Server } from "../src/server";
-var request = require('supertest');
 const expressApp = new Server();
 
-var server = expressApp.app;
-
-describe('GET /api/getDir', function () {
-    it('login', loginUser());
-    it('uri that requires user to be logged in', function (done) {
-        request(server)
-            .get('/api/getDir')
-            .expect(200)
-            .end(function (err, res) {
-                if (err) return done(err);
-                console.log(res.body);
-                done()
-            });
-    });
+const request = require('supertest');
+let agent, token;
+beforeAll(async () => {
+    await expressApp.Start();
+    agent = request(expressApp.app);
 });
 
-
-function loginUser() {
-    return function (done) {
-        request(server)
-            .post('/oauth​/token_test')
-            .expect(200)
-            .end(onResponse);
-        function onResponse(err) {
-            if (err) return done(err);
-            return done();
-        }
-    };
-};
+describe("User Sign up", () => {
+    it('renders user profile', async () => {
+        const res = await agent.get("/oauth/token_test")
+        console.log(res.body.access_token)
+        token = res.body.access_token;
+    });
+    it('user profile', async () => {
+        const res = await agent.get("/user").set('Authorization', 'Bearer ' + token)
+        console.log(res.body)
+    });
+});
