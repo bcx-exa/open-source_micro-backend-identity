@@ -3,6 +3,8 @@ import { ScopeGroup } from "../models/scope-group";
 import { UserGroup } from "../models/user-group";
 import { auroraConnectApi } from "../components/database/connection";
 import { UserService } from "./user";
+import { User } from "aws-sdk/clients/workmail";
+import { ClientService } from "./client";
 
 export class AdminService {
   public async defaultSchema(): Promise<any> {
@@ -55,7 +57,7 @@ export class AdminService {
       { created_at: date, updated_at: date, disabled: false, name: "Basic Scope Group", description: "All permissions deemed to be of a basic level", scopes: basicScopes },
       { created_at: date, updated_at: date, disabled: false, name: "Admin Scope Group", description: "All permissions deemed to be of an admin level", scopes: adminScopes }
     ]
-    
+
     const sgRepository = await connection.getRepository(ScopeGroup);
     const saveScopeGroups = await sgRepository.save(scopeGroups);
 
@@ -70,21 +72,24 @@ export class AdminService {
 
     const ugRepository = await connection.getRepository(UserGroup);
     const saveUserGroups = await ugRepository.save(userGroups);
-    
+
     const basicUserGroup = saveUserGroups.filter(ug => ug.name.includes('Basic'));
     const adminUserGroup = saveUserGroups.filter(ug => ug.name.includes('Admin'));
 
     // Base users
     const users = [{
+      accepted_legal_version: "v1",
       name: "Basic Identity User",
       preferred_username: "basic@" + process.env.DOMAIN,
       password: "ZAQ!@wsx3456",
       phone_number: null,
       email: "basic@" + process.env.DOMAIN,
       disabled: false,
-      user_groups: basicUserGroup
+      user_groups: basicUserGroup,
+
     },
     {
+      accepted_legal_version: "v1",
       name: "Admin Identity User",
       preferred_username: "admin@" + process.env.DOMAIN,
       password: "ZAQ!@wsx3456",
@@ -93,12 +98,25 @@ export class AdminService {
       disabled: false,
       user_groups: adminUserGroup
     }];
-    
+
     for (let i = 0; i < users.length; i++) {
       await new UserService().createUser(users[i]);
     }
 
+    //Create Clients
+    const clients = {
+      client_id: "b69d3b97-84f8-4503-8b13-c212603827e6",
+      client_name: "Unit Test",
+      client_secret: "123",
+      trusted: true,
+      redirect_uris: [
+        "http://" + "localhost" + ":" + process.env.PORT
+      ]
+    }
+    await new ClientService().createClient(clients);
+
+
     return users;
-    
+
   }
 }

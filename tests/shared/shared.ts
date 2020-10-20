@@ -10,12 +10,11 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await server.close(async () => {
-        console.log('Http server closed.');
-    });
+    await server.close();
 });
 
 test("Login to the application", async function () {
+    await agent.post("/admin/initial_scope_creation")
     const res = await agent.get("/oauth/token_test")
     token = res.body.access_token;
     return;

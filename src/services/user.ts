@@ -5,17 +5,18 @@ import { ScopeGroup } from "../models/scope-group";
 import { generatePasswordHash } from "../components/security/crypto";
 import { NotFound, Conflict, InternalServerError } from "../types/response_types";
 import { auroraConnectApi } from "../components/database/connection";
-import { dbFindOneBy, dbFindManyBy, dbSaveOrUpdate, dbDelete} from "../components/database/db-helpers";
+import { dbFindOneBy, dbFindManyBy, dbSaveOrUpdate, dbDelete } from "../components/database/db-helpers";
 import { validateUsername, validatePasswordStrength } from "../components/handlers/validation";
 import { sendVerificationMessage } from "../components/messaging/account-verification";
 import { v4 as uuidv4 } from 'uuid';
+
 
 export class UserService {
   // Users
   public async getUser(user_id: string, detailed: boolean): Promise<any> {
     // Connect to DB
-    const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false } , relations: ['user_groups'] })
-   
+    const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false }, relations: ['user_groups'] })
+
     // If user doesnt exist, then throw error
     if (findUser instanceof NotFound) {
       throw findUser;
@@ -23,7 +24,7 @@ export class UserService {
     if (detailed) {
       // return user from db
       return findUser;
-    } 
+    }
 
     // return version lite
     const ugLite = [];
@@ -56,7 +57,7 @@ export class UserService {
   }
   public async getUserScopes(user_id: string): Promise<any> {
     // Connect to DB
-    const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false } , relations: ['user_groups'] })
+    const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false }, relations: ['user_groups'] })
 
     // If user doesnt exist, then throw error
     if (!findUser) {
@@ -106,17 +107,17 @@ export class UserService {
   public async getUsers(detailed: boolean): Promise<any> {
     // Connect to DB
     const findUsers = await dbFindManyBy(User, { disabled: false, relations: ['user_groups'] });
- 
+
     // If users doesnt exist, then throw error
     if (findUsers instanceof NotFound) {
       throw findUsers;
     }
     if (detailed) {
-          // return user
+      // return user
       return findUsers;
     }
     const findUsersLite = [];
-    
+
     findUsers.forEach(findUser => {
       // return version lite
       const ugLite = [];
@@ -151,6 +152,7 @@ export class UserService {
     return findUsersLite;
   }
   public async createUser(body: UserRequest): Promise<any> {
+    const isSystemAccount = (body.preferred_username == "basic@" + process.env.DOMAIN || "admin@" + process.env.DOMAIN);
     // Check if username is of type email or of type phone_number
     const validPreferredUsername = validateUsername(body.preferred_username);
     const isValidEmail = validPreferredUsername.isValidEmail;
@@ -160,9 +162,9 @@ export class UserService {
     const findCondition = isValidEmail
       ? { email: body.preferred_username, disabled: false }
       : { phone_number: body.preferred_username, disabled: false };
-    
+
     const findUser = await dbFindOneBy(User, findCondition);
-    
+
     // If user exist throw conflict error
     if (!(findUser instanceof NotFound)) {
       throw new Conflict('User already exists');
@@ -180,7 +182,7 @@ export class UserService {
     const connection = await auroraConnectApi();
     const ugRepository = await connection.getRepository(UserGroup);
     const addUserGroups = [];
-    
+
     // If user groups are attached to user
     if (body.user_groups) {
       for (let i = 0; i < body.user_groups.length; i++) {
@@ -211,7 +213,7 @@ export class UserService {
       accepted_legal_version: body.accepted_legal_version,
       email: isValidEmail ? body.preferred_username : null,
       birthdate: null,
-      email_verified: false,
+      email_verified: isSystemAccount ? true : false,
       phone_number_verified: false,
       created_at: date,
       updated_at: date,
@@ -225,23 +227,25 @@ export class UserService {
       account_locked: false,
       user_groups: addUserGroups
     };
-    
+
     // Save user to DB
     const savedUser = await dbSaveOrUpdate(User, newUser);
 
     // Send verification message
-    sendVerificationMessage(newUser, isValidPhoneNumber, isValidEmail);
-    
+    if (!isSystemAccount) {
+      sendVerificationMessage(newUser, isValidPhoneNumber, isValidEmail);
+    }
+
     return savedUser;
   }
-  public async updateUser(body: UserRequest): Promise<any> {    
+  public async updateUser(body: UserRequest): Promise<any> {
     try {
-        // Check if username is of type email or of type phone_number
+      // Check if username is of type email or of type phone_number
       await validateUsername(body.preferred_username);
 
       // Extract info from req object  
       const findUser = await dbFindOneBy(User, { user_id: body.user_id, disabled: false });
-      
+
       // If you can't find user, then throw error
       if (findUser instanceof NotFound) {
         throw findUser;
@@ -255,7 +259,7 @@ export class UserService {
           if (!findUserGroup) {
             throw new NotFound('User group with id:' + body.user_groups[i].user_group_id + ' does not exist!');
           }
-  
+
           addUserGroups.push(findUserGroup);
         }
       }
@@ -264,16 +268,16 @@ export class UserService {
       if (body.password) {
         // Check password strength
         validatePasswordStrength(body.password);
-        
+
         // Hash user password
         const genPassHash = await generatePasswordHash(body.password);
         const salt = genPassHash.salt;
-        const hash = genPassHash.genHash;  
-        
+        const hash = genPassHash.genHash;
+
         findUser.salt = salt;
         findUser.password = hash;
-      } 
-      
+      }
+
       // If email got updated, verify it
       if (findUser.email != body.email) {
         findUser.email = body.email;
@@ -285,9 +289,9 @@ export class UserService {
         findUser.phone_number = body.phone_number;
         sendVerificationMessage(findUser, true, false);
       }
-      
+
       // update user properties
-      findUser.preferred_username = body.preferred_username; 
+      findUser.preferred_username = body.preferred_username;
       findUser.given_name = body.given_name;
       findUser.family_name = body.family_name;
       findUser.name = body.name;
@@ -302,13 +306,13 @@ export class UserService {
 
       // Update user
       const updatedUser = await dbSaveOrUpdate(User, findUser);
-      
+
       return updatedUser;
-    } 
+    }
     catch (e) {
       throw new InternalServerError('Something went wrong when saving the user', 500, e);
-    } 
-  } 
+    }
+  }
   public async deleteUser(user_id: string, softDelete: boolean): Promise<any> {
     try {
       // Connect to DB
