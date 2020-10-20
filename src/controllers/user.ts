@@ -23,7 +23,7 @@ export class UserController extends Controller {
   }
 
   @Get() //specify the request type
-  //@Security('jwt', ['identity:user:get_all:admin'])
+  @Security('jwt', ['identity:user:get_all:admin'])
   async GetUsers(@Query() detailed = false): Promise<any> {
 
     const data = await new UserService().getUsers(detailed);
@@ -39,7 +39,7 @@ export class UserController extends Controller {
   }
 
   @Get("scopes/{user_id}") //specify the request type
-  //@Security('jwt', ['identity:scopes:get:admin'])
+  @Security('jwt', ['identity:scopes:get:admin'])
   async GetUserScopes(@Path() user_id: string): Promise<any> {   
     const data = await  new UserService().getUserScopes(user_id);
     
@@ -69,7 +69,7 @@ export class UserController extends Controller {
   }
 
   @Put() //specify the request type
- // @Security('jwt', ['identity:scopes:put:admin'])
+  @Security('jwt', ['identity:scopes:put:admin'])
   async PutUsers(@Body() body: UserRequest): Promise<any> {
     const data = await new UserService().updateUser(body);
     
@@ -84,7 +84,7 @@ export class UserController extends Controller {
   }
 
   @Delete("{user_id}") //specify the request type
-  //@Security('jwt', ['identity:scopes:delete:admin'])
+  @Security('jwt', ['identity:scopes:delete:admin'])
   async DeleteUsers(@Path() user_id: string, @Query() softDelete = true): Promise<any> {
     const data = await new UserService().deleteUser(user_id, softDelete);
     

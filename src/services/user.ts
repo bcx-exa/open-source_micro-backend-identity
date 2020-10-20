@@ -38,7 +38,7 @@ export class UserService {
 
     const findUserLite: UserRequest = {
       user_id: findUser.user_id,
-      name: findUser.user_id,
+      name: findUser.name,
       preferred_username: findUser.preferred_username,
       phone_number: findUser.phone_number,
       email: findUser.email,
@@ -131,7 +131,7 @@ export class UserService {
 
       const findUserLite: UserRequest = {
         user_id: findUser.user_id,
-        name: findUser.user_id,
+        name: findUser.name,
         preferred_username: findUser.preferred_username,
         phone_number: findUser.phone_number,
         email: findUser.email,

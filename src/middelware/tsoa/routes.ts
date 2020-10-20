@@ -1070,6 +1070,7 @@ export function RegisterRoutes(app: express.Express) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/user',
+            authenticateMiddleware([{"jwt":["identity:user:get_all:admin"]}]),
             function (request: any, response: any, next: any) {
             const args = {
                     detailed: {"default":false,"in":"query","name":"detailed","dataType":"boolean"},
@@ -1092,6 +1093,7 @@ export function RegisterRoutes(app: express.Express) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/user/scopes/:user_id',
+            authenticateMiddleware([{"jwt":["identity:scopes:get:admin"]}]),
             function (request: any, response: any, next: any) {
             const args = {
                     user_id: {"in":"path","name":"user_id","required":true,"dataType":"string"},
@@ -1137,6 +1139,7 @@ export function RegisterRoutes(app: express.Express) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/user',
+            authenticateMiddleware([{"jwt":["identity:scopes:put:admin"]}]),
             function (request: any, response: any, next: any) {
             const args = {
                     body: {"in":"body","name":"body","required":true,"ref":"UserRequest"},
@@ -1159,6 +1162,7 @@ export function RegisterRoutes(app: express.Express) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.delete('/user/:user_id',
+            authenticateMiddleware([{"jwt":["identity:scopes:delete:admin"]}]),
             function (request: any, response: any, next: any) {
             const args = {
                     user_id: {"in":"path","name":"user_id","required":true,"dataType":"string"},
