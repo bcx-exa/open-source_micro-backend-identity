@@ -7,7 +7,7 @@ import { ClientPost } from '../types/client';
 import { ClientRedirectURI } from '../models/redirect-uris';
 import { dbDelete, dbFindManyBy, dbFindOneBy, dbSaveOrUpdate } from '../components/database/db-helpers';
 
-export class ClientService { 
+export class ClientService {
     public async getClient(client_id: string): Promise<any> {
         const findClient = await dbFindOneBy(Client, { client_id: client_id });
 
@@ -16,9 +16,9 @@ export class ClientService {
         }
 
         return findClient;
-    }   
+    }
     public async getClients(): Promise<any> {
-        const findClients = await dbFindManyBy(Client, {relations: ['redirect_uris']});
+        const findClients = await dbFindManyBy(Client, { relations: ['redirect_uris'] });
 
         if (findClients instanceof NotFound) {
             throw findClients;
@@ -26,7 +26,7 @@ export class ClientService {
 
         return findClients;
     }
-    public async createClient(body: ClientPost ): Promise<any> {
+    public async createClient(body: ClientPost): Promise<any> {
         const findClient = await dbFindOneBy(Client, { client_name: body.client_name });
 
         if (!(findClient instanceof NotFound)) {
@@ -35,7 +35,7 @@ export class ClientService {
 
         const connection = await auroraConnectApi();
 
-        const client_id = uuidv4();
+        const client_id = body.client_id ? body.client_id : uuidv4();
         const genPassHash = generatePasswordHash(body.client_secret);
         const salt = genPassHash.salt;
         const clientSecretHash = genPassHash.genHash;
@@ -45,31 +45,31 @@ export class ClientService {
 
         body.redirect_uris.forEach(r => {
             const redirect_uri = new ClientRedirectURI();
-            
+
             redirect_uri.redirect_uri_id = uuidv4();
             redirect_uri.redirect_uri = r;
             redirect_uri.updated_at = date;
             redirect_uri.created_at = date,
-            redirect_uri.disabled = false,
+                redirect_uri.disabled = false,
 
-            redirect_uris.push(redirect_uri);
+                redirect_uris.push(redirect_uri);
         });
 
         await connection.manager.save(redirect_uris);
 
         const client = new Client();
-    
+
         client.client_id = client_id,
-        client.client_name = body.client_name,
-        client.trusted = body.trusted,
-        client.client_secret = clientSecretHash,
-        client.client_secret_salt = salt,
-        client.redirect_uris = redirect_uris,
-        client.created_at = date,
-        client.updated_at = date,
-        client.disabled = false,
-        
-       await connection.manager.save(client);
+            client.client_name = body.client_name,
+            client.trusted = body.trusted,
+            client.client_secret = clientSecretHash,
+            client.client_secret_salt = salt,
+            client.redirect_uris = redirect_uris,
+            client.created_at = date,
+            client.updated_at = date,
+            client.disabled = false,
+
+            await connection.manager.save(client);
 
         return {
             client_name: body.client_name,
@@ -79,7 +79,7 @@ export class ClientService {
             redirect_uris: redirect_uris
         }
     }
-    public async updateClient(body: ClientPost ): Promise<any> {
+    public async updateClient(body: ClientPost): Promise<any> {
         const findClient = await dbFindOneBy(Client, { client_id: body.client_id, client_name: body.client_name });
 
         if (findClient instanceof NotFound) {
@@ -122,7 +122,7 @@ export class ClientService {
 
         const connection = await auroraConnectApi();
         await connection.manager.save(client);
-        
+
         return {
             client_name: body.client_name,
             client_id: findClient.client_id,
@@ -145,5 +145,5 @@ export class ClientService {
 
         await dbSaveOrUpdate(Client, { client_id: client_id, disabled: true });
         return "Client has been successfully disabled";
-    } 
-  }
+    }
+}

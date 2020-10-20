@@ -19,21 +19,21 @@ export async function getAccessToken() {
       }
     };
     const client = new ResourceOwnerPassword(config);
-  
+
     const tokenParams = {
       username: "admin@freedatsandbox.xyz",
       password: "ZAQ!@wsx3456",
       scope: 'openid profile email phone',
     };
-  
+
     try {
       const accessToken = await client.getToken(tokenParams);
       return accessToken;
 
     } catch (error) {
-      console.log('Access Token Error', error.message);
+      console.log('Access Token Error', error);
     }
-  
+
   } catch (e) {
     console.error(e);
   }

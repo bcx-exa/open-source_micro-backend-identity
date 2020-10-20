@@ -28,8 +28,8 @@ export async function auroraConnectApi(): Promise<any> {
             const connection = await createConnection({
                 type: 'aurora-data-api',
                 name: 'default',
-                database: process.env.NODE_ENV == 'test2' ? process.env.DB_NAME + "_Test" : process.env.DB_NAME,
-                dropSchema: process.env.NODE_ENV == 'test2' ? true : false,
+                database: process.env.NODE_ENV == 'test' ? process.env.DB_NAME + "_test" : process.env.DB_NAME,
+                dropSchema: process.env.NODE_ENV == 'test' ? true : false,
                 secretArn: dbSecretARN[0].Value,
                 resourceArn: resourceSecretARN[0].Value,
                 region: process.env.REGION,
