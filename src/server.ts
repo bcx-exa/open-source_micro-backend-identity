@@ -25,6 +25,9 @@ export class Server {
     this.app = express();
   }
 
+  public async Stop(): Promise<void> {
+    this.app.close();
+  }
   public async Start(): Promise<void> {
     try {
       //Import env variables
@@ -67,7 +70,7 @@ export class Server {
       console.log("Route Overrides");
       this.app.use('/auth', authRouter);
       this.app.use('/oauth', authzRouter);
-      
+
       //Generate tsoa routes & spec
       if (env === "local") {
         await execShellCommand("npm run tsoa");
@@ -81,7 +84,6 @@ export class Server {
       this.app.use('/', swaggerUi.serve, async (_req: Request, res: Response) => {
         return res.send(swaggerUi.generateHTML(await import("./middelware/tsoa/swagger.json")));
       });
-           
       //X-Ray Segment End
       console.log("Ending X-Ray Segment");
       //this.app.use(xrayExpress.closeSegment());
@@ -94,11 +96,11 @@ export class Server {
       //Start Express Server
       if (env === "local" || env === "test") {
         const port = env === 'test' ? 5000 : 7000;
-        this.app.listen(port, () => {
+        const server = this.app.listen(port, () => {
           console.log(`Server listening on port http://localhost:${port}`);
         });
+        return server;
       }
-      
     } catch (e) {
       console.error(e);
     }

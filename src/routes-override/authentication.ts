@@ -14,21 +14,24 @@ router.get('/resettoken', (_request, response) => response.render('reset', { tok
 
 router.post('/login', login);
 router.get('/logout', logout);
-router.get("/google",
-    function(req: any, _res: any, next: any) {
-      // Edit request object here
-      req.root = 'Whatever I want';
-      next();
-    },
+router.get("/google", function (req, res, next) {
+  const stateData = {
+    clientID: req.query.clientID ? req.query.clientID : null,
+    clientSecret: req.query.clientSecret ? req.query.clientSecret : null,
+    redirectUri: req.query.redirectUri ? req.query.redirectUri : "http://localhost:7000",
+    scope: req.query.scope ? req.query.scope : "openid profile email phone",
+  };
   passport.authenticate("google", {
     scope: [
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/user.phonenumbers.read'
-    ]
-  }));
+    ],
+    state: JSON.stringify(stateData)
+  })(req, res, next);
+})
 
-router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), async function (req: any, res: any) { 
+router.get("/google/callback", passport.authenticate("google", { failureRedirect: '/auth/login' }), async function (req: any, res: any) {
   // Need to go to logged in page of UI, then ui should initiate request to oauth/authorize
   const tokens = await generateTokens(req.user, req.user.client, req.user.scope);
   res.body = tokens;
