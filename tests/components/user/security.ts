@@ -12,7 +12,7 @@ export async function UserSecurity(user_id, user) {
     // Expect result contain
     expect(res.statusCode).toEqual(401);
   });
-  it('should be protected "create a user"', async () => {
+  it('should be protected "post user"', async () => {
     // Do API call
     const res = await agent
       .post("/user")
@@ -46,7 +46,7 @@ export async function UserSecurity(user_id, user) {
     // Expect result contain
     expect(res.statusCode).toEqual(401);
   }, 500000);
-  it('should be protected "modify created user"', async () => {
+  it('should be protected "put user"', async () => {
     // Do API Call
     const res = await agent.put("/user")
         .set('Authorization', 'Bearer ' + modifiedToken)
@@ -55,7 +55,7 @@ export async function UserSecurity(user_id, user) {
     // Expect result contain
     expect(res.statusCode).toEqual(401);
   }, 500000);
-it('should be protected "delete created user"', async () => {
+it('should be protected "delete user"', async () => {
   // Do API Call
   const res = await agent.delete("/user/" + user_id)
       .set('Authorization', 'Bearer ' + modifiedToken)

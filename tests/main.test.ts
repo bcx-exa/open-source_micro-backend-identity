@@ -10,9 +10,9 @@ describe("User Contoller - Security", async () => {
     await UserSecurity(user_id, user);
 });
 
-// describe("User Contoller - Exceptions", async () => {
-//     await UserExceptions(agent, token, user_id, user);
-// });
+describe("User Contoller - Exceptions", async () => {
+    await UserExceptions();
+});
 
 
 // Scope Controller Test
