@@ -10,8 +10,7 @@ export class UserGroupService {
   // User Groups
   public async getUserGroup(user_group_id: string, detailed: boolean): Promise<any> {
         // Connect to DB
-    const findUserGroup = await dbFindOneBy(UserGroup, { user_group_id: user_group_id, disabled: false, relations: ['users', 'scope_groups'] });
-    
+    const findUserGroup = await dbFindOneBy(UserGroup, { where: { user_group_id: user_group_id, disabled: false }, relations: ['users', 'scope_groups'] });
     // If user doesnt exist, then throw error
     if (findUserGroup instanceof NotFound) {
       throw findUserGroup
@@ -191,7 +190,9 @@ export class UserGroupService {
     }
      
     // Update values
+    findUserGroupById.user_group_id = body.user_group_id;
     findUserGroupById.name = body.name;
+    findUserGroupById.description = body.description;
     findUserGroupById.updated_at = date;
     findUserGroupById.users = addUsers;
     findUserGroupById.scope_groups = addScopeGroups;

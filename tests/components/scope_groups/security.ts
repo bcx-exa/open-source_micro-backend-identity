@@ -1,21 +1,21 @@
 import { agent, token } from "../setup";
 
-export function UserSecurity(user_id, user) {
+export function ScopeGroupSecurity(scope_group_id, scope_group) {
   const modifiedToken = token + 'acd';
 
-  it('should be protected "get users"', async () => {
+  it('should be protected "get scope groups"', async () => {
     // Do API call
     const res = await agent
-      .get("/user")
+      .get("/scopegroup")
       .set('Authorization', 'Bearer ' + modifiedToken);
 
     // Expect result contain
     expect(res.statusCode).toEqual(401);
   });
-  it('should be protected "post user"', async () => {
+  it('should be protected "post scope groups"', async () => {
     // Do API call
     const res = await agent
-      .post("/user")
+      .post("/scopegroup")
       .set('Authorization', 'Bearer ' + modifiedToken)
       .send({
             "preferred_username": "newAccount@gmail.com",
@@ -37,29 +37,29 @@ export function UserSecurity(user_id, user) {
     // Expect result contain
     expect(res.statusCode).toEqual(401);
   }, 500000);
-  it('should be protected "get created user"', async () => {
+  it('should be protected "get created scope group"', async () => {
     // Do API call
     const res = await agent
-      .get("/user/" + user_id)
+      .get("/scopegroup/" + scope_group_id)
       .set('Authorization', 'Bearer ' + modifiedToken);
     
     // Expect result contain
     expect(res.statusCode).toEqual(401);
   }, 500000);
-  it('should be protected "put user"', async () => {
+  it('should be protected "put scope group"', async () => {
     // Do API Call
-    const res = await agent.put("/user")
+    const res = await agent.put("/scopegroup")
         .set('Authorization', 'Bearer ' + modifiedToken)
-        .send(user);
+        .send(scope_group);
 
     // Expect result contain
     expect(res.statusCode).toEqual(401);
   }, 500000);
-it('should be protected "delete user"', async () => {
+it('should be protected "delete scope"', async () => {
   // Do API Call
-  const res = await agent.delete("/user/" + user_id)
+  const res = await agent.delete("/scopegroup/" + scope_group_id)
       .set('Authorization', 'Bearer ' + modifiedToken)
-      .send(user);
+      .send(scope_group);
     
   // Expect result contain      
   expect(res.statusCode).toEqual(401)

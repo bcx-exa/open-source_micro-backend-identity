@@ -1,6 +1,6 @@
 import { agent, token } from "../setup";
 
-export async function UserExceptions() {
+export function UserExceptions() {
   it('should throw Not Found Exception', async () => {
     // Do API call
     const res = await agent

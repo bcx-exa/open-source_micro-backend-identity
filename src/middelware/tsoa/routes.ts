@@ -499,6 +499,7 @@ export function RegisterRoutes(app: express.Express) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/client',
+            authenticateMiddleware([{"jwt":["identity:client:get_all:admin"]}]),
             function (request: any, response: any, next: any) {
             const args = {
             };
@@ -520,6 +521,7 @@ export function RegisterRoutes(app: express.Express) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/client',
+            authenticateMiddleware([{"jwt":["identity:client:post:admin"]}]),
             function (request: any, response: any, next: any) {
             const args = {
                     body: {"in":"body","name":"body","required":true,"ref":"ClientPost"},
@@ -903,28 +905,6 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.DeleteScope.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/scope/default_scopes',
-            authenticateMiddleware([{"jwt":["identity:scopes:post:admin"]}]),
-            function (request: any, response: any, next: any) {
-            const args = {
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new ScopeController();
-
-
-            const promise = controller.addDefaultScope.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

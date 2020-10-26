@@ -84,11 +84,4 @@ export class ScopeController extends Controller {
 
     return result;
   }
-
-
-  @Post("default_scopes") //specify the request type
-  @Security('jwt', ['identity:scopes:post:admin'])
-  async addDefaultScope(): Promise<any> {
-    return new ScopesService().defaultIdentityScope();
-  }
 }

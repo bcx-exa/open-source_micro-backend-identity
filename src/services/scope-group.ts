@@ -10,7 +10,7 @@ export class ScopeGroupService {
   // Scope Groups
   public async getScopeGroup(scope_group_id: string, detailed: boolean): Promise<any> {
     // Connect to DB
-    const findScopeGroup = await dbFindOneBy(ScopeGroup, { scope_group_id: scope_group_id, disabled: false, relations: ['scopes', 'user_groups'] });
+    const findScopeGroup = await dbFindOneBy(ScopeGroup, { where: { scope_group_id: scope_group_id, disabled: false }, relations: ['scopes', 'user_groups'] });
 
     // If user doesnt exist, then throw error
     if (findScopeGroup instanceof NotFound) {
@@ -123,8 +123,6 @@ export class ScopeGroupService {
   }
   public async createScopeGroup(body: ScopeGroupRequest): Promise<any> {
     // Conect to DB
-    const connection = await auroraConnectApi();
-    const repository = await connection.getRepository(ScopeGroup);
     const date = new Date();
 
     // Check if scope exists
@@ -224,7 +222,7 @@ export class ScopeGroupService {
   }
   public async deleteScopeGroup(scope_group_id: string, softDelete: boolean): Promise<any> {
     // Connect to DB
-    const findScopeGroup = await dbFindOneBy(ScopeGroup, { scope_group_id: scope_group_id, relations: ['scopes', 'user_groups'] });
+    const findScopeGroup = await dbFindOneBy(ScopeGroup, { where: { scope_group_id: scope_group_id }, relations: ['scopes', 'user_groups'] });
 
 
     // If user doesnt exist, then throw error

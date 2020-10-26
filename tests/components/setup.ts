@@ -3,17 +3,16 @@ const expressApp = new Server();
 import request from "supertest";
 let agent, token, server;
 
-beforeAll(async () => {
+beforeAll(async (): Promise<void> => {
     server = await expressApp.Start();
     agent = request(expressApp.app);
-
 });
 
-afterAll(async () => {
+afterAll(async (): Promise<void> => {
     await server.close();
 });
 
-describe("Unit Test Environment Setup", async () => {
+describe("Unit Test Environment Setup", () => {
     it("Should setup test DB", async function () {
         await agent.post("/admin/initial_scope_creation")
     }, 500000);

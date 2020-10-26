@@ -38,11 +38,11 @@ export class AdminService {
       { created_at: date, updated_at: date, disabled: false, name: "identity:scopes:put:admin", description: "Permission to modify a specific scope's information" },
       { created_at: date, updated_at: date, disabled: false, name: "identity:scopes:post:admin", description: "Permission to add a scope information to the system" },
       { created_at: date, updated_at: date, disabled: false, name: "identity:scopes:delete:admin", description: "Permission to delete a scope's information from the system" },
-      { created_at: date, updated_at: date, disabled: false, name: "identity:clients:get:admin", description: "Permission to get a specific client's information" },
-      { created_at: date, updated_at: date, disabled: false, name: "identity:clients:get_all:admin", description: "Permission to get all client's information" },
-      { created_at: date, updated_at: date, disabled: false, name: "identity:clients:put:admin", description: "Permission to modify a specific client's information" },
-      { created_at: date, updated_at: date, disabled: false, name: "identity:clients:post:admin", description: "Permission to add a client information to the system" },
-      { created_at: date, updated_at: date, disabled: false, name: "identity:clients:delete:admin", description: "Permission to delete a client's information from the system" },
+      { created_at: date, updated_at: date, disabled: false, name: "identity:client:get:admin", description: "Permission to get a specific client's information" },
+      { created_at: date, updated_at: date, disabled: false, name: "identity:client:get_all:admin", description: "Permission to get all client's information" },
+      { created_at: date, updated_at: date, disabled: false, name: "identity:client:put:admin", description: "Permission to modify a specific client's information" },
+      { created_at: date, updated_at: date, disabled: false, name: "identity:client:post:admin", description: "Permission to add a client information to the system" },
+      { created_at: date, updated_at: date, disabled: false, name: "identity:client:delete:admin", description: "Permission to delete a client's information from the system" },
     ];
     const connection = await auroraConnectApi();
     const repository = await connection.getRepository(Scopes);

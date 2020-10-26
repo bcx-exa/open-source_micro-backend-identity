@@ -7,7 +7,7 @@
     "dev": "eslint . --ext .ts && nodemon",
     "offline": "eslint . --ext .ts && serverless offline start",
     "tsoa": "tsoa spec-and-routes",
-    "test": "jest --runInBand --watch",
+    "test": "jest --runInBand",
     "lint": "eslint . --ext .ts",
     "debug": "nodemon --inspect=3333 src/app.ts",
     "deploy:dev": "node iac/crypto-keys/crypto.js && sls deploy --config iac/resources/pinpoint/pinpoint.serverless.yml --stage dev && node iac/resources/pinpoint/pinpoint_domain_register.js && sls deploy --stage dev",

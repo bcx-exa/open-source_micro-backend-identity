@@ -819,7 +819,13 @@
 				"tags": [
 					"Clients"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:client:get_all:admin"
+						]
+					}
+				],
 				"parameters": []
 			},
 			"post": {
@@ -837,7 +843,13 @@
 				"tags": [
 					"Clients"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"identity:client:post:admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1343,32 +1355,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/scope/default_scopes": {
-			"post": {
-				"operationId": "AddDefaultScope",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Scopes"
-				],
-				"security": [
-					{
-						"jwt": [
-							"identity:scopes:post:admin"
-						]
-					}
-				],
-				"parameters": []
 			}
 		},
 		"/usergroup/{user_group_id}": {

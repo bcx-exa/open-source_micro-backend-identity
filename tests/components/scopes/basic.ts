@@ -1,11 +1,11 @@
 import { agent, token } from "../setup";
-export let user, user_id;
+export let scope, scope_id;
 
-export function UserBasic() {
-  it('should get all users', async () => {
+export function ScopeBasic() {
+  it('should get all scopes', async () => {
     // Do API call
     const res = await agent
-      .get("/user")
+      .get("/scope")
       .set('Authorization', 'Bearer ' + token);
 
     // Expect result contain
@@ -13,27 +13,16 @@ export function UserBasic() {
     expect(res.body).toHaveProperty('message');
     expect(res.body.message).toEqual('Success');
   });
-  it('should create a user', async () => {
+  it('should create a scope', async () => {
     // Do API call
     const res = await agent
-      .post("/user")
+      .post("/scope")
       .set('Authorization', 'Bearer ' + token)
       .send({
-            "preferred_username": "newAccount@gmail.com",
-            "password": "Password@1",
-            "phone_number": "+27721234567",
-            "email": "newAccount@gmail.com",
-            "address": "1 Main Road",
-            "locale": "en",
-            "birthdate": "2020-10-19T06:38:37.613Z",
-            "name": "Test User",
-            "given_name": "Test",
-            "family_name": "User",
-            "accepted_legal_version": "v1",
-            "nickname": "Test",
-            "gender": "Other",
-            "picture": "None"
-        });
+        "name": "test",
+        "description": "test",
+        "scope_groups": []
+      });
     
     // Expect result contain
     expect(res.statusCode).toEqual(200);
@@ -41,44 +30,43 @@ export function UserBasic() {
     expect(res.body.message).toEqual('Success');
 
     // Asign Global Variable to be used in other tests
-    user_id = res.body.data.user_id;
+    scope_id = res.body.data.scope_id;
   }, 500000);
-  it('should get created user', async () => {
+  it('should get created scope', async () => {
     // Do API call
     const res = await agent
-      .get("/user/" + user_id)
+      .get("/scope/" + scope_id)
       .set('Authorization', 'Bearer ' + token);
-    
-    // Expect result contain
+        // Expect result contain
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('message');
     expect(res.body.message).toEqual('Success');
-    expect(res.body.data.user_id).toEqual(user_id);
+    expect(res.body.data.scope_id).toEqual(scope_id);
 
     // Asign Global Variable to be used in other tests
-    user = res.body.data;
+    scope = res.body.data;
   }, 500000);
-  it('should modify a user', async () => {
+  it('should modify a scope', async () => {
     // Remove nulls and modify global user
-    Object.keys(user).forEach(key => (user[key] == null) && delete user[key]);
-    user.address = "Modified Main Road";
+    Object.keys(scope).forEach(key => (scope[key] == null) && delete scope[key]);
+    scope.description = "Modified Scope";
 
     // Do API Call
-    const res = await agent.put("/user")
+    const res = await agent.put("/scope")
         .set('Authorization', 'Bearer ' + token)
-        .send(user);
+        .send(scope);
 
     // Expect result contain
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('message');
     expect(res.body.message).toEqual('Success');
-    expect(res.body.data.address).toEqual("Modified Main Road");
+    expect(res.body.data.description).toEqual("Modified Scope");
   }, 500000);
-it('should delete the created user', async () => {
+it('should delete the created scope', async () => {
   // Do API Call
-  const res = await agent.delete("/user/" + user_id)
+  const res = await agent.delete("/scope/" + scope_id)
       .set('Authorization', 'Bearer ' + token)
-      .send(user);
+      .send(scope);
     
   // Expect result contain      
   expect(res.statusCode).toEqual(200)

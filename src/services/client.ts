@@ -9,7 +9,7 @@ import { dbDelete, dbFindManyBy, dbFindOneBy, dbSaveOrUpdate } from '../componen
 
 export class ClientService {
     public async getClient(client_id: string): Promise<any> {
-        const findClient = await dbFindOneBy(Client, { client_id: client_id });
+        const findClient = await dbFindOneBy(Client, { where: { client_id: client_id }, relations: ['redirect_uris']  });
 
         if (findClient instanceof NotFound) {
             throw findClient;
@@ -49,27 +49,26 @@ export class ClientService {
             redirect_uri.redirect_uri_id = uuidv4();
             redirect_uri.redirect_uri = r;
             redirect_uri.updated_at = date;
-            redirect_uri.created_at = date,
-                redirect_uri.disabled = false,
-
-                redirect_uris.push(redirect_uri);
+            redirect_uri.created_at = date;
+            redirect_uri.disabled = false;
+            redirect_uris.push(redirect_uri);
         });
 
         await connection.manager.save(redirect_uris);
 
         const client = new Client();
 
-        client.client_id = client_id,
-            client.client_name = body.client_name,
-            client.trusted = body.trusted,
-            client.client_secret = clientSecretHash,
-            client.client_secret_salt = salt,
-            client.redirect_uris = redirect_uris,
-            client.created_at = date,
-            client.updated_at = date,
-            client.disabled = false,
+        client.client_id = client_id;
+        client.client_name = body.client_name;
+        client.trusted = body.trusted;
+        client.client_secret = clientSecretHash;
+        client.client_secret_salt = salt;
+        client.redirect_uris = redirect_uris;
+        client.created_at = date;
+        client.updated_at = date;
+        client.disabled = false;
 
-            await connection.manager.save(client);
+        await connection.manager.save(client);
 
         return {
             client_name: body.client_name,
@@ -80,59 +79,67 @@ export class ClientService {
         }
     }
     public async updateClient(body: ClientPost): Promise<any> {
-        const findClient = await dbFindOneBy(Client, { client_id: body.client_id, client_name: body.client_name });
+        const findClient = await dbFindOneBy(Client, { client_id: body.client_id });
 
         if (findClient instanceof NotFound) {
             throw findClient;
         }
 
-        const genPassHash = generatePasswordHash(body.client_secret);
-        const salt = genPassHash.salt;
-        const clientSecretHash = genPassHash.genHash;
-        const date = new Date();
+        const connection = await auroraConnectApi();
 
-        const client: Client = {
-            client_id: findClient.client_id,
-            client_name: body.client_name,
-            client_secret: clientSecretHash,
-            client_secret_salt: salt,
-            trusted: body.trusted,
-            created_at: date,
-            updated_at: date,
-            disabled: false,
-        };
+        const client_id = body.client_id;
+
+        let salt, clientSecretHash;
+
+        if(body.client_secret) {
+            const genPassHash = generatePasswordHash(body.client_secret);
+            salt = genPassHash.salt;
+            clientSecretHash = genPassHash.genHash;
+        }
+
+
+        const date = new Date();
 
         const redirect_uris = [];
 
         body.redirect_uris.forEach(r => {
-            const redirect_uri: ClientRedirectURI = {
-                redirect_uri_id: uuidv4(),
-                redirect_uri: r,
-                client: client,
-                updated_at: date,
-                created_at: date,
-                disabled: false,
-            };
+            const redirect_uri = new ClientRedirectURI();
+
+            redirect_uri.redirect_uri_id = uuidv4();
+            redirect_uri.redirect_uri = r;
+            redirect_uri.updated_at = date;
+            redirect_uri.created_at = date;
+            redirect_uri.disabled = false;
 
             redirect_uris.push(redirect_uri);
         });
 
+        await connection.manager.save(redirect_uris);
 
+        const client = new Client();
+
+        client.client_id = client_id;
+        client.client_name = body.client_name;
+        client.trusted = body.trusted;
+        client.client_secret = clientSecretHash;
+        client.client_secret_salt = salt;
         client.redirect_uris = redirect_uris;
+        client.created_at = date;
+        client.updated_at = date;
+        client.disabled = false;
 
-        const connection = await auroraConnectApi();
         await connection.manager.save(client);
 
         return {
             client_name: body.client_name,
-            client_id: findClient.client_id,
-            trusted: body.trusted,
+            client_id: client_id,
             client_secret: body.client_secret,
-            redirect_uri: redirect_uris
+            trusted: body.trusted,
+            redirect_uris: redirect_uris
         }
     }
     public async deleteClient(client_id: string, softDelete: boolean): Promise<any> {
-        const findClient = await dbFindOneBy(Client, { client_id: client_id });
+        const findClient = await dbFindOneBy(Client, { where: { client_id: client_id }, relations: ['redirect_uris']  });
 
         if (findClient instanceof NotFound) {
             throw findClient;
