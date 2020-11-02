@@ -153,16 +153,14 @@ See the architecture below
 ```bash
 npm run test
 ```
-Jest Report
 
-- [Jest Report](./jest_html_reporters.html)
-
- # Deployment & How-To Video's
+ # To Do's & Bugs
                                      
 - Up Code Coverage on Facebook & Google flows
 - Review & Clean up Docs Architecture folder
 - Code Clean up
 - Up code coverage on passport strategies
+- How-To Video
 
 # Version
 
