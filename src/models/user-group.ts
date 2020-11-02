@@ -3,7 +3,7 @@ import { User } from "./user"
 import { ScopeGroup } from "./scope-group";
 
 //https://www.iana.org/assignments/jwt/jwt.xhtml
-@Entity()
+@Entity({name: 'usergroup'})
 export class UserGroup {
   @PrimaryGeneratedColumn("uuid")
   user_group_id: string;

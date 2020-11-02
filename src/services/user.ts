@@ -15,7 +15,7 @@ export class UserService {
   // Users
   public async getUser(user_id: string, detailed: boolean): Promise<any> {
     // Connect to DB
-    const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false }, relations: ['user_groups'] })
+    const findUser = await dbFindOneBy(User, { where: { user_id: user_id }, relations: ['user_groups', 'tokens'] });
 
     // If user doesnt exist, then throw error
     if (findUser instanceof NotFound) {
@@ -316,7 +316,7 @@ export class UserService {
   public async deleteUser(user_id: string, softDelete: boolean): Promise<any> {
     try {
       // Connect to DB
-      const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false }, relations: ['user_groups'] });
+      const findUser = await dbFindOneBy(User, { where: { user_id: user_id }, relations: ['user_groups', 'tokens'] });
 
       // If user doesnt exist, then throw error
       if (findUser instanceof NotFound) {
@@ -324,14 +324,13 @@ export class UserService {
       }
       // hard delete user
       if (!softDelete) {
-        await dbDelete(User, findUser);
-        return "User has been deleted!";
+        return await dbDelete(User, findUser);
+        //return "User has been deleted!";
       }
       // Disable user
       findUser.disabled = true;
-      await dbSaveOrUpdate(User, findUser);
+      return await dbSaveOrUpdate(User, findUser);
       // return user
-      return "User disabled successfully!";
     } catch (e) {
       throw new InternalServerError('Something went wrong when deleting/disabling the user', 500, e);
     }

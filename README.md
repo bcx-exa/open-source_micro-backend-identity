@@ -4,11 +4,11 @@
 
 • [Website](https://www.bcx.co.za/exa/) • [Docs](docs/architecture/architecture.svg)
 
-This is opinionated boilerplate code that aims to meet the requirements set out by our technical architecture team.
+This is opinionated boilerplate code that aims to meet the requirements set out by our technical architecture team. Anyone is welcome to contribute!
 
 Main objective
 
-- [x] 1. Create a Plug and Play Identity Microservice that follows industry security standards.  
+- [x] 1. Create a Plug and Play Identity Microservice that follows industry security standards. (Oauth 2.0, JWT)
 - [x] 2. One command deployment. (Infrastructure & Application Code)
 
 Features
@@ -22,7 +22,7 @@ Features
 - [x] SSO using JWT
 - [x] Authorization using Oauth 2.0
 - [x] Integration/E2E Testing
-- [x] User Scope Management using User & Scope Groups
+- [x] Granular User Permissions
 - [x] Granular API Protection 
 - [x] One command deployment
 
@@ -132,9 +132,6 @@ npm run destroy:uat
 npm run destroy:prod
 ```
 
-
-
-
 > Note: Lambda cold start plays a role in showing the initial load of swagger ui interface.
 
 > Note: Initial deployments can take up to 40 min. This because certificates needs to be validated and DNS needs to propogate.  You can fast track the process by logging into the console and creating the DNS records from the ACM section in N. Virgina region.
@@ -142,7 +139,6 @@ npm run destroy:prod
 ---
 ### Available Deployment Environments
 ---
-The project has the ability to deploy on.
 
 - AWS (API Gateway, Lambda, ACM & Route53) - Full Featured
 - Docker Container running Node.js - No Auto Domain Setup
@@ -152,12 +148,21 @@ See the architecture below
 
 <img src="docs/architecture/architecture.svg" width='100%' height='100%' />
 
+# Tests (Current Coverage 74.39 %)
 
-# To-Do's & Bugs
+```bash
+npm run test
+```
+Jest Report
 
-- Test Google & Facebook properly
+- [Jest Report](./jest_html_reporters.html)
+
+ # Deployment & How-To Video's
+                                     
+- Up Code Coverage on Facebook & Google flows
 - Review & Clean up Docs Architecture folder
 - Code Clean up
+- Up code coverage on passport strategies
 
 # Version
 

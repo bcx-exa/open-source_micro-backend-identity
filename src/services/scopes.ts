@@ -168,14 +168,11 @@ export class ScopesService {
 
     if (!softDelete) {
       // Delete scope
-      await dbDelete(Scopes, findScope);
-      return "Scope has been deleted!";
+      return await dbDelete(Scopes, findScope);
     }
     
     // Just disable 
     findScope.disabled = true;
-    await dbSaveOrUpdate(Scopes, findScope);
-    
-    return "Scope has been disabled";
+    return await dbSaveOrUpdate(Scopes, findScope);
   }
 }

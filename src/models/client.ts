@@ -3,7 +3,7 @@ import { Oauth } from "./oauth";
 import { ClientRedirectURI } from "./redirect-uris";
 
 //https://www.iana.org/assignments/jwt/jwt.xhtml
-@Entity()
+@Entity({name: 'client'})
 export class Client {
   @PrimaryGeneratedColumn("uuid")
   client_id: string;

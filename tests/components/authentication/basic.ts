@@ -32,7 +32,7 @@ export function AuthenticationBasic() {
       .post("/auth/login")
       .send({
         "username": "admin@freedatsandbox.xyz",
-        "password": "ZAQ!@wsx3456"
+        "password": process.env.ADMIN_PASSWORD
       });
 
     user_cookie = res.headers['set-cookie'];

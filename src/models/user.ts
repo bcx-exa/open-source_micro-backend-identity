@@ -3,7 +3,7 @@ import { UserGroup } from "./user-group";
 import { Oauth } from './oauth';
 
 //https://www.iana.org/assignments/jwt/jwt.xhtml
-@Entity()
+@Entity({name: 'user'})
 export class User {
   @PrimaryGeneratedColumn("uuid")
   user_id: string;

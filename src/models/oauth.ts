@@ -2,7 +2,7 @@ import { ManyToOne, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 import { User } from './user';
 import { Client } from './client';
 //https://www.iana.org/assignments/jwt/jwt.xhtml
-@Entity()
+@Entity({ name: 'oauth'})
 export class Oauth {
   @PrimaryGeneratedColumn("uuid")
   oauth_id: string;
@@ -19,7 +19,7 @@ export class Oauth {
   @ManyToOne(() => Client, client => client.tokens)
   client: Client;
 
-  @ManyToOne(() => User, user => user.tokens)
+  @ManyToOne(() => User, user => user.tokens )
   user: User;
 
   @Column("datetime")

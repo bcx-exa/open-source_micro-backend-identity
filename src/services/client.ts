@@ -146,11 +146,9 @@ export class ClientService {
         }
 
         if (!softDelete) {
-            await dbDelete(Client, { client_id: client_id });
-            return "Client has been successfully deleted";
+            return await dbDelete(Client, { client_id: client_id });    
         }
 
-        await dbSaveOrUpdate(Client, { client_id: client_id, disabled: true });
-        return "Client has been successfully disabled";
+        return await dbSaveOrUpdate(Client, { client_id: client_id, disabled: true });
     }
 }

@@ -214,14 +214,11 @@ export class UserGroupService {
 
     // Hard delete
     if (!softDelete) {
-      await dbDelete(UserGroup, findUserGroup);
-      return "User group has been deleted!";
+      return await dbDelete(UserGroup, findUserGroup);
     }
 
     // Soft delete
     findUserGroup.disabled = true
-    await dbSaveOrUpdate(UserGroup, findUserGroup);
-    // return user
-    return "User disabled sucessfully!";
+    return await dbSaveOrUpdate(UserGroup, findUserGroup);
   }
 }

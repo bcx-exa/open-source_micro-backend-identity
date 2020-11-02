@@ -2,7 +2,7 @@ import { ManyToOne, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 import { Client } from "./client";
 
 //https://www.iana.org/assignments/jwt/jwt.xhtml
-@Entity()
+@Entity({name: 'redirect_uri'})
 export class ClientRedirectURI {
   @PrimaryGeneratedColumn("uuid")
   redirect_uri_id: string;

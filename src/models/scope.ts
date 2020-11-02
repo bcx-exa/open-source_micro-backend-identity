@@ -2,7 +2,7 @@ import { ManyToMany, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 import { ScopeGroup } from "./scope-group";
 
 //https://www.iana.org/assignments/jwt/jwt.xhtml
-@Entity()
+@Entity({name: 'scopes'})
 export class Scopes {
   @PrimaryGeneratedColumn("uuid")
   scope_id: string;

@@ -232,13 +232,10 @@ export class ScopeGroupService {
 
     // hard delete
     if (!softDelete) {
-      await dbDelete(ScopeGroup, findScopeGroup);
-      return "Scope group has been deleted";
+      return await dbDelete(ScopeGroup, findScopeGroup);
     }
 
     findScopeGroup.disabled = true;
-    await dbSaveOrUpdate(ScopeGroup, findScopeGroup);
-
-    return "Scope group has been disabled";
+    return await dbSaveOrUpdate(ScopeGroup, findScopeGroup);
   }
 }

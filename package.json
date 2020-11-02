@@ -7,13 +7,15 @@
     "dev": "eslint . --ext .ts && nodemon",
     "offline": "eslint . --ext .ts && serverless offline start",
     "tsoa": "tsoa spec-and-routes",
-    "test": "jest --runInBand",
+    "test": "jest --runInBand --coverage",
     "lint": "eslint . --ext .ts",
     "debug": "nodemon --inspect=3333 src/app.ts",
     "deploy:dev": "node iac/crypto-keys/crypto.js && sls deploy --config iac/resources/pinpoint/pinpoint.serverless.yml --stage dev && node iac/resources/pinpoint/pinpoint_domain_register.js && sls deploy --stage dev",
-    "destroy:dev": "sls remove --stage dev && sls remove --config iac/resources/acm.serverless.yml --stage dev ",
-    "deploy:uat": "sls deploy --config iac/resources/acm.serverless.yml --stage uat && sls deploy --stage uat ",
-    "deploy:prod": "sls deploy --config iac/resources/acm.serverless.yml --stage prod && sls deploy --stage prod"
+    "deploy:uat": "sls deploy --config iac/resources/acm.serverless.yml --stage uat && sls deploy --stage uat",
+    "deploy:prod": "sls deploy --config iac/resources/acm.serverless.yml --stage prod && sls deploy --stage prod",
+    "destroy:dev": "sls remove --stage dev && sls remove --config iac/resources/acm.serverless.yml --stage dev",
+    "destroy:uat": "sls remove --stage uat && sls remove --config iac/resources/acm.serverless.yml --stage uat",
+    "destroy:prod": "sls remove --stage prod && sls remove --config iac/resources/acm.serverless.yml --stage prod"
   },
   "dependencies": {
     "@tsoa/runtime": "^3.3.0",
@@ -75,6 +77,7 @@
     "fork-ts-checker-webpack-plugin": "^5.2.0",
     "jest": "^26.5.2",
     "jest-cli": "^26.5.2",
+    "jest-html-reporters": "^2.1.0",
     "serverless-domain-manager": "^5.0.0",
     "serverless-dotenv-plugin": "^3.0.0",
     "serverless-offline": "^6.8.0",
@@ -90,6 +93,7 @@
   "author": "Martin Greyling",
   "license": "MIT",
   "jest": {
+
     "moduleFileExtensions": [
       "ts",
       "tsx",

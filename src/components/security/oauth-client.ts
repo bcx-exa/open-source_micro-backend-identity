@@ -22,7 +22,7 @@ export async function getAccessToken() {
 
     const tokenParams = {
       username: "admin@freedatsandbox.xyz",
-      password: "ZAQ!@wsx3456",
+      password: process.env.ADMIN_PASSWORD,
       scope: 'openid profile email phone',
     };
 

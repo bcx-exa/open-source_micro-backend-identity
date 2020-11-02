@@ -1,7 +1,7 @@
 import { agent, token } from "../setup";
 
 export function ClientSecurity(client_id, client) {
-  const modifiedToken = token + 'acd';
+  const modifiedToken = token + 'acdefgs';
 
   it('should be protected "get clients"', async () => {
     // Do API call
