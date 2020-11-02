@@ -90,6 +90,7 @@ Filenames
 AWS_ACCESS_KEY_ID=<YOUR KEY>
 AWS_SECRET_ACCESS_KEY=<YOUR_SECRET>
 AWS_PROFILE=<AWS_PROFILE_NAME>
+ADMIN_PASSWORD=<ANY_PASSWORD>
 HOSTED_ZONE_ID=<ROUTE_53_HOSTED_ZONE_ID>
 GOOGLE_CLIENT_ID=<YOUR_GOOGLE_CLIENT_ID>
 GOOGLE_CLIENT_SECRET=<YOUR_GOOGLE_CLIENT_SECRET>
@@ -137,7 +138,7 @@ npm run destroy:prod
 > Note: Initial deployments can take up to 40 min. This because certificates needs to be validated and DNS needs to propogate.  You can fast track the process by logging into the console and creating the DNS records from the ACM section in N. Virgina region.
 
 ---
-### Available Deployment Environments
+### Available Deployment Options
 ---
 
 - AWS (API Gateway, Lambda, ACM & Route53) - Full Featured
