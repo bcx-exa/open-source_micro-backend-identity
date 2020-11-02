@@ -316,7 +316,7 @@ export class UserService {
   public async deleteUser(user_id: string, softDelete: boolean): Promise<any> {
     try {
       // Connect to DB
-      const findUser = await dbFindOneBy(User, { user_id: user_id });
+      const findUser = await dbFindOneBy(User, { where: { user_id: user_id, disabled: false }, relations: ['user_groups'] });
 
       // If user doesnt exist, then throw error
       if (findUser instanceof NotFound) {

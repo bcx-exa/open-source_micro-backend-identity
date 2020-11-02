@@ -1,5 +1,5 @@
 import { agent, token } from "../setup";
-export let user, user_id;
+export let user_cookie;
 
 export function AuthenticationBasic() {
   it('should signup user', async () => {
@@ -19,24 +19,25 @@ export function AuthenticationBasic() {
     expect(res.body).toHaveProperty('message');
     expect(res.body.message).toEqual('Success: Please verify your account!');
   });
-  it('should load the signin page', async () => {
+  it('should load the login page', async () => {
     // Do API call
     const res = await agent
       .get("/auth/signin");
      // Expect result contain
     expect(res.statusCode).toEqual(200);
   });
-  it('should signin user', async () => {
+  it('should login user and return a cookie', async () => {
     // Do API call
     const res = await agent
-      .post("/auth/signin")
+      .post("/auth/login")
       .send({
-        "username": "basic@freedatsandbox.xyz",
-        "password": "ZAQ!@wsx34"
+        "username": "admin@freedatsandbox.xyz",
+        "password": "ZAQ!@wsx3456"
       });
 
+    user_cookie = res.headers['set-cookie'];
+
     // Expect result contain
-    expect(res.statusCode).toEqual(200);
+    expect(res.statusCode).toEqual(302);
   });
 }
-

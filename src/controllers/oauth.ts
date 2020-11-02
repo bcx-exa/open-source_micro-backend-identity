@@ -1,5 +1,5 @@
 
-import { getAccessToken } from "../components/security/oauth_client";
+import { getAccessToken } from "../components/security/oauth-client";
 import { Controller, Get, Post, Route, Tags, Query } from "tsoa";
 
 @Route("oauth") // route name => localhost:xxx/SignUp

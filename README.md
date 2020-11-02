@@ -6,28 +6,55 @@
 
 This is opinionated boilerplate code that aims to meet the requirements set out by our technical architecture team.
 
-# This is still a work in progress, the template isn't ready yet
-
 Main objective
 
-- [x] 1. Create a Plug and Play Identity microservice
+- [x] 1. Create a Plug and Play Identity Microservice that follows industry security standards.  
+- [x] 2. One command deployment. (Infrastructure & Application Code)
 
 Features
 
-- [x] Auto SES Creating for
+- [x] Sign Up
+- [x] Local Login
+- [x] Social Login
+- [x] Logout
+- [x] Password Reset
+- [x] Account Verification (Email & Phone Numbers)
+- [x] SSO using JWT
+- [x] Authorization using Oauth 2.0
+- [x] Integration/E2E Testing
+- [x] User Scope Management using User & Scope Groups
+- [x] Granular API Protection 
+- [x] One command deployment
 
-This template uses our [template_micro_backend_core](https://github.com/bcx-exa/template_micro_backend_core) version 1.0.0 as it's base.
+## Main Components & Packages
+
+- Passport (Various Strategies)
+- Aurora Serverless with Data API
+- AWS Pinpoint (SMS & Email)
+- AWS Lambda
+- API Gateway
+- Express
+- Serverless Framework
+- Typeorm
+- TSOA
+- Jest
+- Swagger
 
 ---
 
 # Quick Start
 
-### Install IDE, Nodejs & AWS CLI
+---
 
-1. Install VSCode: https://code.visualstudio.com/download
-2. Install Nodejs: https://nodejs.org/en/download/
-3. Install AWS CLI: https://awscli.amazonaws.com/AWSCLIV2.msi.
-4. Fork or clone the repo
+> Warning: Although using the code is absolutely free, the AWS resources required to run the microservice isn't. A full deployment of the solution will cost you money.
+---
+### Pre-Requisites & Notes
+
+---
+
+- You need an AWS account
+- You need a domain registed using Route53 in the same AWS account. 
+- We recommend using subdomains for each micro-service you create. api.yourdomain.co.za appose to yourdomain.co.za/api. This is to keep your certificates and domains isolated for each micro-service.
 
 ---
 
@@ -41,41 +68,37 @@ This template uses our [template_micro_backend_core](https://github.com/bcx-exa/
 npm install -g serverless
 ```
 
-2. Configure your serverless to use the correct AWS profile
-
-```bash
-serverless config credentials --provider aws --key <YOURKEY> --secret <YOURSECRET> --profile <PROFILENAME>
-```
-
-3. Install all packages
+2. Install all packages
 
 ```bash
 npm install
 ```
 
-4. Configure the serverless framework environment variables under path => cicd/env
+3. Configure your serverless to use the correct AWS profile
 
 ```bash
-DomainName: <YOUR DOMAIN>
-Region: <REGION>
-AcmStackName: <YOUR ACM STACK NAME>
-StackName: <YOUR STACK NAME>
-HostedZoneId: <YOUR HOSTED ZONE ID>
+serverless config credentials --provider aws --key <YOURKEY> --secret <YOURSECRET> --profile <PROFILENAME>
 ```
 
-5. (Optional) Add a .env file to the root directory of your project. (Same level as package.json)
+1. Create and configure your local and test env files inside your environments folder.
+
+Filenames
+- .env.local
+- .env.test
 
 ```bash
-PORT=<PORT>
-NODE_ENV=<ENV>
-APP_NAME=<APP_NAME>
+AWS_ACCESS_KEY_ID=<YOUR KEY>
+AWS_SECRET_ACCESS_KEY=<YOUR_SECRET>
+AWS_PROFILE=<AWS_PROFILE_NAME>
+HOSTED_ZONE_ID=<ROUTE_53_HOSTED_ZONE_ID>
+GOOGLE_CLIENT_ID=<YOUR_GOOGLE_CLIENT_ID>
+GOOGLE_CLIENT_SECRET=<YOUR_GOOGLE_CLIENT_SECRET>
+FACEBOOK_CLIENT_ID=<YOUR_FACEBOOK_CLIENT_ID>
+FACEBOOK_CLIENT_SECRET=<YOUR_FACEBOOK_CLIENT_SECRET>
 ```
-
-> The .env file is used by the node application when you do local development. The environment files situated under the cicd folder is specific to the deployment of resources in AWS.
-
 ---
 
-## For Local Development
+### For Local Development
 
 ---
 
@@ -92,49 +115,33 @@ npm run offline
 ```
 
 ---
-
-## For Dev/UAT/Prod Deployments
-
+### For Dev/UAT/Prod Deployments
 ---
-
-### Pre-Requisites & Notes
-
----
-
-- You need a domain registed using Route53 in the same AWS account for this to work. In the background, we are creating a certificate used by the API Gateway. Check out [this](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-certificatemanager-certificate.html) link for more info.
-- We recommend using subdomains for each micro-service you create. api.yourdomain.co.za appose to yourdomain.co.za/api. This is to keep your certificates and domains isolated for each micro-service.
 
 ```bash
 npm run deploy:dev
 npm run deploy:uat
 npm run deploy:prod
 ```
+---
+### Destroying environments Dev/UAT/Prod
+---
+```bash
+npm run destroy:dev
+npm run destroy:uat
+npm run destroy:prod
+```
+
+
+
 
 > Note: Lambda cold start plays a role in showing the initial load of swagger ui interface.
 
-> Note: Initial deployments can take up to 40 min. This because certificates needs to be validated and DNS needs to propogate.
-
-# Details Explanations
-
-## Requirements Mapping Table
-
-| Technical Component | Business Requirement       |
-| ------------------- | -------------------------- |
-| Serverless          | Independantly Deployable   |
-| Serverless Offline  | Local Debugging            |
-| Nodemon             | Local Debugging (Rapid)    |
-| TSOA                | Documented                 |
-| Swagger-UI          | Documented                 |
-| X-Ray               | Traceable                  |
-| Express             | Portable                   |
-| Typescript          | Independantly Maintainable |
-| Eslint              | Independantly Maintainable |
-| Jest                | Independantly Testable     |
+> Note: Initial deployments can take up to 40 min. This because certificates needs to be validated and DNS needs to propogate.  You can fast track the process by logging into the console and creating the DNS records from the ACM section in N. Virgina region.
 
 ---
-
-## Available Deployment Environments
-
+### Available Deployment Environments
+---
 The project has the ability to deploy on.
 
 - AWS (API Gateway, Lambda, ACM & Route53) - Full Featured
@@ -145,26 +152,18 @@ See the architecture below
 
 <img src="docs/architecture/architecture.svg" width='100%' height='100%' />
 
-![Architecture](docs/architecture/architecture.svg)
-
-You can modify the architecture.drawio file inside the docs file should you wish to do so.
-
-# Recommended VSCode Extensions
-
-- I found [this](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio) vscode extension to be useful as it allows you to draw and view draw.io files inside the editor.
-- Also, [this](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) markdown extention is also pretty cool. Once installed, press ctrl-shift-v to view the markdown file.
 
 # To-Do's & Bugs
 
-- Still need to add these
+- Test Google & Facebook properly
+- Review & Clean up Docs Architecture folder
+- Code Clean up
 
 # Version
 
-- 1.0.0
+- 1.0.0 Beta
 
 # Contributions
 
-- Serverless team
-- Cloudformation team
-- Typescript
-- BCX Team
+- BCX Exa Team
+- We would appriciate any contribution from the community

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import passport from 'passport';
 
-export const login = passport.authenticate('local', { session: true, successReturnToOrRedirect: '/', failureRedirect: 'auth/signin' });
+export const login = passport.authenticate('local', { session: true, successReturnToOrRedirect: '/', failureRedirect: 'auth/login' });
 export const loginForm = (_request, response) => response.render('login');
 export const createForm = (_request, response) => response.render('createAccount');
 export const forgotForm = (_request, response) => response.render('forgot');

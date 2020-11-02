@@ -57,7 +57,7 @@ export async function dbDelete(entity: any, record: any): Promise<any> {
   try {
     const connection = await auroraConnectApi();
     const repository = await connection.getRepository(entity);
-    const deleteRecord = await repository.delete(record);
+    const deleteRecord = await repository.remove(record);
   
     return deleteRecord;
 
